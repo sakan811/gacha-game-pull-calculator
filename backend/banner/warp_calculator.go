@@ -87,22 +87,3 @@ func CalculateWarpProbability(bannerType BannerType, currentPulls, plannedPulls 
 	// For Standard banner, character probability is exactly half of total
 	return baseProbability, baseProbability * 0.5
 }
-
-// CalculatePullsNeeded calculates how many pulls needed for desired probability
-func CalculatePullsNeeded(bannerType BannerType, desiredProbability float64, currentPulls int, lost5050 bool) int {
-	stats := NewWarpStats(bannerType, currentPulls, lost5050)
-
-	pulls := 1
-	for pulls <= stats.HardPity {
-		if stats.calculateWithPity(currentPulls+pulls) >= desiredProbability {
-			return pulls
-		}
-		pulls++
-	}
-	return stats.HardPity - currentPulls
-}
-
-// CalculateSpecificCharacterProbability calculates chance of getting a specific standard character
-func CalculateSpecificCharacterProbability(probability float64) float64 {
-	return probability / 7 // Divide by standard pool size (7 characters)
-}

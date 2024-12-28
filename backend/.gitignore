@@ -1,0 +1,4 @@
+# ... existing entries ...
+embedded/dist/*
+!embedded/dist/index.html
++ ../hsr-warp-calculator-app/ 

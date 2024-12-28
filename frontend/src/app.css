@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .main-container {
+    @apply min-h-screen bg-gray-50 py-8 px-4;
+  }
+
+  .content-wrapper {
+    @apply max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8;
+  }
+
+  .page-title {
+    @apply text-4xl font-bold text-center text-gray-800 mb-8;
+  }
+
+  .form-container {
+    @apply space-y-8;
+  }
+
+  .form-group {
+    @apply space-y-6;
+  }
+
+  .form-input-container {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply block text-base font-medium text-gray-700;
+  }
+
+  .form-input {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base;
+  }
+
+  .form-helper {
+    @apply text-sm text-gray-500 mt-1;
+  }
+
+  .checkbox-label {
+    @apply text-base text-gray-700;
+  }
+
+  .error-message {
+    @apply mt-4 p-4 bg-red-100 text-red-700 rounded-md text-base;
+  }
+
+  .results-container {
+    @apply mt-8 p-6 bg-blue-50 rounded-md;
+  }
+
+  .results-title {
+    @apply text-xl font-semibold text-gray-800 mb-4;
+  }
+
+  .results-text {
+    @apply space-y-3 text-base text-gray-600;
+  }
+} 
