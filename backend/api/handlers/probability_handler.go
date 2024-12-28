@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
 	"hsrbannercalculator/api/calculator"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ProbabilityRequest struct {
@@ -12,28 +13,24 @@ type ProbabilityRequest struct {
 	Guaranteed   bool `json:"guaranteed"`
 }
 
-func HandleStandardBannerCalculation(w http.ResponseWriter, r *http.Request) {
+func HandleStandardBannerCalculation(c *gin.Context) {
 	var req ProbabilityRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	result := calculator.CalculateStandardBannerProbability(req.CurrentPity, req.PlannedPulls)
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	c.JSON(http.StatusOK, result)
 }
 
-func HandleLimitedBannerCalculation(w http.ResponseWriter, r *http.Request) {
+func HandleLimitedBannerCalculation(c *gin.Context) {
 	var req ProbabilityRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	result := calculator.CalculateLimitedBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	c.JSON(http.StatusOK, result)
 }
