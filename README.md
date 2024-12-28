@@ -4,12 +4,14 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 ## Status
 
+[![Go Backend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml)
+
 ## How to use
 
 1. Download the executable file from the [hsr-warp-calculator-app](./hsr-warp-calculator-app/) folder depending on your operating system.
-    - [Windows](./hsr-warp-calculator-app/hsr-warp-calculator-app.exe)
-    - [MacOS](./hsr-warp-calculator-app/hsr-warp-calculator-app.app)
-    - [Linux](./hsr-warp-calculator-app/hsr-warp-calculator-app)
+    - [Windows](./hsr-warp-calculator-app/windows/hsrbannercalc.exe)
+    - [MacOS](./hsr-warp-calculator-app/macos/hsrbannercalc.app)
+    - [Linux](./hsr-warp-calculator-app/linux/hsrbannercalc)
 2. Run the executable file.
 3. Navigate to the <http://localhost:8080> in your browser.
 
