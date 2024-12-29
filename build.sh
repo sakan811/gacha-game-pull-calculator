@@ -4,15 +4,8 @@
 APP_DIR="hsr-warp-calculator-app"
 
 # Create app directory and necessary subdirectories
-mkdir -p "$APP_DIR"
+mkdir -p "$APP_DIR"/{windows,macos-intel,macos-silicon}
 mkdir -p backend/embedded/dist
-
-# Determine OS and set binary name
-if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-    BINARY_NAME="hsrbannercalc.exe"
-else
-    BINARY_NAME="hsrbannercalc"
-fi
 
 # Build frontend
 cd frontend
@@ -22,9 +15,32 @@ cd ..
 
 # Build backend with embedded files
 cd backend
-GOOS=windows go build -o "../$APP_DIR/windows/$BINARY_NAME"
-GOOS=linux go build -o "../$APP_DIR/linux/$BINARY_NAME"
-GOOS=darwin go build -o "../$APP_DIR/macos/$BINARY_NAME"
+
+# Build for Windows (amd64)
+GOOS=windows GOARCH=amd64 go build -o "../$APP_DIR/windows/hsrbannercalc.exe"
+
+# Build for macOS (Intel)
+GOOS=darwin GOARCH=amd64 go build -o "../$APP_DIR/macos-intel/hsrbannercalc.app"
+
+# Build for macOS (Apple Silicon)
+GOOS=darwin GOARCH=arm64 go build -o "../$APP_DIR/macos-silicon/hsrbannercalc.app"
+
+# Create a universal binary for macOS (combines Intel and Apple Silicon)
+if command -v lipo &> /dev/null && [[ "$OSTYPE" == "darwin"* ]]; then
+    mkdir -p "../$APP_DIR/macos-universal"
+    lipo -create \
+        "../$APP_DIR/macos-intel/hsrbannercalc.app" \
+        "../$APP_DIR/macos-silicon/hsrbannercalc.app" \
+        -output "../$APP_DIR/macos-universal/hsrbannercalc.app"
+    echo "Created universal macOS binary"
+fi
+
 cd ..
 
-echo "Build complete! Check the $APP_DIR directory for platform-specific builds." 
+echo "Build complete! Check the $APP_DIR directory for platform-specific builds:"
+echo "- Windows (64-bit): $APP_DIR/windows/"
+echo "- macOS (Intel): $APP_DIR/macos-intel/"
+echo "- macOS (Apple Silicon): $APP_DIR/macos-silicon/"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "- macOS (Universal): $APP_DIR/macos-universal/"
+fi 
