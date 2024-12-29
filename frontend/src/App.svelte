@@ -9,6 +9,31 @@
   let error: string | null = null;
   let loading = false;
 
+  function validatePity(value: number) {
+    if (value < 0) return 0;
+    if (value > 89) return 89;
+    return value;
+  }
+
+  function validatePlannedPulls(value: number) {
+    if (value < 1) return 1;
+    return value;
+  }
+
+  function handlePityChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = parseInt(input.value);
+    currentPity = validatePity(value);
+    input.value = currentPity.toString();
+  }
+
+  function handlePlannedPullsChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = parseInt(input.value);
+    plannedPulls = validatePlannedPulls(value);
+    input.value = plannedPulls.toString();
+  }
+
   async function calculateProbability() {
     try {
       loading = true;
@@ -69,6 +94,7 @@
             type="number"
             id="currentPity"
             bind:value={currentPity}
+            on:change={handlePityChange}
             min="0"
             max="89"
             class="form-input"
@@ -84,6 +110,7 @@
             type="number"
             id="plannedPulls"
             bind:value={plannedPulls}
+            on:change={handlePlannedPullsChange}
             min="1"
             class="form-input"
           />
@@ -119,18 +146,35 @@
       {/if}
 
       {#if result}
-        <div class="results-container">
+        <div class="results-container" role="region" aria-label="Results">
           <h2 class="results-title">Results</h2>
           <div class="results-text">
-            <p>5★ Probability: <span class="font-medium">{result.total_5_star_probability?.toFixed(2) || '0.00'}%</span></p>
-            
-            {#if bannerType === 'standard'}
-              <p>Character Probability: <span class="font-medium">{result.character_probability?.toFixed(2) || '0.00'}%</span></p>
-              <p>Light Cone Probability: <span class="font-medium">{result.light_cone_probability?.toFixed(2) || '0.00'}%</span></p>
-            {:else}
-              <p>Rate-Up Probability: <span class="font-medium">{result.rate_up_probability?.toFixed(2) || '0.00'}%</span></p>
-              <p>Standard Character Probability: <span class="font-medium">{result.standard_char_probability?.toFixed(2) || '0.00'}%</span></p>
-            {/if}
+            <div class="results">
+              <div>
+                <span>5★ Probability:</span>
+                <span data-testid="total-probability">{result.total_5_star_probability?.toFixed(2) || '0.00'}%</span>
+              </div>
+              
+              {#if bannerType === 'standard'}
+                <div>
+                  <span>Character Probability:</span>
+                  <span data-testid="character-probability">{result.character_probability?.toFixed(2) || '0.00'}%</span>
+                </div>
+                <div>
+                  <span>Light Cone Probability:</span>
+                  <span data-testid="light-cone-probability">{result.light_cone_probability?.toFixed(2) || '0.00'}%</span>
+                </div>
+              {:else}
+                <div>
+                  <span>Rate-Up Probability:</span>
+                  <span data-testid="rate-up-probability">{result.rate_up_probability?.toFixed(2) || '0.00'}%</span>
+                </div>
+                <div>
+                  <span>Standard Character Probability:</span>
+                  <span data-testid="standard-probability">{result.standard_char_probability?.toFixed(2) || '0.00'}%</span>
+                </div>
+              {/if}
+            </div>
           </div>
         </div>
       {/if}
