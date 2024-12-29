@@ -1,17 +1,18 @@
 import { render, fireEvent, screen, waitFor } from '@testing-library/svelte';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
 import App from '../App.svelte';
 import '@testing-library/jest-dom';
 
 describe('Banner Calculation', () => {
   beforeEach(() => {
-    global.fetch = vi.fn();
+    global.fetch = vi.fn() as unknown as typeof fetch;
     render(App);
   });
 
   async function testStandardBannerCalculation() {
     // Mock successful API response
-    (global.fetch as vi.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({
         total_5_star_probability: 15.5,
@@ -50,7 +51,7 @@ describe('Banner Calculation', () => {
     });
 
     // Mock successful API response
-    (global.fetch as vi.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({
         total_5_star_probability: 20.0,
