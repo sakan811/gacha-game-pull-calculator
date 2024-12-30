@@ -5,11 +5,9 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 export default defineConfig({
   plugins: [svelte()],
   build: {
-    // Change output directory to backend/embedded/dist
-    outDir: '../backend/embedded/dist',
+    outDir: '../backend/internal/web/embedded/dist',
     emptyOutDir: true,
     assetsDir: 'assets',
-    // Ensure assets are referenced correctly
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',

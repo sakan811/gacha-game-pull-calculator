@@ -1,7 +1,7 @@
 package banner_test
 
 import (
-	"hsrbannercalculator/banner"
+	"hsrbannercalculator/internal/domain/banner"
 	"math"
 	"testing"
 )

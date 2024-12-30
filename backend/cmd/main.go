@@ -2,30 +2,18 @@ package main
 
 import (
 	"fmt"
-	"hsrbannercalculator/api/handlers"
-	"hsrbannercalculator/embedded"
-
+	"hsrbannercalculator/internal/api/handlers"
+	"hsrbannercalculator/internal/web/embedded"
 	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	// Set Gin to release mode
+	gin.SetMode(gin.ReleaseMode)
 
-	// CORS middleware (only needed for development)
-	if gin.Mode() != gin.ReleaseMode {
-		r.Use(func(c *gin.Context) {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-			c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-			c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-			if c.Request.Method == "OPTIONS" {
-				c.AbortWithStatus(204)
-				return
-			}
-			c.Next()
-		})
-	}
+	r := gin.Default()
 
 	// API routes
 	api := r.Group("/api")

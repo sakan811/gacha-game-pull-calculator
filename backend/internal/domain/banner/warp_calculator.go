@@ -29,15 +29,6 @@ func (w *WarpStats) calculateRateUpProbability(probability float64) float64 {
 	return probability * w.RateUpChance // 50% chance for rate-up otherwise
 }
 
-// CalculateSpecificCharacterProbability calculates chance of getting a specific standard character
-func (w *WarpStats) CalculateSpecificCharacterProbability(probability float64) float64 {
-	standardCharProb := probability * w.CharacterChance / float64(w.StandardPoolSize)
-	if w.GuaranteedRateUp {
-		return 0 // Can't get standard character if guaranteed rate-up
-	}
-	return standardCharProb
-}
-
 // calculateBaseProbability calculates the probability without pity
 func (w *WarpStats) calculateBaseProbability(pulls int) float64 {
 	totalRate := w.BaseRate5StarChar + w.BaseRate5StarLC
