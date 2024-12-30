@@ -5,7 +5,7 @@ APP_DIR="hsr-warp-calculator-app"
 
 # Create app directory and necessary subdirectories
 mkdir -p "$APP_DIR"/{windows,macos-intel,macos-silicon}
-mkdir -p backend/embedded/dist
+mkdir -p backend/internal/web/embedded/dist
 
 # Build frontend
 cd frontend
@@ -17,13 +17,13 @@ cd ..
 cd backend
 
 # Build for Windows (amd64)
-GOOS=windows GOARCH=amd64 go build -o "../$APP_DIR/windows/hsrbannercalc.exe"
+GOOS=windows GOARCH=amd64 go build -o "../$APP_DIR/windows/hsrbannercalc.exe" ./cmd/main.go
 
 # Build for macOS (Intel)
-GOOS=darwin GOARCH=amd64 go build -o "../$APP_DIR/macos-intel/hsrbannercalc.app"
+GOOS=darwin GOARCH=amd64 go build -o "../$APP_DIR/macos-intel/hsrbannercalc.app" ./cmd/main.go
 
 # Build for macOS (Apple Silicon)
-GOOS=darwin GOARCH=arm64 go build -o "../$APP_DIR/macos-silicon/hsrbannercalc.app"
+GOOS=darwin GOARCH=arm64 go build -o "../$APP_DIR/macos-silicon/hsrbannercalc.app" ./cmd/main.go
 
 # Create a universal binary for macOS (combines Intel and Apple Silicon)
 if command -v lipo &> /dev/null && [[ "$OSTYPE" == "darwin"* ]]; then
