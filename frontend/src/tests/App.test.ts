@@ -8,7 +8,7 @@ describe('App Component Basic Rendering', () => {
   });
 
   async function testInitialRendering() {
-    expect(screen.getByText('HSR Banner Calculator')).toBeTruthy();
+    expect(screen.getByText('Honkai Star Rail Banner Calculator')).toBeTruthy();
     expect(screen.getByLabelText('Banner Type')).toBeTruthy();
     expect(screen.getByLabelText('Current Pity')).toBeTruthy();
     expect(screen.getByLabelText('Planned Pulls')).toBeTruthy();

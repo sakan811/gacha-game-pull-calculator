@@ -68,7 +68,7 @@
 <main class="main-container">
   <div class="content-wrapper">
     <h1 class="page-title">
-      HSR Banner Calculator
+      Honkai Star Rail Banner Calculator
     </h1>
     <section class="form-container">
       <form on:submit|preventDefault={calculateProbability} class="form-group">
