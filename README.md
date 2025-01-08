@@ -21,3 +21,24 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 - **Current Pity** is the number of pulls you have done without getting a 5-star character.
 - **Planned Pulls** is the number of pulls you plan to do.
+
+## Probability Statistics Visualizations
+
+### Standard Banner
+![Standard Banner Probability](stats/graph/hsr_standard_banner_stats.jpg)
+
+### Limited Banner
+![Limited Banner Probability](stats/graph/hsr_limited_banner_stats.jpg)
+
+### Light Cone Banner
+![Light Cone Banner Probability](stats/graph/hsr_light_cone_banner_stats.jpg)
+
+## How to run the statistics
+
+1. Install Python on your machine.
+2. Navigate to the `stats` folder.
+   - `cd stats`
+3. Install the requirements.
+   - `pip install -r requirements.txt`
+4. Run the `hsr_warp_stats.py` file.
+   - `python hsr_warp_stats.py`
