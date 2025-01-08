@@ -24,9 +24,14 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 ## Probability Statistics Visualizations
 
-- [Standard Banner](./stats/graph/standard.png)
-- [Limited Banner](./stats/graph/limited.png)
-- [Light Cone Banner](./stats/graph/light_cone.png)
+### Standard Banner
+![Standard Banner Probability](./stats/graph/hsr_standard_banner_probability.jpg)
+
+### Limited Banner
+![Limited Banner Probability](./stats/graph/hsr_limited_banner_probability.jpg)
+
+### Light Cone Banner
+![Light Cone Banner Probability](./stats/graph/hsr_light_cone_banner_probability.jpg)
 
 ## How to run the statistics
 
