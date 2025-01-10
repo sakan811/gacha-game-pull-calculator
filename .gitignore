@@ -18,3 +18,4 @@ Thumbs.db
 **/*.pyc
 
 backend/internal/web/embedded/dist
+/stats/.ruff_cache
