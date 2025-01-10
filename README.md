@@ -33,6 +33,9 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 ### Light Cone Banner
 ![Light Cone Banner Probability](stats/graph/hsr_light_cone_banner_stats.jpg)
 
+Reference:
+https://www.hoyolab.com/article/497840
+
 ## How to run the statistics
 
 1. Install Python on your machine.
