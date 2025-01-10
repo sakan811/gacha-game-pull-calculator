@@ -39,7 +39,7 @@
 
   async function fetchVisualizationData() {
     try {
-      console.log('Fetching visualization data for:', bannerType);
+      console.log('Fetching visualization data for:', bannerType, 'current pity:', currentPity);
       const response = await fetch('/api/visualization', {
         method: 'POST',
         headers: { 
@@ -64,16 +64,9 @@
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      const text = await response.text();
-      console.log('API Response:', text);
-      
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        console.error('JSON Parse Error:', e);
-        console.error('Invalid JSON:', text);
-        throw new Error('Invalid JSON response from server');
-      }
+      const data = await response.json();
+      console.log('Visualization data received:', data);
+      return data;
     } catch (error) {
       console.error('Visualization API error:', error);
       throw error;
@@ -393,7 +386,16 @@
 
   $: {
     if (result && distributionChartCanvas && cumulativeChartCanvas) {
-      updateCharts();
+      console.log('Updating charts with new data');
+      updateCharts().catch(error => {
+        console.error('Failed to update charts:', error);
+      });
+    } else {
+      console.log('Skipping chart update:', {
+        hasResult: !!result,
+        hasDistributionCanvas: !!distributionChartCanvas,
+        hasCumulativeCanvas: !!cumulativeChartCanvas
+      });
     }
   }
 </script>
