@@ -19,5 +19,13 @@ export default defineConfig({
         rewrite: (path) => path
       }
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/tests/setup.ts'],
+    deps: {
+      inline: [/@asamuzakjp\/css-color/]
+    }
   }
 }) 

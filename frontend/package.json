@@ -11,8 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "npx eslint . --ext .js,.ts,.svelte --fix",
+    "lint:fix": "npx eslint . --ext .js,.ts,.svelte --fix",
     "format": "prettier --write ."
   },
   "devDependencies": {
