@@ -13,7 +13,7 @@ class BannerVisualizer:
 
     def create_distribution_plot(self, data, banner_type, save_path=None):
         """Create distribution plot."""
-        fig = plt.figure(figsize=(8, 10))  # 4:5 aspect ratio
+        fig = plt.figure(figsize=(7.5, 8.75))  # 4:5 exact ratio 
         ax = fig.add_subplot(111)
         
         colors = sns.color_palette("deep")
@@ -51,7 +51,7 @@ class BannerVisualizer:
 
     def create_cumulative_plot(self, data, banner_type, save_path=None):
         """Create cumulative probability plot."""
-        fig = plt.figure(figsize=(8, 10))  # 4:5 aspect ratio
+        fig = plt.figure(figsize=(7.5, 8.75))  # 4:5 exact ratio
         ax = fig.add_subplot(111)
         
         colors = sns.color_palette("deep")
