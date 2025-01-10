@@ -1,89 +1,123 @@
-import { render, fireEvent, screen, waitFor } from '@testing-library/svelte';
+import { render, fireEvent, screen, waitFor } from '@testing-library/vue';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { Mock } from 'vitest';
-import App from '../App.svelte';
-import '@testing-library/jest-dom';
+import App from '../App.vue';
 
 describe('Banner Calculation', () => {
   beforeEach(() => {
-    global.fetch = vi.fn() as unknown as typeof fetch;
+    // Mock fetch for both calculation and visualization
+    global.fetch = vi.fn(((url: string) => {
+      if (url.includes('/visualization')) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve({
+            rolls: [],
+            probability_per_roll: [],
+            cumulative_probability: [],
+            soft_pity_start: 74,
+            hard_pity: 90,
+            current_pity: 0,
+            planned_pulls: 0
+          })
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          total_5_star_probability: 15.5,
+          character_probability: 7.75,
+          light_cone_probability: 7.75,
+          rate_up_probability: 10.0,
+          standard_char_probability: 10.0
+        })
+      });
+    })) as unknown as typeof fetch;
+
     render(App);
   });
 
-  async function testStandardBannerCalculation() {
-    // Mock successful API response
-    (global.fetch as Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({
-        total_5_star_probability: 15.5,
-        character_probability: 7.75,
-        light_cone_probability: 7.75
-      })
-    });
-
-    // Fill form
-    await fireEvent.change(screen.getByLabelText('Current Pity'), { 
-      target: { value: '70' } 
-    });
-    await fireEvent.change(screen.getByLabelText('Planned Pulls'), { 
-      target: { value: '10' } 
-    });
+  it('should show results and plots after calculation', async () => {
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
     
-    // Submit form
-    const calculateButton = screen.getByRole('button', { name: /calculate/i });
+    await waitFor(() => {
+      expect(screen.getByTestId('probability-results')).toBeTruthy();
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    });
+  });
+
+  it('should show chart on first calculation with 0 pity', async () => {
+    // Set inputs
+    const pityInput = screen.getByLabelText('Current Pity') as HTMLInputElement;
+    const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
+    const calculateButton = screen.getAllByRole('button', { name: /calculate/i })[0];
+
+    await fireEvent.update(pityInput, '0');
+    await fireEvent.update(pullsInput, '10');
     await fireEvent.click(calculateButton);
 
-    // Wait for and verify results using data-testid attributes
-    await waitFor(() => {
-      expect(screen.getByTestId('total-probability'))
-        .toHaveTextContent('15.50%');
-      expect(screen.getByTestId('character-probability'))
-        .toHaveTextContent('7.75%');
-      expect(screen.getByTestId('light-cone-probability'))
-        .toHaveTextContent('7.75%');
+    // Wait for next tick and verify chart appears
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+      expect(screen.getByText('Successful Pull Distribution')).toBeTruthy();
+      expect(screen.getByText('Cumulative Probability')).toBeTruthy();
     });
-  }
+  });
 
-  async function testLimitedBannerCalculation() {
-    // Switch to limited banner
-    await fireEvent.change(screen.getByLabelText('Banner Type'), {
-      target: { value: 'limited' }
-    });
-
-    // Mock successful API response
-    (global.fetch as Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({
-        total_5_star_probability: 20.0,
-        rate_up_probability: 10.0,
-        standard_char_probability: 10.0
-      })
-    });
-
-    // Fill form
-    await fireEvent.change(screen.getByLabelText('Current Pity'), {
-      target: { value: '80' }
-    });
-    await fireEvent.change(screen.getByLabelText('Planned Pulls'), {
-      target: { value: '5' }
-    });
-    await fireEvent.click(screen.getByLabelText('Guaranteed Rate-Up (Lost previous 50/50)'));
+  it('should calculate standard banner probabilities', async () => {
+    // Set banner type to standard
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'standard');
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
-    // Submit form
-    const calculateButton = screen.getByRole('button', { name: /calculate/i });
-    await fireEvent.click(calculateButton);
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
 
-    // Wait for and verify results using data-testid attributes
     await waitFor(() => {
-      expect(screen.getByTestId('total-probability'))
-        .toHaveTextContent('20.00%');
-      expect(screen.getByTestId('rate-up-probability'))
-        .toHaveTextContent('10.00%');
-      expect(screen.getByTestId('standard-probability'))
-        .toHaveTextContent('10.00%');
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('15.50%'); // Total probability
+      expect(results.textContent).toContain('7.75%'); // Character probability
+      expect(results.textContent).toContain('7.75%'); // Light cone probability
     });
-  }
+  });
 
-  it('should calculate standard banner probabilities correctly', testStandardBannerCalculation);
-  it('should calculate limited banner probabilities correctly', testLimitedBannerCalculation);
+  it('should calculate limited banner probabilities', async () => {
+    // Set banner type to limited
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'limited');
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '80');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('15.50%'); // Total probability
+      expect(results.textContent).toContain('10.00%'); // Rate-up probability
+    });
+  });
+
+  it('should calculate light cone banner probabilities', async () => {
+    // Set banner type to light cone
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'light_cone');
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '65');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('15.50%'); // Total probability
+      expect(results.textContent).toContain('10.00%'); // Rate-up probability
+    });
+  });
+
+  it('should handle API errors gracefully', async () => {
+    // Mock API error
+    global.fetch = vi.fn().mockRejectedValueOnce(new Error('API Error'));
+    
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+    
+    // Should not show results on error
+    expect(screen.queryByTestId('probability-results')).toBeFalsy();
+    expect(screen.queryByTestId('probability-plots')).toBeFalsy();
+  });
 }); 

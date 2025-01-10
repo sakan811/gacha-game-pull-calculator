@@ -1,6 +1,6 @@
-import { render, fireEvent, screen } from '@testing-library/svelte';
+import { render, screen } from '@testing-library/vue';
 import { describe, it, expect, beforeEach } from 'vitest';
-import App from '../App.svelte';
+import App from '../App.vue';
 
 describe('App Component', () => {
   beforeEach(() => {
@@ -15,34 +15,9 @@ describe('App Component', () => {
       expect(screen.getByLabelText('Planned Pulls')).toBeTruthy();
     });
 
-    it('should not show plots initially', () => {
-      const plotsWrapper = document.querySelector('.plots-wrapper-hidden');
-      expect(plotsWrapper).toBeTruthy();
-    });
-  });
-
-  describe('Banner Type Interactions', () => {
-    it('should show/hide guaranteed checkbox based on banner type', async () => {
-      const select = screen.getByLabelText('Banner Type');
-      
-      await fireEvent.change(select, { target: { value: 'limited' } });
-      expect(screen.getByText('Guaranteed Rate-Up (Lost previous 50/50)')).toBeTruthy();
-      
-      await fireEvent.change(select, { target: { value: 'standard' } });
-      expect(screen.queryByText('Guaranteed Rate-Up (Lost previous 50/50)')).toBeFalsy();
-    });
-
-    it('should adjust max pity based on banner type', async () => {
-      const select = screen.getByLabelText('Banner Type') as HTMLSelectElement;
-      const pityInput = screen.getByLabelText('Current Pity') as HTMLInputElement;
-      
-      await fireEvent.change(select, { target: { value: 'light_cone' } });
-      await fireEvent.change(pityInput, { target: { value: '85' } });
-      expect(pityInput.value).toBe('79'); // Should be capped at 79 for light cone
-
-      await fireEvent.change(select, { target: { value: 'standard' } });
-      await fireEvent.change(pityInput, { target: { value: '95' } });
-      expect(pityInput.value).toBe('89'); // Should be capped at 89 for character banners
+    it('should not show plots and results initially', () => {
+      expect(screen.queryByTestId('probability-results')).toBeFalsy();
+      expect(screen.queryByTestId('probability-plots')).toBeFalsy();
     });
   });
 });

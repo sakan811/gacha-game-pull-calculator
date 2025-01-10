@@ -16,3 +16,7 @@ Thumbs.db
 
 **/*.venv/
 **/*.pyc
+
+backend/internal/web/embedded/dist
+/stats/.ruff_cache
+/test-all.sh
