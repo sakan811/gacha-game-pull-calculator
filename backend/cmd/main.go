@@ -28,6 +28,11 @@ func main() {
 	staticFS := embedded.GetFileSystem()
 	r.StaticFS("/", staticFS)
 
+	// Ensure index.html is served for all unmatched routes
+	r.NoRoute(func(c *gin.Context) {
+		c.FileFromFS("/index.html", staticFS)
+	})
+
 	// Print the access URL before starting the server
 	fmt.Printf("\nHSR Warp Calculator is running!\nOpen your browser and visit: \033[36mhttp://localhost:8080\033[0m\n\n")
 
