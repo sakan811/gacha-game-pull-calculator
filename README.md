@@ -25,16 +25,19 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 ## Probability Statistics Visualizations
 
 ### Standard Banner
+
 ![Standard Banner Probability](stats/graph/hsr_standard_banner_stats.jpg)
 
 ### Limited Banner
+
 ![Limited Banner Probability](stats/graph/hsr_limited_banner_stats.jpg)
 
 ### Light Cone Banner
+
 ![Light Cone Banner Probability](stats/graph/hsr_light_cone_banner_stats.jpg)
 
 Reference:
-https://www.hoyolab.com/article/497840
+<https://www.hoyolab.com/article/497840>
 
 ## How to run the statistics
 

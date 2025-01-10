@@ -20,6 +20,8 @@ func main() {
 	{
 		api.POST("/standard", handlers.HandleStandardBannerCalculation)
 		api.POST("/limited", handlers.HandleLimitedBannerCalculation)
+		api.POST("/light_cone", handlers.HandleLightConeBannerCalculation)
+		api.POST("/visualization", handlers.HandleVisualizationData)
 	}
 
 	// Serve embedded static files

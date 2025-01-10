@@ -24,3 +24,13 @@ func CalculateLimitedBannerProbability(currentPity, plannedPulls int, guaranteed
 		StandardCharProbability: (total5StarProb - rateUpProb) * 100,
 	}
 }
+
+func CalculateLightConeBannerProbability(currentPity, plannedPulls int) models.ProbabilityResponse {
+	total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.LightCone, currentPity, plannedPulls, false)
+
+	return models.ProbabilityResponse{
+		Total5StarProbability:   total5StarProb * 100,
+		RateUpProbability:       rateUpProb * 100,
+		StandardCharProbability: (total5StarProb - rateUpProb) * 100,
+	}
+}

@@ -1,4 +1,4 @@
-export type BannerType = 'standard' | 'limited';
+export type BannerType = 'standard' | 'limited' | 'light_cone';
 
 export interface BannerRequest {
   current_pity: number;
