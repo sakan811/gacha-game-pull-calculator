@@ -1,7 +1,31 @@
 <script lang="ts">
-  import Chart from 'chart.js/auto';
+  import {
+    Chart,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    LineController,
+    Title,
+    Tooltip,
+    Legend,
+    type ChartConfiguration,
+    type InteractionModeMap
+  } from 'chart.js';
   import annotationPlugin from 'chartjs-plugin-annotation';
-  Chart.register(annotationPlugin);
+
+  // Register required components
+  Chart.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    LineController,
+    Title,
+    Tooltip,
+    Legend,
+    annotationPlugin
+  );
   
   export let bannerType: string;
   export let currentPity: number;
@@ -10,18 +34,50 @@
   
   let cumulativeChartCanvas: HTMLCanvasElement;
   let distributionChartCanvas: HTMLCanvasElement;
-  let cumulativeChart: Chart;
-  let distributionChart: Chart;
+  let cumulativeChart: Chart | null = null;
+  let distributionChart: Chart | null = null;
 
   async function fetchVisualizationData() {
-    const response = await fetch('/api/visualization', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ banner_type: bannerType, current_pity: currentPity }),
-    });
+    try {
+      console.log('Fetching visualization data for:', bannerType);
+      const response = await fetch('/api/visualization', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+          banner_type: bannerType, 
+          current_pity: currentPity 
+        })
+      });
 
-    if (!response.ok) throw new Error('Failed to fetch visualization data');
-    return await response.json();
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('API Error Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: text
+        });
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      const text = await response.text();
+      console.log('API Response:', text);
+      
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        console.error('JSON Parse Error:', e);
+        console.error('Invalid JSON:', text);
+        throw new Error('Invalid JSON response from server');
+      }
+    } catch (error) {
+      console.error('Visualization API error:', error);
+      throw error;
+    }
   }
 
   function createCharts(data: any) {
@@ -31,14 +87,43 @@
     );
     const maxProbRoll = data.rolls[maxProbIndex];
 
-    // Cumulative Chart (now first)
-    cumulativeChart = new Chart(cumulativeChartCanvas, {
+    const commonScaleOptions = {
+      x: {
+        type: 'linear' as const,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)'
+        },
+        border: {
+          display: true,
+          color: 'rgba(0, 0, 0, 0.1)'
+        },
+        title: {
+          display: true,
+          text: 'Roll Number'
+        }
+      }
+    };
+
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index' as keyof InteractionModeMap
+      }
+    };
+
+    // Cumulative Chart configuration
+    const cumulativeConfig: ChartConfiguration<'line'> = {
       type: 'line',
       data: {
         labels: data.rolls,
         datasets: [{
           label: 'Cumulative Probability',
-          data: data.cumulative_probability.map((p: number) => p * 100),
+          data: data.cumulative_probability.map((p: number, i: number) => ({
+            x: data.rolls[i],
+            y: p * 100
+          })),
           borderColor: 'rgb(220, 57, 18)',
           borderWidth: 2,
           tension: 0.4,
@@ -47,11 +132,7 @@
         }]
       },
       options: {
-        responsive: true,
-        interaction: {
-          intersect: false,
-          mode: 'index'
-        },
+        ...commonOptions,
         plugins: {
           legend: {
             display: true,
@@ -75,6 +156,7 @@
                   content: `Soft Pity (${data.soft_pity_start})`,
                   display: true,
                   position: 'start',
+                  yAdjust: -160,
                   backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   color: 'rgb(85, 168, 104)',
                   font: { size: 11 },
@@ -142,6 +224,7 @@
                   content: `Current Total (${totalPulls})`,
                   display: true,
                   position: 'start',
+                  yAdjust: -30,
                   backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   color: 'rgb(255, 0, 0)',
                   font: { size: 11 },
@@ -152,20 +235,9 @@
           }
         },
         scales: {
-          x: {
-            grid: {
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            border: {
-              display: true,
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            title: {
-              display: true,
-              text: 'Roll Number'
-            }
-          },
+          ...commonScaleOptions,
           y: {
+            type: 'linear' as const,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)'
             },
@@ -176,21 +248,26 @@
             min: 0,
             max: 100,
             ticks: {
-              callback: (value) => (value as number).toFixed(0)
+              callback: function(tickValue: number | string): string {
+                return typeof tickValue === 'number' ? tickValue.toFixed(2) : tickValue;
+              }
             }
           }
         }
       }
-    });
+    };
 
-    // Distribution Chart
-    distributionChart = new Chart(distributionChartCanvas, {
+    // Distribution Chart configuration
+    const distributionConfig: ChartConfiguration<'line'> = {
       type: 'line',
       data: {
         labels: data.rolls,
         datasets: [{
           label: 'Probability per Roll',
-          data: data.probability_per_roll.map((p: number) => p * 100),
+          data: data.probability_per_roll.map((p: number, i: number) => ({
+            x: data.rolls[i],
+            y: p * 100
+          })),
           borderColor: 'rgb(76, 114, 176)',
           borderWidth: 2,
           tension: 0.4,
@@ -199,11 +276,7 @@
         }]
       },
       options: {
-        responsive: true,
-        interaction: {
-          intersect: false,
-          mode: 'index'
-        },
+        ...commonOptions,
         plugins: {
           legend: {
             display: true,
@@ -243,7 +316,8 @@
                 label: {
                   content: `Soft Pity (${data.soft_pity_start})`,
                   display: true,
-                  position: 'end',
+                  position: 'start',
+                  yAdjust: -160,
                   backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   color: 'rgb(85, 168, 104)',
                   font: { size: 11 },
@@ -260,6 +334,7 @@
                   content: `Current Total (${totalPulls})`,
                   display: true,
                   position: 'start',
+                  yAdjust: -30,
                   backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   color: 'rgb(255, 0, 0)',
                   font: { size: 11 },
@@ -270,50 +345,50 @@
           }
         },
         scales: {
-          x: {
-            grid: {
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            border: {
-              display: true,
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            title: {
-              display: true,
-              text: 'Roll Number'
-            },
-            ticks: {
-              font: { size: 11 }
-            }
-          },
+          ...commonScaleOptions,
           y: {
+            type: 'linear' as const,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)'
             },
             title: {
               display: true,
-              text: 'Probability per Roll (%)',
-              font: { size: 12 },
-              padding: { bottom: 10 }
+              text: 'Probability per Roll (%)'
             },
             ticks: {
-              font: { size: 11 },
-              callback: (value) => (value as number).toFixed(2)
+              callback: function(tickValue: number | string): string {
+                return typeof tickValue === 'number' ? tickValue.toFixed(2) : tickValue;
+              }
             }
           }
         }
       }
-    });
+    };
+
+    // Create new charts
+    cumulativeChart = new Chart(cumulativeChartCanvas, cumulativeConfig);
+    distributionChart = new Chart(distributionChartCanvas, distributionConfig);
   }
 
   async function updateCharts() {
     if (!distributionChartCanvas || !cumulativeChartCanvas) return;
     
-    if (distributionChart) distributionChart.destroy();
-    if (cumulativeChart) cumulativeChart.destroy();
+    // Destroy existing charts
+    if (distributionChart) {
+      distributionChart.destroy();
+      distributionChart = null;
+    }
+    if (cumulativeChart) {
+      cumulativeChart.destroy();
+      cumulativeChart = null;
+    }
     
-    const data = await fetchVisualizationData();
-    createCharts(data);
+    try {
+      const data = await fetchVisualizationData();
+      createCharts(data);
+    } catch (error) {
+      console.error('Failed to update charts:', error);
+    }
   }
 
   $: {
