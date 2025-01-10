@@ -21,6 +21,11 @@ jobs:
         cache: true
         cache-dependency-path: backend/go.sum
 
+    - name: Create embedded dist directory
+      run: |
+        mkdir -p backend/internal/web/embedded/dist
+        echo '<!DOCTYPE html><html><head><title>HSR Banner Calculator</title></head><body><div id="app"></div></body></html>' > backend/internal/web/embedded/dist/index.html
+
     - name: Install dependencies
       working-directory: ./backend
       run: go mod download
