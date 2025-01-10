@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/vue';
-import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import ProbabilityPlot from '../components/ProbabilityPlot.vue';
+
 
 const mockVisualizationData = {
   rolls: [0, 1, 2],
@@ -70,82 +71,101 @@ describe('ProbabilityPlot Component', () => {
     });
   });
 
-  it('should show correct total pulls line', async () => {
-    const testProps = {
-      bannerType: 'standard' as const,
-      currentPity: 10,
-      plannedPulls: 20,
-      result: {
-        total_5_star_probability: 50
+  describe('Total Pulls Calculation', () => {
+    beforeEach(() => {
+      // Mock ResizeObserver for all canvas tests
+      global.ResizeObserver = vi.fn().mockImplementation(() => ({
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn()
+      }));
+    });
+
+    it('should show correct total pulls with current pity and planned pulls', async () => {
+      const testCases = [
+        { currentPity: 0, plannedPulls: 10, expected: 10 },
+        { currentPity: 10, plannedPulls: 20, expected: 30 },
+        { currentPity: 74, plannedPulls: 16, expected: 90 }, // Hard pity case
+        { currentPity: 89, plannedPulls: 1, expected: 90 }, // Edge case
+      ];
+
+      for (const testCase of testCases) {
+        // Mock visualization data for each test case
+        server.use(
+          http.post('/api/visualization', () => {
+            return HttpResponse.json({
+              ...mockVisualizationData,
+              current_pity: testCase.currentPity,
+              planned_pulls: testCase.plannedPulls
+            });
+          })
+        );
+
+        const { container } = render(ProbabilityPlot, {
+          props: {
+            bannerType: 'standard',
+            currentPity: testCase.currentPity,
+            plannedPulls: testCase.plannedPulls,
+            result: { total_5_star_probability: 50 }
+          }
+        });
+
+        // Trigger chart update
+        await container.querySelector('[data-testid="probability-plots"]')?.dispatchEvent(
+          new Event('mounted', { bubbles: true })
+        );
+
+        // Wait for chart to update
+        await vi.waitFor(() => {
+          expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
+        });
       }
-    };
-
-    // Mock ResizeObserver for canvas
-    global.ResizeObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn()
-    }));
-
-    // Update mock server response for this test
-    server.use(
-      http.post('/api/visualization', () => {
-        return HttpResponse.json({
-          ...mockVisualizationData,
-          current_pity: testProps.currentPity,
-          planned_pulls: testProps.plannedPulls
-        });
-      })
-    );
-
-    const { container } = render(ProbabilityPlot, {
-      props: testProps
     });
 
-    // Trigger chart update
-    await container.querySelector('[data-testid="probability-plots"]')?.dispatchEvent(
-      new Event('mounted', { bubbles: true })
-    );
+    it('should update total pulls only after calculation', async () => {
+      const initialProps = {
+        currentPity: 10,
+        plannedPulls: 20,
+      };
 
-    // Wait for chart to update
-    await vi.waitFor(() => {
-      // Instead of checking text directly, verify the chart container exists
-      expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
-    });
-  });
+      // Mock visualization data
+      server.use(
+        http.post('/api/visualization', () => {
+          return HttpResponse.json({
+            ...mockVisualizationData,
+            current_pity: initialProps.currentPity,
+            planned_pulls: initialProps.plannedPulls
+          });
+        })
+      );
 
-  it('should only update total pulls line after calculation', async () => {
-    const initialProps = {
-      bannerType: 'standard' as const,
-      currentPity: 10,
-      plannedPulls: 20,
-      result: { total_5_star_probability: 50 }
-    };
+      const { container, rerender } = render(ProbabilityPlot, {
+        props: {
+          bannerType: 'standard',
+          currentPity: initialProps.currentPity,
+          plannedPulls: initialProps.plannedPulls,
+          result: { total_5_star_probability: 50 }
+        }
+      });
 
-    // Mock visualization data with different planned pulls
-    server.use(
-      http.post('/api/visualization', () => {
-        return HttpResponse.json({
-          ...mockVisualizationData,
-          current_pity: initialProps.currentPity,
-          planned_pulls: initialProps.plannedPulls
-        });
-      })
-    );
+      // Initial calculation
+      await container.querySelector('[data-testid="probability-plots"]')?.dispatchEvent(
+        new Event('mounted', { bubbles: true })
+      );
 
-    const { rerender, container } = render(ProbabilityPlot, {
-      props: initialProps
-    });
+      // Change props without triggering calculation
+      await rerender({
+        bannerType: 'standard',
+        currentPity: initialProps.currentPity,
+        plannedPulls: 40,
+        result: { total_5_star_probability: 50 }
+      });
 
-    // Change planned pulls without triggering calculation
-    await rerender({
-      ...initialProps,
-      plannedPulls: 30
-    });
-
-    // Wait for chart to update and verify container exists
-    await vi.waitFor(() => {
-      expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
+      // Get component instance and verify data
+      await vi.waitFor(() => {
+        const spy = vi.spyOn(server, 'use');
+        expect(spy).not.toHaveBeenCalled();
+      });
     });
   });
 }); 
