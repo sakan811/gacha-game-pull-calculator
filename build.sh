@@ -25,7 +25,7 @@ mkdir -p backend/internal/web/embedded/dist
 
 # Build frontend
 cd frontend
-npm install --legacy-peer-deps
+npm install
 npm run build
 cd ..
 

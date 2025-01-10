@@ -1,9 +1,9 @@
 import eslint from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
-import sveltePlugin from 'eslint-plugin-svelte';
-import svelteParser from 'svelte-eslint-parser';
 import prettier from 'eslint-config-prettier';
+import vuePlugin from 'eslint-plugin-vue';
+import vueParser from 'vue-eslint-parser';
 
 export default [
   eslint.configs.recommended,
@@ -11,15 +11,14 @@ export default [
     ignores: ['dist/*', 'node_modules/*', '*.config.js', '*.config.ts', 'scripts/*']
   },
   {
-    files: ['**/*.{js,ts}'],
+    files: ['**/*.{js,ts,vue}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        ecmaVersion: 2020,
+        ecmaVersion: 2021,
         sourceType: 'module'
       },
       globals: {
-        // Add browser globals
         window: 'readonly',
         document: 'readonly',
         console: 'readonly',
@@ -32,52 +31,29 @@ export default [
       }
     },
     plugins: {
-      '@typescript-eslint': tseslint
+      '@typescript-eslint': tseslint,
+      'vue': vuePlugin
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
-      'no-inner-declarations': 'off' // Allow function declarations in blocks
+      'no-inner-declarations': 'off',
+      'vue/multi-word-component-names': 'off'
     }
   },
   {
-    files: ['**/*.svelte'],
+    files: ['**/*.vue'],
     languageOptions: {
-      parser: svelteParser,
+      parser: vueParser,
       parserOptions: {
         parser: tsParser,
         sourceType: 'module'
-      },
-      globals: {
-        // Add browser globals for Svelte files
-        window: 'readonly',
-        document: 'readonly',
-        console: 'readonly',
-        fetch: 'readonly',
-        HTMLElement: 'readonly',
-        HTMLInputElement: 'readonly',
-        HTMLSelectElement: 'readonly',
-        HTMLCanvasElement: 'readonly',
-        Event: 'readonly'
       }
-    },
-    plugins: {
-      svelte: sveltePlugin
-    },
-    rules: {
-      'svelte/valid-compile': 'warn',
-      'svelte/no-dom-manipulating': 'off',
-      'svelte/experimental-require-strict-events': 'off',
-      'svelte/experimental-require-slot-types': 'off',
-      'svelte/system': 'warn',
-      'no-inner-declarations': 'off' // Allow function declarations in Svelte script blocks
     }
   },
   {
-    // Test file specific config
     files: ['**/*.test.ts', '**/setup.ts'],
     languageOptions: {
       globals: {
-        // Add test globals
         describe: 'readonly',
         it: 'readonly',
         expect: 'readonly',

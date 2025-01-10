@@ -1,13 +1,35 @@
-import '@testing-library/jest-dom/vitest';
-import { vi } from 'vitest';
+import '@testing-library/jest-dom';
+import { afterEach, vi } from 'vitest';
+
+// Mock Chart.js
+vi.mock('chart.js', () => ({
+  Chart: {
+    register: vi.fn(),
+  },
+  CategoryScale: vi.fn(),
+  LinearScale: vi.fn(),
+  PointElement: vi.fn(),
+  LineElement: vi.fn(),
+  Title: vi.fn(),
+  Tooltip: vi.fn(),
+  Legend: vi.fn(),
+}));
+
+// Mock vue-chartjs
+vi.mock('vue-chartjs', () => ({
+  Line: {
+    name: 'Line',
+    render: () => null // Return empty render
+  }
+}));
+
+// Mock chartjs-plugin-annotation
+vi.mock('chartjs-plugin-annotation', () => ({
+  default: vi.fn(),
+}));
 
 // Mock fetch globally
 global.fetch = vi.fn();
-
-// Reset all mocks before each test
-beforeEach(() => {
-  vi.resetAllMocks();
-});
 
 // Clean up after each test
 afterEach(() => {
