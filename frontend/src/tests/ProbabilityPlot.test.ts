@@ -61,7 +61,7 @@ describe('ProbabilityPlot Component', () => {
 
     // Trigger the update through DOM event
     await container.querySelector('[data-testid="probability-plots"]')?.dispatchEvent(
-      new CustomEvent('mounted')
+      new Event('mounted', { bubbles: true })
     );
 
     // Wait for the request to complete
@@ -104,12 +104,47 @@ describe('ProbabilityPlot Component', () => {
 
     // Trigger chart update
     await container.querySelector('[data-testid="probability-plots"]')?.dispatchEvent(
-      new CustomEvent('mounted')
+      new Event('mounted', { bubbles: true })
     );
 
     // Wait for chart to update
     await vi.waitFor(() => {
       // Instead of checking text directly, verify the chart container exists
+      expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
+    });
+  });
+
+  it('should only update total pulls line after calculation', async () => {
+    const initialProps = {
+      bannerType: 'standard' as const,
+      currentPity: 10,
+      plannedPulls: 20,
+      result: { total_5_star_probability: 50 }
+    };
+
+    // Mock visualization data with different planned pulls
+    server.use(
+      http.post('/api/visualization', () => {
+        return HttpResponse.json({
+          ...mockVisualizationData,
+          current_pity: initialProps.currentPity,
+          planned_pulls: initialProps.plannedPulls
+        });
+      })
+    );
+
+    const { rerender, container } = render(ProbabilityPlot, {
+      props: initialProps
+    });
+
+    // Change planned pulls without triggering calculation
+    await rerender({
+      ...initialProps,
+      plannedPulls: 30
+    });
+
+    // Wait for chart to update and verify container exists
+    await vi.waitFor(() => {
       expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
     });
   });

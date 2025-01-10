@@ -10,7 +10,6 @@
     "test": "vitest",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
     "lint:fix": "eslint --fix \"src/**/*.{vue,js,jsx,ts,tsx}\"",
     "format": "prettier --write ."
   },

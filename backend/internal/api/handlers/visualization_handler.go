@@ -14,12 +14,14 @@ type VisualizationData struct {
 	SoftPityStart         int       `json:"soft_pity_start"`
 	HardPity              int       `json:"hard_pity"`
 	CurrentPity           int       `json:"current_pity"`
+	PlannedPulls          int       `json:"planned_pulls"`
 }
 
 func HandleVisualizationData(c *gin.Context) {
 	var req struct {
-		BannerType  string `json:"banner_type"`
-		CurrentPity int    `json:"current_pity"`
+		BannerType   string `json:"banner_type"`
+		CurrentPity  int    `json:"current_pity"`
+		PlannedPulls int    `json:"planned_pulls"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -68,6 +70,7 @@ func HandleVisualizationData(c *gin.Context) {
 		SoftPityStart:         config.SoftPityStart,
 		HardPity:              config.HardPity,
 		CurrentPity:           req.CurrentPity,
+		PlannedPulls:          req.PlannedPulls,
 	}
 
 	c.JSON(http.StatusOK, data)

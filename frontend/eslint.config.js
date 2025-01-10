@@ -65,7 +65,8 @@ export default [
         HTMLElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLSelectElement: 'readonly',
-        fetch: 'readonly'
+        fetch: 'readonly',
+        CustomEvent: 'readonly'
       }
     }
   },

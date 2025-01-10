@@ -1,6 +1,14 @@
 import '@testing-library/jest-dom';
 import { afterEach, vi } from 'vitest';
 
+// Add type for CustomEventInit if not available
+interface CustomEventInit {
+  bubbles?: boolean;
+  cancelable?: boolean;
+  composed?: boolean;
+  detail?: any;
+}
+
 // Mock Chart.js
 vi.mock('chart.js', () => ({
   Chart: {
@@ -30,6 +38,15 @@ vi.mock('chartjs-plugin-annotation', () => ({
 
 // Mock fetch globally
 global.fetch = vi.fn();
+
+// Mock CustomEvent if not available in test environment
+if (typeof CustomEvent === 'undefined') {
+  global.CustomEvent = class CustomEvent extends Event {
+    constructor(type: string, options?: CustomEventInit) {
+      super(type, options);
+    }
+  } as typeof CustomEvent;
+}
 
 // Clean up after each test
 afterEach(() => {

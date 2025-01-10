@@ -6,6 +6,7 @@
       <div class="chart-canvas-container">
         <Line
           v-if="chartData"
+          :key="chartData.labels.length"
           :data="distributionChartData"
           :options="distributionChartOptions"
         />
@@ -175,12 +176,12 @@ const cumulativeChartData = computed<ChartData<'line'>>(() => ({
 const chartAnnotations = computed(() => ({
   totalPulls: {
     type: 'line' as const,
-    xMin: (visualizationData.value?.current_pity ?? 0) + props.plannedPulls,
-    xMax: (visualizationData.value?.current_pity ?? 0) + props.plannedPulls,
+    xMin: visualizationData.value?.current_pity ?? 0,
+    xMax: visualizationData.value?.current_pity ?? 0,
     borderColor: 'rgba(255, 0, 0, 0.8)',
     borderWidth: 2,
     label: {
-      content: `Total Pulls: ${(visualizationData.value?.current_pity ?? 0) + props.plannedPulls}`,
+      content: `Total Pulls: ${visualizationData.value?.current_pity ?? 0}`,
       display: true,
       backgroundColor: 'rgba(255, 255, 255, 0.8)',
       color: 'rgb(255, 0, 0)'
