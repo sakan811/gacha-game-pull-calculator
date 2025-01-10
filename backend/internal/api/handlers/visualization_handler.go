@@ -34,7 +34,7 @@ func HandleVisualizationData(c *gin.Context) {
 	} else if req.BannerType == "light_cone" {
 		bannerType = banner.LightCone
 	}
-	config := banner.GetBannerConfig(bannerType)
+	config := banner.GetConfig(bannerType)
 
 	// Calculate probabilities
 	rolls := make([]int, config.HardPity)

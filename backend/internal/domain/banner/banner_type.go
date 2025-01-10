@@ -1,16 +1,16 @@
 package banner
 
-// BannerType represents different types of banners in the game
-type BannerType int
+// Type represents different types of banners in the game
+type Type int
 
 const (
-	Standard BannerType = iota
+	Standard Type = iota
 	Limited
 	LightCone
 )
 
-// BannerConfig holds the configuration for different banner types
-type BannerConfig struct {
+// Config holds the configuration for different banner types
+type Config struct {
 	BaseRate5StarChar float64 // 0.3% for character
 	BaseRate5StarLC   float64 // 0.3% for light cone
 	BaseRate4Star     float64 // 5.1%
@@ -22,11 +22,11 @@ type BannerConfig struct {
 	StandardPoolSize  int
 }
 
-// GetBannerConfig returns the configuration for a specific banner type
-func GetBannerConfig(bannerType BannerType) BannerConfig {
+// GetConfig returns the configuration for a specific banner type
+func GetConfig(bannerType Type) Config {
 	switch bannerType {
 	case Limited:
-		return BannerConfig{
+		return Config{
 			BaseRate5StarChar: 0.006, // 0.6% (all goes to character)
 			BaseRate5StarLC:   0.0,   // No light cones in limited
 			BaseRate4Star:     0.051,
@@ -38,7 +38,7 @@ func GetBannerConfig(bannerType BannerType) BannerConfig {
 			StandardPoolSize:  7,
 		}
 	case LightCone:
-		return BannerConfig{
+		return Config{
 			BaseRate5StarChar: 0.0,
 			BaseRate5StarLC:   0.008,
 			BaseRate4Star:     0.051,
@@ -50,7 +50,7 @@ func GetBannerConfig(bannerType BannerType) BannerConfig {
 			StandardPoolSize:  5,
 		}
 	default: // Standard
-		return BannerConfig{
+		return Config{
 			BaseRate5StarChar: 0.003, // 0.3% for character
 			BaseRate5StarLC:   0.003, // 0.3% for light cone
 			BaseRate4Star:     0.051,

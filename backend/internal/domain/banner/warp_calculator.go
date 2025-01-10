@@ -5,17 +5,17 @@ import (
 )
 
 type WarpStats struct {
-	BannerConfig
+	Config
 	CurrentPulls int  // Current number of pulls without 5*
 	Lost5050     bool // Whether the last 5★ pull lost the 50/50
 }
 
 // NewWarpStats creates a new WarpStats instance for the specified banner type
-func NewWarpStats(bannerType BannerType, currentPulls int, lost5050 bool) WarpStats {
-	config := GetBannerConfig(bannerType)
+func NewWarpStats(bannerType Type, currentPulls int, lost5050 bool) WarpStats {
+	config := GetConfig(bannerType)
 	config.GuaranteedRateUp = lost5050 // Set guaranteed if lost previous 50/50
 	return WarpStats{
-		BannerConfig: config,
+		Config:       config,
 		CurrentPulls: currentPulls,
 		Lost5050:     lost5050,
 	}
@@ -63,7 +63,7 @@ func (w *WarpStats) calculateWithPity(pulls int) float64 {
 }
 
 // CalculateWarpProbability calculates the probability of getting a 5* based on current pity
-func CalculateWarpProbability(bannerType BannerType, currentPulls, plannedPulls int, lost5050 bool) (float64, float64) {
+func CalculateWarpProbability(bannerType Type, currentPulls, plannedPulls int, lost5050 bool) (float64, float64) {
 	stats := NewWarpStats(bannerType, currentPulls, lost5050)
 	totalPulls := currentPulls + plannedPulls
 
