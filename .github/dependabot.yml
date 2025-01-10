@@ -5,7 +5,37 @@
 
 version: 2
 updates:
-  - package-ecosystem: "gomod" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "gomod"
+    directory: "/backend"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "@testing-library/*"
+          - "eslint*"
+      svelte:
+        patterns:
+          - "svelte*"
+          - "@sveltejs/*"
+
+  - package-ecosystem: "pip"
+    directory: "/stats"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      data-science:
+        patterns:
+          - "numpy"
+          - "pandas"
+          - "matplotlib"
+          - "seaborn"
