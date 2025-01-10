@@ -35,7 +35,7 @@ jobs:
         npm install --legacy-peer-deps
 
     - name: Install Rollup
-      run: npm install @rollup/rollup-linux-x64-gnu
+      run: npm install @rollup/rollup-linux-x64-gnu --legacy-peer-deps
 
     - name: Run tests
       run: npm test
