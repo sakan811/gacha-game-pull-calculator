@@ -33,3 +33,42 @@ func TestCalculateLimitedBannerProbability(t *testing.T) {
 		assert.Greater(t, result.StandardCharProbability, 0.0)
 	})
 }
+
+func TestCalculateLightConeBannerProbability(t *testing.T) {
+	tests := []struct {
+		name         string
+		currentPity  int
+		plannedPulls int
+		wantMin      float64 // Minimum expected probability
+	}{
+		{
+			name:         "Before soft pity",
+			currentPity:  50,
+			plannedPulls: 10,
+			wantMin:      0.0,
+		},
+		{
+			name:         "During soft pity",
+			currentPity:  65,
+			plannedPulls: 5,
+			wantMin:      20.0,
+		},
+		{
+			name:         "Near hard pity",
+			currentPity:  78,
+			plannedPulls: 1,
+			wantMin:      90.0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := services.CalculateLightConeBannerProbability(tt.currentPity, tt.plannedPulls)
+
+			assert.GreaterOrEqual(t, result.Total5StarProbability, tt.wantMin)
+			assert.LessOrEqual(t, result.Total5StarProbability, 100.0)
+			assert.GreaterOrEqual(t, result.RateUpProbability, 0.0)
+			assert.LessOrEqual(t, result.RateUpProbability, result.Total5StarProbability)
+		})
+	}
+}

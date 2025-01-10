@@ -78,6 +78,44 @@ func TestHandleLimitedBannerCalculation(t *testing.T) {
 	})
 }
 
+func TestHandleLightConeBannerCalculation(t *testing.T) {
+	router := setupTestRouter()
+	router.POST("/light_cone", handlers.HandleLightConeBannerCalculation)
+
+	tests := []struct {
+		name           string
+		request        models.ProbabilityRequest
+		expectedStatus int
+	}{
+		{
+			name: "Valid light cone request",
+			request: models.ProbabilityRequest{
+				CurrentPity:  65,
+				PlannedPulls: 10,
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name: "Invalid pity for light cone",
+			request: models.ProbabilityRequest{
+				CurrentPity:  80, // Light cone max pity is 79
+				PlannedPulls: 10,
+			},
+			expectedStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := performRequest(router, "POST", "/light_cone", tt.request)
+			assert.Equal(t, tt.expectedStatus, w.Code)
+			if tt.expectedStatus == http.StatusOK {
+				assertValidResponse(t, w, false)
+			}
+		})
+	}
+}
+
 func assertValidResponse(t *testing.T, w *httptest.ResponseRecorder, isLimited bool) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
