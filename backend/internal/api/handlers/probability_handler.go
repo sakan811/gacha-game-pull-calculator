@@ -29,3 +29,14 @@ func HandleLimitedBannerCalculation(c *gin.Context) {
 	result := services.CalculateLimitedBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }
+
+func HandleLightConeBannerCalculation(c *gin.Context) {
+	var req models.ProbabilityRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result := services.CalculateLightConeBannerProbability(req.CurrentPity, req.PlannedPulls)
+	c.JSON(http.StatusOK, result)
+}
