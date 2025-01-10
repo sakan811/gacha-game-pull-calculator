@@ -6,6 +6,7 @@ type BannerType int
 const (
 	Standard BannerType = iota
 	Limited
+	LightCone
 )
 
 // BannerConfig holds the configuration for different banner types
@@ -35,6 +36,18 @@ func GetBannerConfig(bannerType BannerType) BannerConfig {
 			GuaranteedRateUp:  false,
 			CharacterChance:   1.0,
 			StandardPoolSize:  7,
+		}
+	case LightCone:
+		return BannerConfig{
+			BaseRate5StarChar: 0.0,
+			BaseRate5StarLC:   0.008,
+			BaseRate4Star:     0.051,
+			SoftPityStart:     67,
+			HardPity:          80,
+			RateUpChance:      0.75,
+			GuaranteedRateUp:  false,
+			CharacterChance:   0.0,
+			StandardPoolSize:  5,
 		}
 	default: // Standard
 		return BannerConfig{
