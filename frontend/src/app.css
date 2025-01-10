@@ -4,15 +4,42 @@
 
 @layer components {
   .main-container {
-    @apply min-h-screen bg-gray-50 py-8 px-4;
+    @apply min-h-screen bg-gray-50 py-8 px-8 flex justify-center;
   }
 
-  .content-wrapper {
-    @apply max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8;
+  .layout-container {
+    @apply w-full max-w-7xl transition-all duration-300 ease-in-out;
+  }
+
+  .calculator-centered {
+    @apply flex justify-center;
+    & .calculator-wrapper {
+      @apply w-full max-w-2xl;
+    }
+  }
+
+  .calculator-with-plots {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+  }
+
+  .calculator-wrapper {
+    @apply bg-white rounded-lg shadow-md p-8 transition-all duration-300 h-fit;
   }
 
   .page-title {
     @apply text-4xl font-bold text-center text-gray-800 mb-8;
+  }
+
+  .plots-wrapper {
+    @apply bg-white rounded-lg shadow-md p-8 sticky top-8 transition-all duration-300;
+  }
+
+  .plots-wrapper-hidden {
+    @apply opacity-0 translate-x-full hidden md:block md:absolute;
+  }
+
+  .plots-wrapper-visible {
+    @apply opacity-100 translate-x-0 relative block;
   }
 
   .form-container {
@@ -57,5 +84,22 @@
 
   .results-text {
     @apply space-y-3 text-base text-gray-600;
+  }
+
+  /* Chart specific styles */
+  .chart-container {
+    @apply w-full space-y-8;
+  }
+
+  .chart-wrapper {
+    @apply w-full bg-white rounded-lg p-4;
+  }
+
+  .chart-title {
+    @apply text-xl font-semibold text-gray-800 mb-4 text-center;
+  }
+
+  .chart-canvas-container {
+    @apply relative aspect-[4/3] w-full;
   }
 } 
