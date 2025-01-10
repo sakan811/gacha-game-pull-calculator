@@ -35,7 +35,7 @@ class WarpStats(ProbabilityCalculator):
     def plot_statistics(self, save_path=None):
         """Create and display probability plots."""
         data = self._prepare_plot_data()
-        self.visualizer.create_plot(data, self.banner_type, save_path)
+        self.visualizer.create_plots(data, self.banner_type, save_path)
 
     def _prepare_plot_data(self):
         """Prepare data for plotting."""

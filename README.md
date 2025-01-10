@@ -26,16 +26,18 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 ### Standard Banner
 
-![Standard Banner Probability](stats/graph/hsr_standard_banner_stats.jpg)
+![Standard Banner Cumulative Probability](stats\graph\hsr_standard_banner_stats_cumulative.jpg)
+![Standard Banner Probability per Roll](stats\graph\hsr_standard_banner_stats_distribution.jpg) 
 
 ### Limited Banner
 
-![Limited Banner Probability](stats/graph/hsr_limited_banner_stats.jpg)
+![Limited Banner Cumulative Probability](stats\graph\hsr_limited_banner_stats_cumulative.jpg)
+![Limited Banner Probability per Roll](stats\graph\hsr_limited_banner_stats_distribution.jpg)
 
 ### Light Cone Banner
 
-![Light Cone Banner Probability](stats/graph/hsr_light_cone_banner_stats.jpg)
-
+![Light Cone Banner Cumulative Probability](stats\graph\hsr_light_cone_banner_stats_cumulative.jpg)
+![Light Cone Banner Probability per Roll](stats\graph\hsr_light_cone_banner_stats_distribution.jpg)
 Reference:
 <https://www.hoyolab.com/article/497840>
 

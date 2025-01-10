@@ -11,85 +11,81 @@ class BannerVisualizer:
         plt.rcParams['axes.grid'] = True
         plt.rcParams['grid.alpha'] = 0.3
 
-    def create_plot(self, data, banner_type, save_path=None):
-        """Create and save/display the probability plots."""
-        # Create figure with 4:5 ratio
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12.5))
+    def create_distribution_plot(self, data, banner_type, save_path=None):
+        """Create distribution plot."""
+        fig = plt.figure(figsize=(8, 10))  # 4:5 aspect ratio
+        ax = fig.add_subplot(111)
         
-        # Use a clean color palette
         colors = sns.color_palette("deep")
         
-        # Add title
-        title = banner_type.replace('_', ' ').title()
-        fig.suptitle(f"Honkai: Star Rail\n{title} Banner Analysis", 
-                    fontsize=20, y=1.0, fontweight='bold')
-        
-        # Plot individual roll probabilities (upper)
+        # Plot probability distribution
         sns.lineplot(data=data, x='Roll Number', y='Probability per Roll', 
-                    ax=ax1, color=colors[0], linewidth=2,
+                    ax=ax, color=colors[0], linewidth=2,
                     label='Pull Probability')
         
-        # Add data labels for important points in probability distribution
+        # Add markers and annotations
         most_likely_pull = data['Roll Number'][data['Probability per Roll'].idxmax()]
         max_prob = data['Probability per Roll'].max()
         
-        # Add vertical lines with labels
-        ax1.axvline(most_likely_pull, color=colors[1], linestyle='--', linewidth=1.5,
-                   label=f'Most Likely Pull ({most_likely_pull})')
-        ax1.axvline(74 if banner_type != 'light_cone' else 65, 
-                   color=colors[2], linestyle=':', linewidth=1.5,
-                   label='Soft Pity Start')
+        ax.axvline(most_likely_pull, color=colors[1], linestyle='--',
+                  label=f'Most Likely Pull ({most_likely_pull})')
+        ax.axvline(74 if banner_type != 'light_cone' else 65, 
+                  color=colors[2], linestyle=':',
+                  label='Soft Pity Start')
         
-        # Add annotation for peak probability
-        ax1.annotate(f'Peak: {max_prob:.1%}',
-                    xy=(most_likely_pull, max_prob),
-                    xytext=(10, 10), textcoords='offset points',
-                    ha='left', va='bottom',
-                    bbox=dict(boxstyle='round,pad=0.5', fc='white', alpha=0.8),
-                    arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
+        ax.annotate(f'Peak: {max_prob:.1%}',
+                   xy=(most_likely_pull, max_prob),
+                   xytext=(10, 10), textcoords='offset points',
+                   bbox=dict(boxstyle='round,pad=0.5', fc='white', alpha=0.8))
         
-        ax1.legend(loc='upper left', fontsize=10, framealpha=0.9)
-        ax1.set_title("Succesful Pull Probability Distribution", fontsize=16, pad=10)
-        ax1.set_xlabel("Roll Number", fontsize=12)
-        ax1.set_ylabel("Probability", fontsize=12)
+        ax.set_title(f"Honkai: Star Rail\n{banner_type.replace('_', ' ').title()} Banner\nPull Distribution",
+                    fontsize=16, pad=20)
+        ax.set_xlabel("Roll Number")
+        ax.set_ylabel("Probability per Roll")
+        ax.legend(loc='upper left')
 
-        # Plot cumulative probability (lower)
-        sns.lineplot(data=data, x='Roll Number', y='Cumulative Probability', 
-                    ax=ax2, color=colors[3], linewidth=2,
+        if save_path:
+            plt.savefig(f"{save_path}_distribution.jpg", dpi=300, bbox_inches='tight')
+            plt.close()
+        return fig
+
+    def create_cumulative_plot(self, data, banner_type, save_path=None):
+        """Create cumulative probability plot."""
+        fig = plt.figure(figsize=(8, 10))  # 4:5 aspect ratio
+        ax = fig.add_subplot(111)
+        
+        colors = sns.color_palette("deep")
+        
+        # Plot cumulative probability
+        sns.lineplot(data=data, x='Roll Number', y='Cumulative Probability',
+                    ax=ax, color=colors[3], linewidth=2,
                     label='Cumulative Rate')
         
-        # Add reference lines and labels
+        # Add reference lines
         fifty_percent_pull = np.interp(0.5, data['Cumulative Probability'], data['Roll Number'])
         
-        ax2.axhline(0.5, color=colors[4], linestyle=':', linewidth=1.5,
-                    label='50% Chance')
-        ax2.axhline(1.0, color=colors[2], linestyle='-.', linewidth=1.5,
-                    label='100% Guarantee')
-        ax2.axvline(90 if banner_type != 'light_cone' else 80, 
-                    color=colors[1], linestyle='--', linewidth=1.5,
-                    label='Hard Pity')
+        ax.axhline(0.5, color=colors[4], linestyle=':', label='50% Chance')
+        ax.axhline(1.0, color=colors[2], linestyle='-.', label='100% Guarantee')
+        ax.axvline(90 if banner_type != 'light_cone' else 80,
+                  color=colors[1], linestyle='--', label='Hard Pity')
         
-        # Add annotation for 50% point
-        ax2.annotate(f'50% at pull {int(fifty_percent_pull)}',
-                    xy=(fifty_percent_pull, 0.5),
-                    xytext=(10, -10), textcoords='offset points',
-                    ha='left', va='top',
-                    bbox=dict(boxstyle='round,pad=0.5', fc='white', alpha=0.8),
-                    arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
+        ax.annotate(f'50% at pull {int(fifty_percent_pull)}',
+                   xy=(fifty_percent_pull, 0.5),
+                   xytext=(10, -10), textcoords='offset points',
+                   bbox=dict(boxstyle='round,pad=0.5', fc='white', alpha=0.8))
         
-        ax2.legend(loc='lower right', fontsize=10, framealpha=0.9,
-                  bbox_to_anchor=(0.98, 0.98))
-        ax2.set_title("Cumulative Probability", fontsize=16, pad=10)
-        ax2.set_xlabel("Roll Number", fontsize=12)
-        ax2.set_ylabel("Probability", fontsize=12)
+        ax.set_title(f"Honkai: Star Rail\n{banner_type.replace('_', ' ').title()} Banner\nCumulative Probability",
+                    fontsize=16, pad=20)
+        ax.set_xlabel("Roll Number")
+        ax.set_ylabel("Cumulative Probability")
+        ax.legend(loc='lower right')
 
-        # Adjust layout
-        plt.tight_layout()
-        plt.subplots_adjust(top=0.90, hspace=0.3)
-
-        # Save or display the plot
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight', format='jpg')
+            plt.savefig(f"{save_path}_cumulative.jpg", dpi=300, bbox_inches='tight')
             plt.close()
-        else:
-            plt.show()
+        return fig
+
+    def create_plots(self, data, banner_type, save_path=None):
+        """Create all plots for a banner type."""
+        self.create_distribution_plot(data, banner_type, save_path)
+        self.create_cumulative_plot(data, banner_type, save_path)
