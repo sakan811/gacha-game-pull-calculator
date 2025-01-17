@@ -20,3 +20,4 @@ Thumbs.db
 backend/internal/web/embedded/dist
 /stats/.ruff_cache
 /test-all.sh
+/test-macos-app.ps1
