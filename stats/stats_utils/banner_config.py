@@ -16,24 +16,24 @@ BANNER_CONFIGS = {
     "standard": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
-        pity_start=74,
+        pity_start=73,
         hard_pity=90,
-        rate_increase=0.07,
+        rate_increase=0.06,
         guarantee_featured=False
     ),
     "limited": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
-        pity_start=74,
+        pity_start=73,
         hard_pity=90,
-        rate_increase=0.07,
+        rate_increase=0.06,
         guarantee_featured=True,
         featured_rate=0.5
     ),
     "light_cone": BannerConfig(
         base_rate=0.008,
         four_star_rate=0.066,
-        pity_start=64,
+        pity_start=65,
         hard_pity=80,
         rate_increase=0.07,
         guarantee_featured=True,
