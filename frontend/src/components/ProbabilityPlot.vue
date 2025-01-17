@@ -190,8 +190,8 @@ const chartAnnotations = computed(() => ({
   },
   softPity: {
     type: 'line' as const,
-    xMin: visualizationData.value?.soft_pity_start ?? 74,
-    xMax: visualizationData.value?.soft_pity_start ?? 74,
+    xMin: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 64 : 74),
+    xMax: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 64 : 74),
     borderColor: 'rgba(255, 165, 0, 0.5)',
     borderWidth: 2,
     borderDash: [5, 5],
