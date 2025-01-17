@@ -1,4 +1,4 @@
-package banner_test
+package banner
 
 import (
 	"hsrbannercalculator/internal/domain/banner"
@@ -16,14 +16,38 @@ func TestLimitedBanner(t *testing.T) {
 			name: "base rates are correct",
 			testFunc: func(t *testing.T) {
 				config := banner.GetConfig(banner.Limited)
-				if config.BaseRate5StarChar != 0.006 {
-					t.Errorf("Expected 5★ rate 0.6%%, got %.1f%%", config.BaseRate5StarChar*100)
+				if config.BaseRate != 0.006 {
+					t.Errorf("Expected base rate 0.6%%, got %.1f%%", config.BaseRate*100)
 				}
-				if config.BaseRate5StarLC != 0.0 {
-					t.Errorf("Expected no light cones, got %.1f%%", config.BaseRate5StarLC*100)
+				if config.FourStarRate != 0.051 {
+					t.Errorf("Expected 4★ rate 5.1%%, got %.1f%%", config.FourStarRate*100)
 				}
-				if config.BaseRate4Star != 0.051 {
-					t.Errorf("Expected 4★ rate 5.1%%, got %.1f%%", config.BaseRate4Star*100)
+				if config.RateIncrease != 0.06 {
+					t.Errorf("Expected rate increase 6%%, got %.1f%%", config.RateIncrease*100)
+				}
+			},
+		},
+		{
+			name: "pity thresholds are correct",
+			testFunc: func(t *testing.T) {
+				config := banner.GetConfig(banner.Limited)
+				if config.SoftPityStart != 73 {
+					t.Errorf("Expected soft pity at 73, got %d", config.SoftPityStart)
+				}
+				if config.HardPity != 90 {
+					t.Errorf("Expected hard pity at 90, got %d", config.HardPity)
+				}
+			},
+		},
+		{
+			name: "rate up mechanics are correct",
+			testFunc: func(t *testing.T) {
+				config := banner.GetConfig(banner.Limited)
+				if config.RateUpChance != 0.5 {
+					t.Errorf("Expected 50%% rate-up chance, got %.1f%%", config.RateUpChance*100)
+				}
+				if !config.GuaranteedRateUp {
+					t.Error("Expected guaranteed rate-up to be true")
 				}
 			},
 		},
@@ -31,10 +55,9 @@ func TestLimitedBanner(t *testing.T) {
 			name: "50/50 rate up mechanics",
 			testFunc: func(t *testing.T) {
 				total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.Limited, 0, 1, false)
-				standardCharProb := total5StarProb - rateUpProb
-				if !almostEqual(rateUpProb, standardCharProb) {
-					t.Errorf("Expected equal rate-up and standard probabilities on 50/50, got %.2f%% vs %.2f%%",
-						rateUpProb*100, standardCharProb*100)
+				if !almostEqual(rateUpProb, total5StarProb*0.5) {
+					t.Errorf("Expected rate-up probability to be half of total on 50/50, got %.2f%% vs %.2f%%",
+						rateUpProb*100, total5StarProb*50)
 				}
 			},
 		},
@@ -57,9 +80,21 @@ func TestLimitedBanner(t *testing.T) {
 				}
 			},
 		},
+		{
+			name: "soft pity increases rates",
+			testFunc: func(t *testing.T) {
+				config := banner.GetConfig(banner.Limited)
+				beforePity, _ := banner.CalculateWarpProbability(banner.Limited, config.SoftPityStart-1, 1, false)
+				afterPity, _ := banner.CalculateWarpProbability(banner.Limited, config.SoftPityStart, 1, false)
+				if afterPity <= beforePity {
+					t.Errorf("Expected increased probability after soft pity, got %.2f%% vs %.2f%%",
+						afterPity*100, beforePity*100)
+				}
+			},
+		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, tt.testFunc)
+	for _, tc := range tests {
+		t.Run(tc.name, tc.testFunc)
 	}
 }

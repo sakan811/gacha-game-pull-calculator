@@ -11,15 +11,13 @@ const (
 
 // Config holds the configuration for different banner types
 type Config struct {
-	BaseRate5StarChar float64 // 0.3% for character
-	BaseRate5StarLC   float64 // 0.3% for light cone
-	BaseRate4Star     float64 // 5.1%
-	SoftPityStart     int
-	HardPity          int
-	GuaranteedRateUp  bool
-	RateUpChance      float64
-	CharacterChance   float64
-	StandardPoolSize  int
+	BaseRate         float64
+	FourStarRate     float64
+	SoftPityStart    int
+	HardPity         int
+	RateIncrease     float64
+	RateUpChance     float64
+	GuaranteedRateUp bool
 }
 
 // GetConfig returns the configuration for a specific banner type
@@ -27,39 +25,33 @@ func GetConfig(bannerType Type) Config {
 	switch bannerType {
 	case Limited:
 		return Config{
-			BaseRate5StarChar: 0.006, // 0.6% (all goes to character)
-			BaseRate5StarLC:   0.0,   // No light cones in limited
-			BaseRate4Star:     0.051,
-			SoftPityStart:     74,
-			HardPity:          90,
-			RateUpChance:      0.5,
-			GuaranteedRateUp:  false,
-			CharacterChance:   1.0,
-			StandardPoolSize:  7,
+			BaseRate:         0.006,
+			FourStarRate:     0.051,
+			SoftPityStart:    73,
+			HardPity:         90,
+			RateIncrease:     0.06,
+			RateUpChance:     0.5,
+			GuaranteedRateUp: true,
 		}
 	case LightCone:
 		return Config{
-			BaseRate5StarChar: 0.0,
-			BaseRate5StarLC:   0.008, // 0.8% for light cone
-			BaseRate4Star:     0.066,
-			SoftPityStart:     64, // Fixed from 67 to 64
-			HardPity:          80,
-			RateUpChance:      0.75,
-			GuaranteedRateUp:  false,
-			CharacterChance:   0.0,
-			StandardPoolSize:  5,
+			BaseRate:         0.008,
+			FourStarRate:     0.066,
+			SoftPityStart:    65,
+			HardPity:         80,
+			RateIncrease:     0.07,
+			RateUpChance:     0.75,
+			GuaranteedRateUp: true,
 		}
 	default: // Standard
 		return Config{
-			BaseRate5StarChar: 0.003, // 0.3% for character
-			BaseRate5StarLC:   0.003, // 0.3% for light cone
-			BaseRate4Star:     0.051,
-			SoftPityStart:     74,
-			HardPity:          90,
-			RateUpChance:      1.0,
-			GuaranteedRateUp:  false,
-			CharacterChance:   0.5, // Split 50/50 between char and LC after getting 5★
-			StandardPoolSize:  7,
+			BaseRate:         0.006,
+			FourStarRate:     0.051,
+			SoftPityStart:    73,
+			HardPity:         90,
+			RateIncrease:     0.06,
+			RateUpChance:     0.0,
+			GuaranteedRateUp: false,
 		}
 	}
 }
