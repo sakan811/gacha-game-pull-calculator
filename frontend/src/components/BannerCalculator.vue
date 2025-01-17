@@ -19,7 +19,7 @@
                 type="number"
                 v-model.number="currentPity"
                 min="0"
-                max="89"
+                :max="maxPityForBannerType"
                 class="form-input"
                 id="current-pity"
               />
@@ -31,6 +31,7 @@
                 type="number"
                 v-model.number="plannedPulls"
                 min="1"
+                max="200"
                 class="form-input"
                 id="planned-pulls"
               />
@@ -59,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 import ProbabilityResult from './ProbabilityResult.vue'
 import ProbabilityPlot from './ProbabilityPlot.vue'
 
@@ -77,23 +78,34 @@ const plannedPulls = ref(1)
 const result = ref<CalculationResult | null>(null)
 const plotRef = ref<InstanceType<typeof ProbabilityPlot> | null>(null)
 
+const maxPityForBannerType = computed(() => {
+  switch (bannerType.value) {
+    case 'light_cone':
+      return 79
+    default:
+      return 89
+  }
+})
+
 // Watch for changes and validate immediately
 watch(currentPity, (newValue) => {
   if (newValue < 0) currentPity.value = 0
-  if (newValue > 89) currentPity.value = 89
+  if (newValue > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
 })
 
 watch(plannedPulls, (newValue) => {
   if (newValue < 1) plannedPulls.value = 1
+  if (newValue > 200) plannedPulls.value = 200
 })
 
 function validateInputs() {
   // Clamp current pity to valid range
   if (currentPity.value < 0) currentPity.value = 0
-  if (currentPity.value > 89) currentPity.value = 89
+  if (currentPity.value > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
 
   // Clamp planned pulls to valid range
   if (plannedPulls.value < 1) plannedPulls.value = 1
+  if (plannedPulls.value > 200) plannedPulls.value = 200
 }
 
 async function calculateProbability() {
@@ -112,7 +124,7 @@ async function calculateProbability() {
     })
 
     if (!response.ok) {
-      throw new Error('Network response was not ok')
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     result.value = await response.json()
@@ -120,6 +132,7 @@ async function calculateProbability() {
     await plotRef.value?.updateCharts()
   } catch (error) {
     console.error('Error:', error)
+    result.value = null
   }
 }
 </script>

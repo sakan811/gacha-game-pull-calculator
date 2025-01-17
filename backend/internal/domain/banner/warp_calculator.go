@@ -26,15 +26,7 @@ func (w *WarpStats) calculateRateUpProbability(probability float64) float64 {
 	if w.GuaranteedRateUp {
 		return probability // 100% rate-up if guaranteed
 	}
-	return probability * w.RateUpChance // 50% chance for rate-up otherwise
-}
-
-// calculateBaseProbability calculates the probability without pity
-func (w *WarpStats) calculateBaseProbability(pulls int) float64 {
-	totalRate := w.BaseRate5StarChar + w.BaseRate5StarLC
-	notGetting := 1.0 - totalRate
-	notGettingInNPulls := math.Pow(notGetting, float64(pulls))
-	return 1.0 - notGettingInNPulls
+	return probability * w.RateUpChance // Apply rate-up chance (50% for limited, 75% for light cone)
 }
 
 // calculateWithPity calculates probability including pity system
@@ -44,18 +36,15 @@ func (w *WarpStats) calculateWithPity(pulls int) float64 {
 	}
 
 	probability := 0.0
-
-	// Calculate probability for each pull individually
-	baseRate := w.BaseRate5StarChar + w.BaseRate5StarLC // Total 5★ rate
 	notGettingBefore := 1.0
 
 	for i := 0; i < pulls; i++ {
 		currentPull := i + 1
-		currentRate := baseRate
+		currentRate := w.BaseRate
 
 		// Apply soft pity
 		if currentPull >= w.SoftPityStart {
-			increasedRate := baseRate + float64(currentPull-w.SoftPityStart+1)*0.07
+			increasedRate := w.BaseRate + float64(currentPull-w.SoftPityStart+1)*w.RateIncrease
 			currentRate = math.Min(1.0, increasedRate)
 		}
 
@@ -75,12 +64,7 @@ func CalculateWarpProbability(bannerType Type, currentPulls, plannedPulls int, l
 	// Calculate base 5★ probability
 	baseProbability := stats.calculateWithPity(totalPulls)
 
-	if bannerType == Limited {
-		rateUpProb := stats.calculateRateUpProbability(baseProbability)
-		return baseProbability, rateUpProb
-	}
-
-	if bannerType == LightCone {
+	if bannerType == Limited || bannerType == LightCone {
 		rateUpProb := stats.calculateRateUpProbability(baseProbability)
 		return baseProbability, rateUpProb
 	}

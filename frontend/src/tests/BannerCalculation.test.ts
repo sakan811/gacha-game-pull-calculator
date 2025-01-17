@@ -1,39 +1,39 @@
 import { render, fireEvent, screen, waitFor } from '@testing-library/vue';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll, afterEach } from 'vitest';
+import { http, HttpResponse } from 'msw';
 import App from '../App.vue';
+import { createMockServer, setupResizeObserverMock, mockCalculationResponse } from './test-utils';
+
+interface CalculateRequest {
+  banner_type: 'standard' | 'limited' | 'light_cone';
+  current_pity: number;
+  planned_pulls: number;
+}
+
+// Setup MSW server with both endpoints
+const server = createMockServer([
+  http.post('/api/standard', async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
+    // Validate request body
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
+  })
+]);
 
 describe('Banner Calculation', () => {
-  beforeEach(() => {
-    // Mock fetch for both calculation and visualization
-    global.fetch = vi.fn(((url: string) => {
-      if (url.includes('/visualization')) {
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => Promise.resolve({
-            rolls: [],
-            probability_per_roll: [],
-            cumulative_probability: [],
-            soft_pity_start: 74,
-            hard_pity: 90,
-            current_pity: 0,
-            planned_pulls: 0
-          })
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve({
-          total_5_star_probability: 15.5,
-          character_probability: 7.75,
-          light_cone_probability: 7.75,
-          rate_up_probability: 10.0,
-          standard_char_probability: 10.0
-        })
-      });
-    })) as unknown as typeof fetch;
+  // Start server before all tests
+  beforeAll(() => server.listen());
+  
+  // Reset handlers after each test
+  afterEach(() => server.resetHandlers());
+  
+  // Clean up after all tests
+  afterAll(() => server.close());
 
+  beforeEach(() => {
+    setupResizeObserverMock(vi);
     render(App);
   });
 
@@ -112,12 +112,26 @@ describe('Banner Calculation', () => {
 
   it('should handle API errors gracefully', async () => {
     // Mock API error
-    global.fetch = vi.fn().mockRejectedValueOnce(new Error('API Error'));
+    server.use(
+      http.post('/api/standard', () => {
+        return HttpResponse.error();
+      })
+    );
     
     await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
     
     // Should not show results on error
     expect(screen.queryByTestId('probability-results')).toBeFalsy();
     expect(screen.queryByTestId('probability-plots')).toBeFalsy();
+  });
+
+  it('should validate maximum planned pulls', async () => {
+    const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
+    await fireEvent.update(pullsInput, '300');
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+
+    await waitFor(() => {
+      expect(pullsInput.value).toBe('200');
+    });
   });
 }); 

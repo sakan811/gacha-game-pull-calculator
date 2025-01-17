@@ -43,6 +43,7 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 Reference:
 <https://www.hoyolab.com/article/497840>
+<https://starrailstation.com/en/warp#global>
 
 ## How to run the statistics
 

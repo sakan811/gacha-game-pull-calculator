@@ -92,7 +92,9 @@ async function fetchVisualizationData() {
       }),
     })
 
-    if (!response.ok) throw new Error('Network response was not ok')
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
 
     const data = await response.json() as VisualizationData
     if (!Array.isArray(data.rolls) || !Array.isArray(data.probability_per_roll) || !Array.isArray(data.cumulative_probability)) {
