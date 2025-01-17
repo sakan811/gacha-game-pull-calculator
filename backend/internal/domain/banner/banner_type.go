@@ -40,9 +40,9 @@ func GetConfig(bannerType Type) Config {
 	case LightCone:
 		return Config{
 			BaseRate5StarChar: 0.0,
-			BaseRate5StarLC:   0.008,
-			BaseRate4Star:     0.051,
-			SoftPityStart:     67,
+			BaseRate5StarLC:   0.008, // 0.8% for light cone
+			BaseRate4Star:     0.066,
+			SoftPityStart:     64, // Fixed from 67 to 64
 			HardPity:          80,
 			RateUpChance:      0.75,
 			GuaranteedRateUp:  false,
@@ -58,7 +58,7 @@ func GetConfig(bannerType Type) Config {
 			HardPity:          90,
 			RateUpChance:      1.0,
 			GuaranteedRateUp:  false,
-			CharacterChance:   0.5,
+			CharacterChance:   0.5, // Split 50/50 between char and LC after getting 5★
 			StandardPoolSize:  7,
 		}
 	}
