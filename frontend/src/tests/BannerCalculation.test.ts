@@ -5,16 +5,29 @@ import App from '../App.vue';
 import { createMockServer, setupResizeObserverMock, mockCalculationResponse } from './test-utils';
 
 interface CalculateRequest {
-  banner_type: 'standard' | 'limited' | 'light_cone';
   current_pity: number;
   planned_pulls: number;
 }
 
 // Setup MSW server with both endpoints
 const server = createMockServer([
-  http.post('/api/standard', async ({ request }) => {
+  http.post('/api/star_rail/standard', async ({ request }) => {
     const body = await request.json() as CalculateRequest;
     // Validate request body
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
+  }),
+  http.post('/api/star_rail/limited', async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
+  }),
+  http.post('/api/star_rail/light_cone', async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
     if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
       return HttpResponse.error();
     }
@@ -43,6 +56,9 @@ describe('Banner Calculation', () => {
     await waitFor(() => {
       expect(screen.getByTestId('probability-results')).toBeTruthy();
       expect(screen.getByTestId('probability-plots')).toBeTruthy();
+      // Check visualization data is present
+      expect(screen.getByText('Successful Pull Distribution')).toBeTruthy();
+      expect(screen.getByText('Cumulative Probability')).toBeTruthy();
     });
   });
 
@@ -56,11 +72,13 @@ describe('Banner Calculation', () => {
     await fireEvent.update(pullsInput, '10');
     await fireEvent.click(calculateButton);
 
-    // Wait for next tick and verify chart appears
+    // Wait for next tick and verify chart appears with visualization data
     await vi.waitFor(() => {
       expect(screen.getByTestId('probability-plots')).toBeTruthy();
       expect(screen.getByText('Successful Pull Distribution')).toBeTruthy();
       expect(screen.getByText('Cumulative Probability')).toBeTruthy();
+      // Verify total pulls is displayed
+      expect(screen.getByTestId('probability-results')).toBeTruthy();
     });
   });
 
@@ -77,7 +95,9 @@ describe('Banner Calculation', () => {
       expect(results.textContent).toContain('15.50%'); // Total probability
       expect(results.textContent).toContain('7.75%'); // Character probability
       expect(results.textContent).toContain('7.75%'); // Light cone probability
-    });
+      // Verify visualization data is present
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    }, { timeout: 3000 });
   });
 
   it('should calculate limited banner probabilities', async () => {
@@ -92,7 +112,9 @@ describe('Banner Calculation', () => {
       const results = screen.getByTestId('probability-results');
       expect(results.textContent).toContain('15.50%'); // Total probability
       expect(results.textContent).toContain('10.00%'); // Rate-up probability
-    });
+      // Verify visualization data is present
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    }, { timeout: 3000 });
   });
 
   it('should calculate light cone banner probabilities', async () => {
@@ -107,13 +129,15 @@ describe('Banner Calculation', () => {
       const results = screen.getByTestId('probability-results');
       expect(results.textContent).toContain('15.50%'); // Total probability
       expect(results.textContent).toContain('10.00%'); // Rate-up probability
-    });
+      // Verify visualization data is present
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    }, { timeout: 3000 });
   });
 
   it('should handle API errors gracefully', async () => {
     // Mock API error
     server.use(
-      http.post('/api/standard', () => {
+      http.post('/api/star_rail/standard', () => {
         return HttpResponse.error();
       })
     );

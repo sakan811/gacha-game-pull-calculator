@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-func TestLightConeBanner(t *testing.T) {
+func TestStarRailLightConeBanner(t *testing.T) {
 	tests := []testCase{
 		{
 			name: "base rates are correct",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.LightCone)
+				config := banner.GetConfig(banner.StarRailLightCone)
 				if config.BaseRate != 0.008 {
 					t.Errorf("Expected base rate 0.8%%, got %.1f%%", config.BaseRate*100)
 				}
@@ -25,7 +25,7 @@ func TestLightConeBanner(t *testing.T) {
 		{
 			name: "pity thresholds are correct",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.LightCone)
+				config := banner.GetConfig(banner.StarRailLightCone)
 				if config.SoftPityStart != 65 {
 					t.Errorf("Expected soft pity at 65, got %d", config.SoftPityStart)
 				}
@@ -37,7 +37,7 @@ func TestLightConeBanner(t *testing.T) {
 		{
 			name: "rate up mechanics are correct",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.LightCone)
+				config := banner.GetConfig(banner.StarRailLightCone)
 				if config.RateUpChance != 0.75 {
 					t.Errorf("Expected 75%% rate-up chance, got %.1f%%", config.RateUpChance*100)
 				}
@@ -49,7 +49,7 @@ func TestLightConeBanner(t *testing.T) {
 		{
 			name: "75/25 rate up mechanics",
 			testFunc: func(t *testing.T) {
-				total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.LightCone, 0, 1, false)
+				total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.StarRailLightCone, 0, 1, false)
 				if !almostEqual(rateUpProb, total5StarProb*0.75) {
 					t.Errorf("Expected rate-up probability to be 75%% of total, got %.2f%% vs %.2f%%",
 						rateUpProb*100, total5StarProb*75)
@@ -59,7 +59,7 @@ func TestLightConeBanner(t *testing.T) {
 		{
 			name: "guaranteed rate up after losing 75/25",
 			testFunc: func(t *testing.T) {
-				total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.LightCone, 0, 1, true)
+				total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.StarRailLightCone, 0, 1, true)
 				if !almostEqual(rateUpProb, total5StarProb) {
 					t.Errorf("Expected 100%% rate-up chance when guaranteed, got %.2f%% vs %.2f%%",
 						rateUpProb*100, total5StarProb*100)
@@ -69,7 +69,7 @@ func TestLightConeBanner(t *testing.T) {
 		{
 			name: "guaranteed 5★ at 80 pulls",
 			testFunc: func(t *testing.T) {
-				total5StarProb, _ := banner.CalculateWarpProbability(banner.LightCone, 79, 1, false)
+				total5StarProb, _ := banner.CalculateWarpProbability(banner.StarRailLightCone, 79, 1, false)
 				if !almostEqual(total5StarProb, 1.0) {
 					t.Errorf("Expected 100%% chance at 80 pulls, got %.2f%%", total5StarProb*100)
 				}
@@ -78,9 +78,9 @@ func TestLightConeBanner(t *testing.T) {
 		{
 			name: "soft pity increases rates",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.LightCone)
-				beforePity, _ := banner.CalculateWarpProbability(banner.LightCone, config.SoftPityStart-1, 1, false)
-				afterPity, _ := banner.CalculateWarpProbability(banner.LightCone, config.SoftPityStart, 1, false)
+				config := banner.GetConfig(banner.StarRailLightCone)
+				beforePity, _ := banner.CalculateWarpProbability(banner.StarRailLightCone, config.SoftPityStart-1, 1, false)
+				afterPity, _ := banner.CalculateWarpProbability(banner.StarRailLightCone, config.SoftPityStart, 1, false)
 				if afterPity <= beforePity {
 					t.Errorf("Expected increased probability after soft pity, got %.2f%% vs %.2f%%",
 						afterPity*100, beforePity*100)

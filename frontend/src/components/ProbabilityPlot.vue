@@ -57,7 +57,8 @@ ChartJS.register(
 )
 
 const props = defineProps<{
-  bannerType: 'standard' | 'limited' | 'light_cone'
+  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon'
+  gameType: 'star_rail' | 'genshin'
   currentPity: number
   plannedPulls: number
   result: {
@@ -86,6 +87,7 @@ async function fetchVisualizationData() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        game_type: props.gameType,
         banner_type: props.bannerType,
         current_pity: props.currentPity,
         planned_pulls: props.plannedPulls
