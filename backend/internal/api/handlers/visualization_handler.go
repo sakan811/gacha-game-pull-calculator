@@ -19,6 +19,7 @@ type VisualizationData struct {
 
 func HandleVisualizationData(c *gin.Context) {
 	var req struct {
+		GameType     string `json:"game_type"`
 		BannerType   string `json:"banner_type"`
 		CurrentPity  int    `json:"current_pity"`
 		PlannedPulls int    `json:"planned_pulls"`
@@ -29,13 +30,8 @@ func HandleVisualizationData(c *gin.Context) {
 		return
 	}
 
-	// Get banner configuration
-	bannerType := banner.Standard
-	if req.BannerType == "limited" {
-		bannerType = banner.Limited
-	} else if req.BannerType == "light_cone" {
-		bannerType = banner.LightCone
-	}
+	// Get banner config using the centralized configuration
+	bannerType := banner.GetBannerTypeFromGameAndBanner(req.GameType, req.BannerType)
 	config := banner.GetConfig(bannerType)
 
 	// Calculate probabilities
@@ -44,10 +40,15 @@ func HandleVisualizationData(c *gin.Context) {
 	cumulativeProb := make([]float64, config.HardPity)
 
 	// Calculate probability per roll (chance of getting 5★ on exactly that pull)
+	stats := banner.WarpStats{
+		Config:       config,
+		CurrentPulls: 0,
+	}
+
 	prevCumulative := 0.0
 	for i := 0; i < config.HardPity; i++ {
 		rolls[i] = i + 1
-		currentTotal, _ := banner.CalculateWarpProbability(bannerType, i, 1, false)
+		currentTotal := stats.CalculateWithPity(i + 1)
 
 		// Probability of getting 5★ exactly on this pull
 		probPerRoll[i] = currentTotal - prevCumulative

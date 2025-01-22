@@ -18,9 +18,22 @@ func main() {
 	// API routes
 	api := r.Group("/api")
 	{
-		api.POST("/standard", handlers.HandleStandardBannerCalculation)
-		api.POST("/limited", handlers.HandleLimitedBannerCalculation)
-		api.POST("/light_cone", handlers.HandleLightConeBannerCalculation)
+		// Star Rail routes
+		starRail := api.Group("/star_rail")
+		{
+			starRail.POST("/standard", handlers.HandleStandardBannerCalculation)
+			starRail.POST("/limited", handlers.HandleLimitedBannerCalculation)
+			starRail.POST("/light_cone", handlers.HandleLightConeBannerCalculation)
+		}
+
+		// Genshin routes
+		genshin := api.Group("/genshin")
+		{
+			genshin.POST("/standard", handlers.HandleGenshinStandardBannerCalculation)
+			genshin.POST("/limited", handlers.HandleGenshinLimitedBannerCalculation)
+			genshin.POST("/weapon", handlers.HandleGenshinWeaponBannerCalculation)
+		}
+
 		api.POST("/visualization", handlers.HandleVisualizationData)
 	}
 
@@ -34,7 +47,7 @@ func main() {
 	})
 
 	// Print the access URL before starting the server
-	fmt.Printf("\nHSR Warp Calculator is running!\nOpen your browser and visit: \033[36mhttp://localhost:8080\033[0m\n\n")
+	fmt.Printf("\nWarp Calculator is running!\nOpen your browser and visit: \033[36mhttp://localhost:8080\033[0m\n\n")
 
 	// Start the server
 	log.Fatal(r.Run(":8080"))
