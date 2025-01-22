@@ -47,6 +47,10 @@ Reference:
 
 <https://starrailstation.com/en/warp#global>
 
+<https://paimon.moe/wish/tally?id=300077>
+
+<https://zzz.rng.moe/en/tracker/global#3001>
+
 ## How to run the statistics
 
 1. Install Python on your machine.
