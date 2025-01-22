@@ -10,7 +10,8 @@ export const mockVisualizationData = {
   cumulative_probability: [0.1, 0.3, 0.6],
   soft_pity_start: 74,
   hard_pity: 90,
-  current_pity: 0
+  current_pity: 0,
+  total_pulls: 90
 };
 
 export const mockCalculationResponse = {
@@ -62,20 +63,23 @@ export const setupResizeObserverMock = (vi: MockVitest) => {
 export const mockBannerProps = {
   standard: {
     bannerType: 'standard' as const,
+    gameType: 'star_rail' as const,
     currentPity: 0,
     plannedPulls: 10,
-    result: { total_5_star_probability: 50 }
+    result: mockCalculationResponse
   },
   limited: {
     bannerType: 'limited' as const,
+    gameType: 'star_rail' as const,
     currentPity: 0,
     plannedPulls: 10,
-    result: { total_5_star_probability: 50 }
+    result: mockCalculationResponse
   },
   lightCone: {
     bannerType: 'light_cone' as const,
+    gameType: 'star_rail' as const,
     currentPity: 0,
     plannedPulls: 10,
-    result: { total_5_star_probability: 50 }
+    result: mockCalculationResponse
   }
 }; 

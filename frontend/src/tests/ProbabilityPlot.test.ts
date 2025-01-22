@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/vue';
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import ProbabilityPlot from '../components/ProbabilityPlot.vue';
-import { createMockServer, mockVisualizationData, mockBannerProps, setupResizeObserverMock } from './test-utils';
+import { createMockServer, mockVisualizationData, mockBannerProps, mockCalculationResponse, setupResizeObserverMock } from './test-utils';
 
 // Setup MSW server
 const server = createMockServer();
@@ -61,13 +61,13 @@ describe('ProbabilityPlot Component', () => {
     ];
 
     testCases.forEach(({ currentPity, plannedPulls, expected }) => {
-      it(`should show correct total pulls: ${currentPity} + ${plannedPulls} = ${expected}`, async () => {
+      it(`should show chart with total pulls: ${currentPity} + ${plannedPulls} = ${expected}`, async () => {
         server.use(
           http.post('/api/visualization', () => {
             return HttpResponse.json({
               ...mockVisualizationData,
               current_pity: currentPity,
-              planned_pulls: plannedPulls
+              total_pulls: expected
             });
           })
         );
@@ -76,7 +76,8 @@ describe('ProbabilityPlot Component', () => {
           props: {
             ...mockBannerProps.standard,
             currentPity,
-            plannedPulls
+            plannedPulls,
+            result: mockCalculationResponse
           }
         });
 
@@ -88,16 +89,18 @@ describe('ProbabilityPlot Component', () => {
         // Wait for chart to update
         await vi.waitFor(() => {
           expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
+          expect(container.querySelector('[data-testid="probability-plots"]')).toBeTruthy();
         });
       });
     });
 
-    it('should update total pulls only after calculation', async () => {
+    it('should update charts only after calculation', async () => {
       const { container, rerender } = render(ProbabilityPlot, {
         props: {
           ...mockBannerProps.standard,
           currentPity: 10,
-          plannedPulls: 20
+          plannedPulls: 20,
+          result: mockCalculationResponse
         }
       });
 
@@ -110,10 +113,11 @@ describe('ProbabilityPlot Component', () => {
       await rerender({
         ...mockBannerProps.standard,
         currentPity: 10,
-        plannedPulls: 40
+        plannedPulls: 40,
+        result: mockCalculationResponse
       });
 
-      // Get component instance and verify data
+      // Get component instance and verify data hasn't changed
       await vi.waitFor(() => {
         const spy = vi.spyOn(server, 'use');
         expect(spy).not.toHaveBeenCalled();
