@@ -1,4 +1,6 @@
-export type BannerType = 'standard' | 'limited' | 'light_cone';
+export type GameType = 'genshin' | 'star_rail';
+
+export type BannerType = 'standard' | 'limited' | 'light_cone' | 'weapon';
 
 export interface BannerRequest {
   current_pity: number;

@@ -44,7 +44,7 @@ interface Props {
     light_cone_probability?: number
     rate_up_probability?: number
   }
-  bannerType: 'standard' | 'limited' | 'light_cone'
+  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon'
 }
 
 defineProps<Props>()

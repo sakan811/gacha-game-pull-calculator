@@ -5,11 +5,20 @@
         <form @submit.prevent="calculateProbability" class="form-container">
           <div class="form-group">
             <div class="form-input-container">
+              <label class="form-label" for="game-type">Game</label>
+              <select v-model="gameType" class="form-input" id="game-type">
+                <option value="star_rail">Honkai: Star Rail</option>
+                <option value="genshin">Genshin Impact</option>
+              </select>
+            </div>
+
+            <div class="form-input-container">
               <label class="form-label" for="banner-type">Banner Type</label>
               <select v-model="bannerType" class="form-input" id="banner-type">
                 <option value="standard">Standard Banner</option>
                 <option value="limited">Limited Character Banner</option>
-                <option value="light_cone">Light Cone Banner</option>
+                <option v-if="gameType === 'star_rail'" value="light_cone">Light Cone Banner</option>
+                <option v-if="gameType === 'genshin'" value="weapon">Weapon Banner</option>
               </select>
             </div>
 
@@ -51,6 +60,7 @@
       <ProbabilityPlot
         ref="plotRef"
         :bannerType="bannerType"
+        :gameType="gameType"
         :currentPity="currentPity"
         :plannedPulls="plannedPulls"
         :result="result"
@@ -63,6 +73,7 @@
 import { ref, watch, nextTick, computed } from 'vue'
 import ProbabilityResult from './ProbabilityResult.vue'
 import ProbabilityPlot from './ProbabilityPlot.vue'
+import type { GameType } from '../types'
 
 interface CalculationResult {
   total_5_star_probability: number
@@ -72,18 +83,33 @@ interface CalculationResult {
   standard_char_probability?: number
 }
 
-const bannerType = ref<'standard' | 'limited' | 'light_cone'>('standard')
+const gameType = ref<GameType>('star_rail')
+const bannerType = ref<'standard' | 'limited' | 'light_cone' | 'weapon'>('standard')
 const currentPity = ref(0)
 const plannedPulls = ref(1)
 const result = ref<CalculationResult | null>(null)
 const plotRef = ref<InstanceType<typeof ProbabilityPlot> | null>(null)
 
+// Reset banner type when game changes
+watch(gameType, () => {
+  if (bannerType.value === 'light_cone' && gameType.value === 'genshin') {
+    bannerType.value = 'weapon'
+  } else if (bannerType.value === 'weapon' && gameType.value === 'star_rail') {
+    bannerType.value = 'light_cone'
+  }
+})
+
 const maxPityForBannerType = computed(() => {
-  switch (bannerType.value) {
-    case 'light_cone':
-      return 79
-    default:
-      return 89
+  if (gameType.value === 'star_rail') {
+    return bannerType.value === 'light_cone' ? 79 : 89
+  } else {
+    // Genshin Impact pity values
+    switch (bannerType.value) {
+      case 'weapon':
+        return 79
+      default:
+        return 89
+    }
   }
 })
 
@@ -112,7 +138,7 @@ async function calculateProbability() {
   validateInputs()
 
   try {
-    const response = await fetch(`/api/${bannerType.value}`, {
+    const response = await fetch(`/api/${gameType.value}/${bannerType.value}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
