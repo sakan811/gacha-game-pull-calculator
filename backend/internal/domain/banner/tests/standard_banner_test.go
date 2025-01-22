@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-func TestStandardBanner(t *testing.T) {
+func TestStarRailStandardBanner(t *testing.T) {
 	tests := []testCase{
 		{
 			name: "base rates are correct",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.Standard)
+				config := banner.GetConfig(banner.StarRailStandard)
 				if config.BaseRate != 0.006 {
 					t.Errorf("Expected base rate 0.6%%, got %.1f%%", config.BaseRate*100)
 				}
@@ -25,7 +25,7 @@ func TestStandardBanner(t *testing.T) {
 		{
 			name: "pity thresholds are correct",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.Standard)
+				config := banner.GetConfig(banner.StarRailStandard)
 				if config.SoftPityStart != 73 {
 					t.Errorf("Expected soft pity at 73, got %d", config.SoftPityStart)
 				}
@@ -37,7 +37,7 @@ func TestStandardBanner(t *testing.T) {
 		{
 			name: "guaranteed 5★ at 90 pulls",
 			testFunc: func(t *testing.T) {
-				total5StarProb, _ := banner.CalculateWarpProbability(banner.Standard, 89, 1, false)
+				total5StarProb, _ := banner.CalculateWarpProbability(banner.StarRailStandard, 89, 1, false)
 				if !almostEqual(total5StarProb, 1.0) {
 					t.Errorf("Expected 100%% chance at 90 pulls, got %.2f%%", total5StarProb*100)
 				}
@@ -46,7 +46,7 @@ func TestStandardBanner(t *testing.T) {
 		{
 			name: "character probability is half of total",
 			testFunc: func(t *testing.T) {
-				total5StarProb, characterProb := banner.CalculateWarpProbability(banner.Standard, 0, 1, false)
+				total5StarProb, characterProb := banner.CalculateWarpProbability(banner.StarRailStandard, 0, 1, false)
 				if !almostEqual(characterProb, total5StarProb*0.5) {
 					t.Errorf("Expected character probability to be half of total, got %.2f%% vs %.2f%%",
 						characterProb*100, total5StarProb*50)
@@ -56,9 +56,9 @@ func TestStandardBanner(t *testing.T) {
 		{
 			name: "soft pity increases rates",
 			testFunc: func(t *testing.T) {
-				config := banner.GetConfig(banner.Standard)
-				beforePity, _ := banner.CalculateWarpProbability(banner.Standard, config.SoftPityStart-1, 1, false)
-				afterPity, _ := banner.CalculateWarpProbability(banner.Standard, config.SoftPityStart, 1, false)
+				config := banner.GetConfig(banner.StarRailStandard)
+				beforePity, _ := banner.CalculateWarpProbability(banner.StarRailStandard, config.SoftPityStart-1, 1, false)
+				afterPity, _ := banner.CalculateWarpProbability(banner.StarRailStandard, config.SoftPityStart, 1, false)
 				if afterPity <= beforePity {
 					t.Errorf("Expected increased probability after soft pity, got %.2f%% vs %.2f%%",
 						afterPity*100, beforePity*100)

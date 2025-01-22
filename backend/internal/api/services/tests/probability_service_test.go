@@ -7,34 +7,34 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCalculateStandardBannerProbability(t *testing.T) {
+func TestCalculateStarRailStandardBannerProbability(t *testing.T) {
 	t.Run("low_pity_calculation", func(t *testing.T) {
-		result := services.CalculateStandardBannerProbability(0, 10)
+		result := services.CalculateStarRailStandardBannerProbability(0, 10)
 		assert.Less(t, result.Total5StarProbability, 100.0)
 		assert.Greater(t, result.Total5StarProbability, 0.0)
 		assert.Equal(t, result.CharacterProbability+result.LightConeProbability, result.Total5StarProbability)
 	})
 
 	t.Run("high_pity_calculation", func(t *testing.T) {
-		result := services.CalculateStandardBannerProbability(89, 1)
+		result := services.CalculateStarRailStandardBannerProbability(89, 1)
 		assert.InDelta(t, 100.0, result.Total5StarProbability, 0.1)
 	})
 }
 
-func TestCalculateLimitedBannerProbability(t *testing.T) {
+func TestCalculateStarRailLimitedBannerProbability(t *testing.T) {
 	t.Run("guaranteed_high_pity", func(t *testing.T) {
-		result := services.CalculateLimitedBannerProbability(89, 1, true)
+		result := services.CalculateStarRailLimitedBannerProbability(89, 1, true)
 		assert.InDelta(t, 100.0, result.RateUpProbability, 0.1)
 	})
 
 	t.Run("non_guaranteed_low_pity", func(t *testing.T) {
-		result := services.CalculateLimitedBannerProbability(0, 10, false)
+		result := services.CalculateStarRailLimitedBannerProbability(0, 10, false)
 		assert.Less(t, result.RateUpProbability, result.Total5StarProbability)
 		assert.Greater(t, result.StandardCharProbability, 0.0)
 	})
 }
 
-func TestCalculateLightConeBannerProbability(t *testing.T) {
+func TestCalculateStarRailLightConeBannerProbability(t *testing.T) {
 	tests := []struct {
 		name         string
 		currentPity  int
@@ -63,12 +63,66 @@ func TestCalculateLightConeBannerProbability(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := services.CalculateLightConeBannerProbability(tt.currentPity, tt.plannedPulls)
-
+			result := services.CalculateStarRailLightConeBannerProbability(tt.currentPity, tt.plannedPulls)
 			assert.GreaterOrEqual(t, result.Total5StarProbability, tt.wantMin)
 			assert.LessOrEqual(t, result.Total5StarProbability, 100.0)
 			assert.GreaterOrEqual(t, result.RateUpProbability, 0.0)
 			assert.LessOrEqual(t, result.RateUpProbability, result.Total5StarProbability)
 		})
 	}
+}
+
+func TestCalculateGenshinStandardBannerProbability(t *testing.T) {
+	t.Run("low_pity_calculation", func(t *testing.T) {
+		result := services.CalculateGenshinStandardBannerProbability(0, 10)
+		assert.Less(t, result.Total5StarProbability, 100.0)
+		assert.Greater(t, result.Total5StarProbability, 0.0)
+		assert.Equal(t, result.CharacterProbability+result.LightConeProbability, result.Total5StarProbability)
+	})
+
+	t.Run("high_pity_calculation", func(t *testing.T) {
+		result := services.CalculateGenshinStandardBannerProbability(89, 1)
+		assert.InDelta(t, 100.0, result.Total5StarProbability, 0.1)
+	})
+
+	t.Run("character_weapon_equal_probability", func(t *testing.T) {
+		result := services.CalculateGenshinStandardBannerProbability(0, 10)
+		assert.Equal(t, result.CharacterProbability, result.LightConeProbability)
+	})
+}
+
+func TestCalculateGenshinLimitedBannerProbability(t *testing.T) {
+	t.Run("guaranteed_high_pity", func(t *testing.T) {
+		result := services.CalculateGenshinLimitedBannerProbability(89, 1, true)
+		assert.InDelta(t, 100.0, result.RateUpProbability, 0.1)
+	})
+
+	t.Run("non_guaranteed_low_pity", func(t *testing.T) {
+		result := services.CalculateGenshinLimitedBannerProbability(0, 10, false)
+		assert.Less(t, result.RateUpProbability, result.Total5StarProbability)
+	})
+
+	t.Run("guaranteed_changes_probability", func(t *testing.T) {
+		nonGuaranteed := services.CalculateGenshinLimitedBannerProbability(0, 10, false)
+		guaranteed := services.CalculateGenshinLimitedBannerProbability(0, 10, true)
+		assert.Greater(t, guaranteed.RateUpProbability, nonGuaranteed.RateUpProbability)
+	})
+}
+
+func TestCalculateGenshinWeaponBannerProbability(t *testing.T) {
+	t.Run("guaranteed_high_pity", func(t *testing.T) {
+		result := services.CalculateGenshinWeaponBannerProbability(79, 1, true)
+		assert.InDelta(t, 100.0, result.RateUpProbability, 0.1)
+	})
+
+	t.Run("non_guaranteed_low_pity", func(t *testing.T) {
+		result := services.CalculateGenshinWeaponBannerProbability(0, 10, false)
+		assert.Less(t, result.RateUpProbability, result.Total5StarProbability)
+	})
+
+	t.Run("soft_pity_increases_rates", func(t *testing.T) {
+		beforePity := services.CalculateGenshinWeaponBannerProbability(61, 1, false)
+		afterPity := services.CalculateGenshinWeaponBannerProbability(62, 1, false)
+		assert.Greater(t, afterPity.Total5StarProbability, beforePity.Total5StarProbability)
+	})
 }
