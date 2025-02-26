@@ -27,6 +27,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    /* Ignore specific errors */
+    "ignoreDeprecations": "5.0",
+
     "types": ["vue"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

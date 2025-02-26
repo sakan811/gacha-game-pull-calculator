@@ -13,6 +13,11 @@ const (
 	GenshinStandard
 	GenshinLimited
 	GenshinWeapon
+
+	// Zenless Zone Zero banners
+	ZenlessStandard
+	ZenlessLimited
+	ZenlessWEngine
 )
 
 // Config holds the configuration for different banner types
@@ -35,7 +40,7 @@ func GetConfig(bannerType Type) Config {
 			FourStarRate:     0.051,
 			SoftPityStart:    73,
 			HardPity:         90,
-			RateIncrease:     0.06,
+			RateIncrease:     0.07,
 			RateUpChance:     0.5,
 			GuaranteedRateUp: true,
 		}
@@ -55,7 +60,7 @@ func GetConfig(bannerType Type) Config {
 			FourStarRate:     0.051,
 			SoftPityStart:    73,
 			HardPity:         90,
-			RateIncrease:     0.06,
+			RateIncrease:     0.07,
 			RateUpChance:     0.5,
 			GuaranteedRateUp: true,
 		}
@@ -75,7 +80,37 @@ func GetConfig(bannerType Type) Config {
 			FourStarRate:     0.051,
 			SoftPityStart:    73,
 			HardPity:         90,
-			RateIncrease:     0.06,
+			RateIncrease:     0.07,
+			RateUpChance:     0.0,
+			GuaranteedRateUp: false,
+		}
+	case ZenlessLimited:
+		return Config{
+			BaseRate:         0.006, // 0.6%
+			FourStarRate:     0.051,
+			SoftPityStart:    73,
+			HardPity:         90,
+			RateIncrease:     0.07,
+			RateUpChance:     0.5,
+			GuaranteedRateUp: true,
+		}
+	case ZenlessWEngine:
+		return Config{
+			BaseRate:         0.01, // 1%
+			FourStarRate:     0.08,
+			SoftPityStart:    64,
+			HardPity:         80,
+			RateIncrease:     0.07,
+			RateUpChance:     0.75,
+			GuaranteedRateUp: true,
+		}
+	case ZenlessStandard:
+		return Config{
+			BaseRate:         0.006, // 0.6%
+			FourStarRate:     0.051,
+			SoftPityStart:    73,
+			HardPity:         90,
+			RateIncrease:     0.07,
 			RateUpChance:     0.0,
 			GuaranteedRateUp: false,
 		}
@@ -85,7 +120,7 @@ func GetConfig(bannerType Type) Config {
 			FourStarRate:     0.051,
 			SoftPityStart:    73,
 			HardPity:         90,
-			RateIncrease:     0.06,
+			RateIncrease:     0.07,
 			RateUpChance:     0.0,
 			GuaranteedRateUp: false,
 		}
@@ -107,6 +142,12 @@ func GetBannerTypeFromGameAndBanner(gameType, bannerType string) Type {
 		return GenshinLimited
 	case gameType == "genshin" && bannerType == "weapon":
 		return GenshinWeapon
+	case gameType == "zenless" && bannerType == "standard":
+		return ZenlessStandard
+	case gameType == "zenless" && bannerType == "limited":
+		return ZenlessLimited
+	case gameType == "zenless" && bannerType == "w_engine":
+		return ZenlessWEngine
 	default:
 		return StarRailStandard
 	}

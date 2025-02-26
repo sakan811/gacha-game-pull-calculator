@@ -32,6 +32,28 @@ const server = createMockServer([
       return HttpResponse.error();
     }
     return HttpResponse.json(mockCalculationResponse);
+  }),
+  // Zenless Zone Zero endpoints
+  http.post('/api/zenless/standard', async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
+  }),
+  http.post('/api/zenless/limited', async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
+  }),
+  http.post('/api/zenless/w_engine', async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
   })
 ]);
 
@@ -157,5 +179,78 @@ describe('Banner Calculation', () => {
     await waitFor(() => {
       expect(pullsInput.value).toBe('200');
     });
+  });
+
+  // Zenless Zone Zero tests
+  it('should calculate Zenless standard banner probabilities', async () => {
+    // Set game type to Zenless
+    await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
+    // Set banner type to standard
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'standard');
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('15.50%'); // Total probability
+      expect(results.textContent).toContain('7.75%'); // Character probability
+      expect(results.textContent).toContain('W-Engine'); // Should show W-Engine label
+      expect(results.textContent).toContain('7.75%'); // W-Engine probability
+      // Verify visualization data is present
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    }, { timeout: 3000 });
+  });
+
+  it('should calculate Zenless limited banner probabilities', async () => {
+    // Set game type to Zenless
+    await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
+    // Set banner type to limited
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'limited');
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('15.50%'); // Total probability
+      expect(results.textContent).toContain('10.00%'); // Rate-up probability
+      // Verify visualization data is present
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    }, { timeout: 3000 });
+  });
+
+  it('should calculate Zenless W-Engine banner probabilities', async () => {
+    // Set game type to Zenless
+    await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
+    // Set banner type to W-Engine
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'w_engine');
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    
+    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('15.50%'); // Total probability
+      expect(results.textContent).toContain('10.00%'); // Rate-up probability
+      // Verify visualization data is present
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    }, { timeout: 3000 });
+  });
+
+  it('should switch banner types correctly when changing game to Zenless', async () => {
+    // Start with Star Rail and Light Cone
+    await fireEvent.update(screen.getByLabelText('Game'), 'star_rail');
+    await fireEvent.update(screen.getByLabelText('Banner Type'), 'light_cone');
+    
+    // Change to Zenless - should automatically switch to W-Engine
+    await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
+    
+    // Check that banner type was switched to W-Engine
+    const bannerTypeSelect = screen.getByLabelText('Banner Type') as HTMLSelectElement;
+    expect(bannerTypeSelect.value).toBe('w_engine');
   });
 }); 

@@ -19,6 +19,10 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 2. Run the executable file.
 3. Navigate to the <http://localhost:8080> in your browser.
 
+## Disclaimer
+
+Assumes that the rate-increase is 7% for all banners in Genshin Impact, Honkai Star Rail, and Zenless Zone Zero.
+
 ## General Guidelines
 
 - **Current Pity** is the number of pulls you have done without getting a 5-star character.

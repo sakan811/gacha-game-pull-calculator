@@ -9,6 +9,7 @@
               <select v-model="gameType" class="form-input" id="game-type">
                 <option value="star_rail">Honkai: Star Rail</option>
                 <option value="genshin">Genshin Impact</option>
+                <option value="zenless">Zenless Zone Zero</option>
               </select>
             </div>
 
@@ -19,6 +20,7 @@
                 <option value="limited">Limited Character Banner</option>
                 <option v-if="gameType === 'star_rail'" value="light_cone">Light Cone Banner</option>
                 <option v-if="gameType === 'genshin'" value="weapon">Weapon Banner</option>
+                <option v-if="gameType === 'zenless'" value="w_engine">W-Engine Banner</option>
               </select>
             </div>
 
@@ -52,7 +54,7 @@
       </div>
 
       <div v-if="result" class="results-wrapper">
-        <ProbabilityResult :result="result" :bannerType="bannerType" />
+        <ProbabilityResult :result="result" :bannerType="bannerType" :gameType="gameType" />
       </div>
     </div>
 
@@ -73,7 +75,8 @@
 import { ref, watch, nextTick, computed } from 'vue'
 import ProbabilityResult from './ProbabilityResult.vue'
 import ProbabilityPlot from './ProbabilityPlot.vue'
-import type { GameType } from '../types'
+import type { ProbabilityPlotMethods } from './types'
+import type { GameType, BannerType } from '../types'
 
 interface CalculationResult {
   total_5_star_probability: number
@@ -84,24 +87,28 @@ interface CalculationResult {
 }
 
 const gameType = ref<GameType>('star_rail')
-const bannerType = ref<'standard' | 'limited' | 'light_cone' | 'weapon'>('standard')
+const bannerType = ref<BannerType>('standard')
 const currentPity = ref(0)
 const plannedPulls = ref(1)
 const result = ref<CalculationResult | null>(null)
-const plotRef = ref<InstanceType<typeof ProbabilityPlot> | null>(null)
+const plotRef = ref<ProbabilityPlotMethods | null>(null)
 
 // Reset banner type when game changes
 watch(gameType, () => {
-  if (bannerType.value === 'light_cone' && gameType.value === 'genshin') {
-    bannerType.value = 'weapon'
-  } else if (bannerType.value === 'weapon' && gameType.value === 'star_rail') {
-    bannerType.value = 'light_cone'
+  if (bannerType.value === 'light_cone' && gameType.value !== 'star_rail') {
+    bannerType.value = gameType.value === 'genshin' ? 'weapon' : 'w_engine';
+  } else if (bannerType.value === 'weapon' && gameType.value !== 'genshin') {
+    bannerType.value = gameType.value === 'star_rail' ? 'light_cone' : 'w_engine';
+  } else if (bannerType.value === 'w_engine' && gameType.value !== 'zenless') {
+    bannerType.value = gameType.value === 'star_rail' ? 'light_cone' : 'weapon';
   }
 })
 
 const maxPityForBannerType = computed(() => {
   if (gameType.value === 'star_rail') {
     return bannerType.value === 'light_cone' ? 79 : 89
+  } else if (gameType.value === 'zenless') {
+    return bannerType.value === 'w_engine' ? 79 : 89
   } else {
     // Genshin Impact pity values
     switch (bannerType.value) {
@@ -163,50 +170,6 @@ async function calculateProbability() {
 }
 </script>
 
-<style scoped>
-.calculator-layout {
-  @apply flex flex-col gap-8 w-full max-w-7xl;
-}
-
-.top-section {
-  @apply flex flex-col md:flex-row gap-8 justify-center;
-}
-
-.calculator-wrapper {
-  @apply bg-white rounded-lg shadow-md p-8 transition-all duration-300 h-fit md:w-[400px] flex-shrink-0;
-}
-
-.results-wrapper {
-  @apply flex-1 flex flex-col gap-8 min-w-[300px] md:max-w-[400px];
-}
-
-.plots-layout {
-  @apply w-full flex flex-col gap-8;
-}
-
-.form-container {
-  @apply space-y-8;
-}
-
-.form-group {
-  @apply space-y-6;
-}
-
-.form-input-container {
-  @apply space-y-2;
-}
-
-.form-label {
-  @apply block text-base font-medium text-gray-700;
-}
-
-.form-input {
-  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base;
-}
-
-.calculate-button {
-  @apply w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md 
-         hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-         transition-colors duration-200;
-}
+<style>
+/* No need to import app.css here as it's imported in main.ts */
 </style> 

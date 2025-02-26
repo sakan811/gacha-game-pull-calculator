@@ -99,3 +99,52 @@ func HandleGenshinWeaponBannerCalculation(c *gin.Context) {
 	result := services.CalculateGenshinWeaponBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }
+
+// Zenless Zone Zero handlers
+func HandleZenlessStandardBannerCalculation(c *gin.Context) {
+	var req models.ProbabilityRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if req.CurrentPity < 0 || req.CurrentPity > 89 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 89 for Zenless standard banner"})
+		return
+	}
+
+	result := services.CalculateZenlessStandardBannerProbability(req.CurrentPity, req.PlannedPulls)
+	c.JSON(http.StatusOK, result)
+}
+
+func HandleZenlessLimitedBannerCalculation(c *gin.Context) {
+	var req models.ProbabilityRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if req.CurrentPity < 0 || req.CurrentPity > 89 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 89 for Zenless limited banner"})
+		return
+	}
+
+	result := services.CalculateZenlessLimitedBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
+	c.JSON(http.StatusOK, result)
+}
+
+func HandleZenlessWEngineBannerCalculation(c *gin.Context) {
+	var req models.ProbabilityRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if req.CurrentPity < 0 || req.CurrentPity > 79 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 79 for Zenless W-Engine banner"})
+		return
+	}
+
+	result := services.CalculateZenlessWEngineBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
+	c.JSON(http.StatusOK, result)
+}
