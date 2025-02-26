@@ -163,50 +163,6 @@ async function calculateProbability() {
 }
 </script>
 
-<style scoped>
-.calculator-layout {
-  @apply flex flex-col gap-8 w-full max-w-7xl;
-}
-
-.top-section {
-  @apply flex flex-col md:flex-row gap-8 justify-center;
-}
-
-.calculator-wrapper {
-  @apply bg-white rounded-lg shadow-md p-8 transition-all duration-300 h-fit md:w-[400px] flex-shrink-0;
-}
-
-.results-wrapper {
-  @apply flex-1 flex flex-col gap-8 min-w-[300px] md:max-w-[400px];
-}
-
-.plots-layout {
-  @apply w-full flex flex-col gap-8;
-}
-
-.form-container {
-  @apply space-y-8;
-}
-
-.form-group {
-  @apply space-y-6;
-}
-
-.form-input-container {
-  @apply space-y-2;
-}
-
-.form-label {
-  @apply block text-base font-medium text-gray-700;
-}
-
-.form-input {
-  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base;
-}
-
-.calculate-button {
-  @apply w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md 
-         hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-         transition-colors duration-200;
-}
+<style>
+/* No need to import app.css here as it's imported in main.ts */
 </style> 

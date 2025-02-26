@@ -1,3 +1,219 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities; 
+@import 'tailwindcss';
+
+/* Calculator Layout Styles */
+.calculator-layout {
+  display: flex;
+  flex-direction: column;
+  gap: theme(spacing.8);
+  width: 100%;
+  max-width: theme(maxWidth.7xl);
+}
+
+.top-section {
+  display: flex;
+  flex-direction: column;
+  gap: theme(spacing.8);
+  justify-content: center;
+  
+  @media (min-width: theme(screens.md)) {
+    flex-direction: row;
+  }
+}
+
+.calculator-wrapper {
+  background-color: theme(colors.white);
+  border-radius: theme(borderRadius.lg);
+  box-shadow: theme(boxShadow.md);
+  padding: theme(spacing.8);
+  transition-property: all;
+  transition-duration: 300ms;
+  height: fit-content;
+  flex-shrink: 0;
+  
+  @media (min-width: theme(screens.md)) {
+    width: 400px;
+  }
+}
+
+.results-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: theme(spacing.8);
+  min-width: 300px;
+  
+  @media (min-width: theme(screens.md)) {
+    max-width: 400px;
+  }
+}
+
+.plots-layout {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: theme(spacing.8);
+}
+
+/* Form Styles */
+.form-container {
+  margin-top: theme(spacing.0);
+  margin-bottom: theme(spacing.8);
+}
+
+.form-group {
+  margin-top: theme(spacing.0);
+  margin-bottom: theme(spacing.6);
+}
+
+.form-input-container {
+  margin-top: theme(spacing.0);
+  margin-bottom: theme(spacing.2);
+}
+
+.form-label {
+  display: block;
+  font-size: theme(fontSize.base);
+  font-weight: theme(fontWeight.medium);
+  color: theme(colors.gray.700);
+}
+
+.form-input {
+  margin-top: theme(spacing.1);
+  display: block;
+  width: 100%;
+  border-radius: theme(borderRadius.md);
+  border-color: theme(colors.gray.300);
+  box-shadow: theme(boxShadow.sm);
+  font-size: theme(fontSize.base);
+  
+  &:focus {
+    border-color: theme(colors.blue.500);
+    --tw-ring-color: theme(colors.blue.500);
+  }
+}
+
+.calculate-button {
+  width: 100%;
+  padding: theme(spacing.2) theme(spacing.4);
+  background-color: theme(colors.blue.500);
+  color: theme(colors.white);
+  font-weight: theme(fontWeight.semibold);
+  border-radius: theme(borderRadius.md);
+  transition-property: color;
+  transition-duration: 200ms;
+  
+  &:hover {
+    background-color: theme(colors.blue.600);
+  }
+  
+  &:focus {
+    outline: none;
+    --tw-ring-offset-width: 2px;
+    --tw-ring-width: 2px;
+    --tw-ring-color: theme(colors.blue.500);
+  }
+}
+
+/* Main Layout Styles (moved from App.vue) */
+.main-container {
+  min-height: 100vh;
+  background-color: theme(colors.gray.50);
+  padding: theme(spacing.8);
+  display: flex;
+  justify-content: center;
+}
+
+.layout-container {
+  width: 100%;
+  max-width: 1440px;
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.calculator-centered {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.page-title {
+  font-size: theme(fontSize.4xl);
+  font-weight: theme(fontWeight.bold);
+  text-align: center;
+  color: theme(colors.gray.800);
+  margin-bottom: theme(spacing.8);
+}
+
+/* Probability Plot Styles (moved from ProbabilityPlot.vue) */
+.plots-wrapper {
+  background-color: theme(colors.white);
+  border-radius: theme(borderRadius.lg);
+  box-shadow: theme(boxShadow.md);
+  padding: theme(spacing.6);
+  transition-property: all;
+  transition-duration: 300ms;
+  width: 100%;
+  margin-top: theme(spacing.0);
+  margin-bottom: theme(spacing.8);
+}
+
+.chart-container {
+  width: 100%;
+  margin-top: theme(spacing.0);
+  margin-bottom: theme(spacing.2);
+  background-color: theme(colors.white);
+  border-radius: theme(borderRadius.lg);
+  padding: theme(spacing.4);
+}
+
+.chart-title {
+  font-size: theme(fontSize.xl);
+  font-weight: theme(fontWeight.semibold);
+  color: theme(colors.gray.800);
+  margin-bottom: theme(spacing.4);
+  text-align: center;
+}
+
+.chart-canvas-container {
+  position: relative;
+  aspect-ratio: 16/9;
+  width: 100%;
+  height: 250px;
+}
+
+/* Probability Results Styles (moved from ProbabilityResult.vue) */
+.results-container {
+  margin-top: theme(spacing.8);
+  padding: theme(spacing.6);
+  background-color: theme(colors.blue.50);
+  border-radius: theme(borderRadius.md);
+}
+
+.results-title {
+  font-size: theme(fontSize.xl);
+  font-weight: theme(fontWeight.semibold);
+  color: theme(colors.gray.800);
+  margin-bottom: theme(spacing.4);
+}
+
+.results-text {
+  margin-top: theme(spacing.0);
+  margin-bottom: theme(spacing.3);
+  font-size: theme(fontSize.base);
+  color: theme(colors.gray.600);
+}
+
+.result-item {
+  background-color: theme(colors.white);
+  border-radius: theme(borderRadius.lg);
+  box-shadow: theme(boxShadow.md);
+  padding: theme(spacing.4);
+  margin-bottom: theme(spacing.4);
+}
+
+.result-value {
+  font-size: theme(fontSize.3xl);
+  font-weight: theme(fontWeight.semibold);
+  color: theme(colors.indigo.600);
+}

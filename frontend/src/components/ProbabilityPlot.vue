@@ -274,20 +274,6 @@ const cumulativeChartOptions = computed<ChartOptions<'line'>>(() => ({
 }))
 </script>
 
-<style scoped>
-.plots-wrapper {
-  @apply bg-white rounded-lg shadow-md p-6 transition-all duration-300 w-full space-y-8;
-}
-
-.chart-container {
-  @apply w-full space-y-2 bg-white rounded-lg p-4;
-}
-
-.chart-title {
-  @apply text-xl font-semibold text-gray-800 mb-4 text-center;
-}
-
-.chart-canvas-container {
-  @apply relative aspect-[16/9] w-full h-[250px];
-}
+<style>
+/* Styles moved to app.css */
 </style> 
