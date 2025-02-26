@@ -52,7 +52,7 @@
       </div>
 
       <div v-if="result" class="results-wrapper">
-        <ProbabilityResult :result="result" :bannerType="bannerType" />
+        <ProbabilityResult :result="result" :bannerType="bannerType" :gameType="gameType" />
       </div>
     </div>
 

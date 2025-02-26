@@ -17,7 +17,7 @@
           </dd>
         </div>
         <div class="result-item">
-          <dt class="form-label">Light Cone Probability</dt>
+          <dt class="form-label">{{ gameType === 'genshin' ? 'Weapon' : 'Light Cone' }} Probability</dt>
           <dd class="result-value">
             {{ formatProbability(result.light_cone_probability) }}%
           </dd>
@@ -37,6 +37,8 @@
 </template>
 
 <script setup lang="ts">
+import type { GameType } from '../types'
+
 interface Props {
   result: {
     total_5_star_probability: number
@@ -45,6 +47,7 @@ interface Props {
     rate_up_probability?: number
   }
   bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon'
+  gameType: GameType
 }
 
 defineProps<Props>()
