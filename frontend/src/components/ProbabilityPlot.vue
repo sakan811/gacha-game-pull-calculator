@@ -56,6 +56,11 @@ ChartJS.register(
   annotationPlugin
 )
 
+// Define an interface for the component's exposed methods
+export interface ProbabilityPlotMethods {
+  updateCharts: () => Promise<void>;
+}
+
 const props = defineProps<{
   bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine'
   gameType: 'star_rail' | 'genshin' | 'zenless'
@@ -154,7 +159,7 @@ async function updateCharts() {
 }
 
 // Expose update function
-defineExpose({ updateCharts })
+defineExpose<ProbabilityPlotMethods>({ updateCharts })
 
 const distributionChartData = computed<ChartData<'line'>>(() => ({
   labels: chartData.value?.labels ?? [],

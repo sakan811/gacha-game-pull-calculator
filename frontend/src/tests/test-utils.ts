@@ -36,6 +36,16 @@ export const createMockServer = (customHandlers: HttpHandler[] = []) => {
     }),
     http.post('/api/light_cone', () => {
       return HttpResponse.json(mockCalculationResponse);
+    }),
+    // Zenless Zone Zero endpoints
+    http.post('/api/zenless/standard', () => {
+      return HttpResponse.json(mockCalculationResponse);
+    }),
+    http.post('/api/zenless/limited', () => {
+      return HttpResponse.json(mockCalculationResponse);
+    }),
+    http.post('/api/zenless/w_engine', () => {
+      return HttpResponse.json(mockCalculationResponse);
     })
   ];
 
@@ -78,6 +88,28 @@ export const mockBannerProps = {
   lightCone: {
     bannerType: 'light_cone' as const,
     gameType: 'star_rail' as const,
+    currentPity: 0,
+    plannedPulls: 10,
+    result: mockCalculationResponse
+  },
+  // Zenless Zone Zero props
+  zenlessStandard: {
+    bannerType: 'standard' as const,
+    gameType: 'zenless' as const,
+    currentPity: 0,
+    plannedPulls: 10,
+    result: mockCalculationResponse
+  },
+  zenlessLimited: {
+    bannerType: 'limited' as const,
+    gameType: 'zenless' as const,
+    currentPity: 0,
+    plannedPulls: 10,
+    result: mockCalculationResponse
+  },
+  zenlessWEngine: {
+    bannerType: 'w_engine' as const,
+    gameType: 'zenless' as const,
     currentPity: 0,
     plannedPulls: 10,
     result: mockCalculationResponse

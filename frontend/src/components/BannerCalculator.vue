@@ -75,6 +75,7 @@
 import { ref, watch, nextTick, computed } from 'vue'
 import ProbabilityResult from './ProbabilityResult.vue'
 import ProbabilityPlot from './ProbabilityPlot.vue'
+import type { ProbabilityPlotMethods } from './types'
 import type { GameType, BannerType } from '../types'
 
 interface CalculationResult {
@@ -90,7 +91,7 @@ const bannerType = ref<BannerType>('standard')
 const currentPity = ref(0)
 const plannedPulls = ref(1)
 const result = ref<CalculationResult | null>(null)
-const plotRef = ref<InstanceType<typeof ProbabilityPlot> | null>(null)
+const plotRef = ref<ProbabilityPlotMethods | null>(null)
 
 // Reset banner type when game changes
 watch(gameType, () => {

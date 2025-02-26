@@ -17,8 +17,8 @@ func TestGenshinStandardBanner(t *testing.T) {
 				if config.FourStarRate != 0.051 {
 					t.Errorf("Expected 4★ rate 5.1%%, got %.1f%%", config.FourStarRate*100)
 				}
-				if config.RateIncrease != 0.06 {
-					t.Errorf("Expected rate increase 6%%, got %.1f%%", config.RateIncrease*100)
+				if config.RateIncrease != 0.07 {
+					t.Errorf("Expected rate increase 7%%, got %.1f%%", config.RateIncrease*100)
 				}
 			},
 		},
@@ -72,8 +72,8 @@ func TestGenshinLimitedBanner(t *testing.T) {
 				if config.FourStarRate != 0.051 {
 					t.Errorf("Expected 4★ rate 5.1%%, got %.1f%%", config.FourStarRate*100)
 				}
-				if config.RateIncrease != 0.06 {
-					t.Errorf("Expected rate increase 6%%, got %.1f%%", config.RateIncrease*100)
+				if config.RateIncrease != 0.07 {
+					t.Errorf("Expected rate increase 7%%, got %.1f%%", config.RateIncrease*100)
 				}
 			},
 		},
