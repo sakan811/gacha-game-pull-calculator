@@ -34,6 +34,14 @@ func main() {
 			genshin.POST("/weapon", handlers.HandleGenshinWeaponBannerCalculation)
 		}
 
+		// Zenless Zone Zero routes
+		zenless := api.Group("/zenless")
+		{
+			zenless.POST("/standard", handlers.HandleZenlessStandardBannerCalculation)
+			zenless.POST("/limited", handlers.HandleZenlessLimitedBannerCalculation)
+			zenless.POST("/w_engine", handlers.HandleZenlessWEngineBannerCalculation)
+		}
+
 		api.POST("/visualization", handlers.HandleVisualizationData)
 	}
 

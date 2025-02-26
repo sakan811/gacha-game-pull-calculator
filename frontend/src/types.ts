@@ -1,6 +1,6 @@
-export type GameType = 'genshin' | 'star_rail';
+export type GameType = 'genshin' | 'star_rail' | 'zenless';
 
-export type BannerType = 'standard' | 'limited' | 'light_cone' | 'weapon';
+export type BannerType = 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine';
 
 export interface BannerRequest {
   current_pity: number;

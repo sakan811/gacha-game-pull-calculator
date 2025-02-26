@@ -57,8 +57,8 @@ ChartJS.register(
 )
 
 const props = defineProps<{
-  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon'
-  gameType: 'star_rail' | 'genshin'
+  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine'
+  gameType: 'star_rail' | 'genshin' | 'zenless'
   currentPity: number
   plannedPulls: number
   result: {

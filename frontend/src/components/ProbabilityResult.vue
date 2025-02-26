@@ -17,7 +17,7 @@
           </dd>
         </div>
         <div class="result-item">
-          <dt class="form-label">{{ gameType === 'genshin' ? 'Weapon' : 'Light Cone' }} Probability</dt>
+          <dt class="form-label">{{ getEquipmentLabel }} Probability</dt>
           <dd class="result-value">
             {{ formatProbability(result.light_cone_probability) }}%
           </dd>
@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import type { GameType } from '../types'
+import { computed } from 'vue'
 
 interface Props {
   result: {
@@ -46,11 +47,22 @@ interface Props {
     light_cone_probability?: number
     rate_up_probability?: number
   }
-  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon'
+  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine'
   gameType: GameType
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const getEquipmentLabel = computed(() => {
+  switch (props.gameType) {
+    case 'genshin':
+      return 'Weapon'
+    case 'zenless':
+      return 'W-Engine'
+    default:
+      return 'Light Cone'
+  }
+})
 
 function formatProbability(value?: number): string {
   return value?.toFixed(2) ?? '0.00'
