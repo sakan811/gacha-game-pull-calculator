@@ -6,37 +6,98 @@ class BannerConfig:
     """Banner configuration parameters."""
     base_rate: float
     four_star_rate: float
-    pity_start: int
+    soft_pity_start: int
     hard_pity: int
     rate_increase: float
-    guarantee_featured: bool
-    featured_rate: float = None
+    guaranteed_rate_up: bool
+    rate_up_chance: float = None
 
+# Banner configurations for all games and banner types
 BANNER_CONFIGS = {
-    "standard": BannerConfig(
+    # Star Rail banners
+    "star_rail_standard": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
-        pity_start=73,
+        soft_pity_start=73,
         hard_pity=90,
-        rate_increase=0.06,
-        guarantee_featured=False
+        rate_increase=0.07,
+        guaranteed_rate_up=False,
+        rate_up_chance=0.0
     ),
-    "limited": BannerConfig(
+    "star_rail_limited": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
-        pity_start=73,
+        soft_pity_start=73,
         hard_pity=90,
-        rate_increase=0.06,
-        guarantee_featured=True,
-        featured_rate=0.5
+        rate_increase=0.07,
+        guaranteed_rate_up=True,
+        rate_up_chance=0.5
     ),
-    "light_cone": BannerConfig(
+    "star_rail_light_cone": BannerConfig(
         base_rate=0.008,
         four_star_rate=0.066,
-        pity_start=65,
+        soft_pity_start=65,
         hard_pity=80,
         rate_increase=0.07,
-        guarantee_featured=True,
-        featured_rate=0.75
+        guaranteed_rate_up=True,
+        rate_up_chance=0.75
+    ),
+    
+    # Genshin banners
+    "genshin_standard": BannerConfig(
+        base_rate=0.006,
+        four_star_rate=0.051,
+        soft_pity_start=73,
+        hard_pity=90,
+        rate_increase=0.07,
+        guaranteed_rate_up=False,
+        rate_up_chance=0.0
+    ),
+    "genshin_limited": BannerConfig(
+        base_rate=0.006,
+        four_star_rate=0.051,
+        soft_pity_start=73,
+        hard_pity=90,
+        rate_increase=0.07,
+        guaranteed_rate_up=True,
+        rate_up_chance=0.5
+    ),
+    "genshin_weapon": BannerConfig(
+        base_rate=0.007,
+        four_star_rate=0.066,
+        soft_pity_start=62,
+        hard_pity=80,
+        rate_increase=0.07,
+        guaranteed_rate_up=True,
+        rate_up_chance=0.75
+    ),
+    
+    # Zenless Zone Zero banners
+    "zenless_standard": BannerConfig(
+        base_rate=0.006,
+        four_star_rate=0.051,
+        soft_pity_start=73,
+        hard_pity=90,
+        rate_increase=0.07,
+        guaranteed_rate_up=False,
+        rate_up_chance=0.0
+    ),
+    "zenless_limited": BannerConfig(
+        base_rate=0.006,
+        four_star_rate=0.051,
+        soft_pity_start=73,
+        hard_pity=90,
+        rate_increase=0.07,
+        guaranteed_rate_up=True,
+        rate_up_chance=0.5
+    ),
+    "zenless_w_engine": BannerConfig(
+        base_rate=0.01,
+        four_star_rate=0.08,
+        soft_pity_start=64,
+        hard_pity=80,
+        rate_increase=0.07,
+        guaranteed_rate_up=True,
+        rate_up_chance=0.75
     )
 } 

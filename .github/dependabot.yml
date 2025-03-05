@@ -22,10 +22,17 @@ updates:
           - "@types/*"
           - "@testing-library/*"
           - "eslint*"
-      svelte:
+          - "typescript*"
+          - "vitest*"
+      vue:
         patterns:
-          - "svelte*"
-          - "@sveltejs/*"
+          - "vue*"
+          - "@vue/*"
+          - "@vitejs/*"
+      tailwind:
+        patterns:
+          - "tailwindcss*"
+          - "@tailwindcss/*"
 
   - package-ecosystem: "pip"
     directory: "/stats"
@@ -35,7 +42,5 @@ updates:
     groups:
       data-science:
         patterns:
-          - "numpy"
-          - "pandas"
-          - "matplotlib"
           - "seaborn"
+          - "ruff"

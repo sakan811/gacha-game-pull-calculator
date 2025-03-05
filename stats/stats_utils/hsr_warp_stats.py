@@ -8,23 +8,41 @@ from stats_utils.visualization import BannerVisualizer
 
 
 class WarpStats(ProbabilityCalculator):
-    def __init__(self, banner_type="standard"):
-        """Initialize warp statistics calculator."""
+    """Class for calculating and visualizing warp statistics."""
+    
+    def __init__(self, game_type="star_rail", banner_type="standard"):
+        """Initialize warp statistics calculator.
+        
+        Args:
+            game_type (str): Type of game ('star_rail', 'genshin', or 'zenless')
+            banner_type (str): Type of banner ('standard', 'limited', 'light_cone', 'weapon', or 'w_engine')
+        
+        Raises:
+            ValueError: If game_type or banner_type is not valid
+        """
+        self.game_type = game_type.lower().replace(' ', '_')
         self.banner_type = banner_type.lower().replace(' ', '_')
-        self._load_config()
-        self.rolls = np.arange(1, self.hard_pity + 1)
+        self.config_key = f"{self.game_type}_{self.banner_type}"
+        self.config = self._load_config()
+        self.rolls = np.arange(1, self.config.hard_pity + 1)
         self._calculate_all_probabilities()
         self.visualizer = BannerVisualizer()
 
     def _load_config(self):
-        """Load banner configuration."""
-        if self.banner_type not in BANNER_CONFIGS:
+        """Load banner configuration.
+        
+        Returns:
+            BannerConfig: The configuration for the selected banner type
+            
+        Raises:
+            ValueError: If banner_type is not valid
+        """
+        if self.config_key not in BANNER_CONFIGS:
+            valid_configs = list(BANNER_CONFIGS.keys())
             raise ValueError(
-                "banner_type must be 'standard', 'limited', or 'light_cone'"
+                f"Invalid configuration key: {self.config_key}. Valid keys are: {valid_configs}"
             )
-        config = BANNER_CONFIGS[self.banner_type]
-        for key, value in vars(config).items():
-            setattr(self, key, value)
+        return BANNER_CONFIGS[self.config_key]
 
     def _calculate_all_probabilities(self):
         """Calculate all probability distributions."""
@@ -33,12 +51,23 @@ class WarpStats(ProbabilityCalculator):
         self.cumulative_prob = self._calculate_cumulative_prob()
 
     def plot_statistics(self, save_path=None):
-        """Create and display probability plots."""
+        """Create and display probability plots.
+        
+        Args:
+            save_path (str, optional): Path to save the plots. If None, plots are not saved.
+            
+        Returns:
+            tuple: Tuple containing the distribution and cumulative plots
+        """
         data = self._prepare_plot_data()
-        self.visualizer.create_plots(data, self.banner_type, save_path)
+        self.visualizer.create_plots(data, self.game_type, self.banner_type, save_path)
 
     def _prepare_plot_data(self):
-        """Prepare data for plotting."""
+        """Prepare data for plotting.
+        
+        Returns:
+            pd.DataFrame: DataFrame containing roll numbers and probabilities
+        """
         return pd.DataFrame({
             "Roll Number": self.rolls,
             "Probability per Roll": self.p_first_5_star,
