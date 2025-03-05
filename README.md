@@ -30,20 +30,7 @@ Assumes that the rate-increase is 7% for all banners in Genshin Impact, Honkai S
 
 ## Probability Statistics Visualizations
 
-### Standard Banner
-
-![Standard Banner Cumulative Probability](stats/graph/hsr_standard_banner_stats_cumulative.jpg)
-![Standard Banner Probability per Roll](stats/graph/hsr_standard_banner_stats_distribution.jpg)
-
-### Limited Banner
-
-![Limited Banner Cumulative Probability](stats/graph/hsr_limited_banner_stats_cumulative.jpg)
-![Limited Banner Probability per Roll](stats/graph/hsr_limited_banner_stats_distribution.jpg)
-
-### Light Cone Banner
-
-![Light Cone Banner Cumulative Probability](stats/graph/hsr_light_cone_banner_stats_cumulative.jpg)
-![Light Cone Banner Probability per Roll](stats/graph/hsr_light_cone_banner_stats_distribution.jpg)
+[Click here](/docs/VISUAL.md) to view the visualizations.
 
 Reference:
 
@@ -55,12 +42,18 @@ Reference:
 
 <https://zzz.rng.moe/en/tracker/global#3001>
 
-## How to run the statistics
+## How to run the statistics script
 
-1. Install Python on your machine.
-2. Navigate to the `stats` folder.
+1. Install [Python](https://www.python.org/downloads/) on your machine.
+2. Install [UV](https://docs.astral.sh/uv/getting-started/installation/), a Python package manager.
+3. Navigate to the `stats` folder.
    - `cd stats`
-3. Install the requirements.
-   - `pip install -r requirements.txt`
-4. Run the `hsr_warp_stats.py` file.
-   - `python hsr_warp_stats.py`
+4. Create a virtual environment.
+   - `uv venv`
+5. Activate the virtual environment.
+   - On Windows: `venv\Scripts\activate`
+   - On macOS/Linux: `source venv/bin/activate`
+6. Install the requirements.
+   - `uv pip install -r requirements.txt`
+7. Run the `stats_main.py` file.
+   - `python stats_main.py`
