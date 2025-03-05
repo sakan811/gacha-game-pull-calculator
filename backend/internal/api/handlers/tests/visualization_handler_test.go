@@ -20,6 +20,7 @@ func TestVisualizationHandler(t *testing.T) {
 
 	t.Run("should include planned pulls in response", func(t *testing.T) {
 		reqBody := map[string]interface{}{
+			"game_type":     "star_rail",
 			"banner_type":   "standard",
 			"current_pity":  10,
 			"planned_pulls": 20,
