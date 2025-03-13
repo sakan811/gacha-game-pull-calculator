@@ -14,4 +14,9 @@ export interface BannerResponse {
   light_cone_probability?: number;
   rate_up_probability?: number;
   standard_char_probability?: number;
+}
+
+export interface CalculateRequest {
+  current_pity: number;
+  planned_pulls: number;
 } 

@@ -2,18 +2,21 @@
 
 ## Table of Contents
 
-- [Honkai: Star Rail](#honkai-star-rail)
-  - [Standard Banner](#standard-banner)
-  - [Limited Banner](#limited-banner)
-  - [Light Cone Banner](#light-cone-banner)
-- [Genshin Impact](#genshin-impact)
-  - [Standard Banner](#standard-banner-1)
-  - [Limited Banner](#limited-banner-1)
-  - [Weapon Banner](#weapon-banner)
-- [Zenless Zone Zero](#zenless-zone-zero)
-  - [Standard Banner](#standard-banner-2)
-  - [Limited Banner](#limited-banner-2)
-  - [W-Engine Banner](#w-engine-banner)
+- [Probability Statistics Visualizations](#probability-statistics-visualizations)
+  - [Table of Contents](#table-of-contents)
+  - [Honkai: Star Rail](#honkai-star-rail)
+    - [Standard Banner](#standard-banner)
+    - [Limited Banner](#limited-banner)
+    - [Light Cone Banner](#light-cone-banner)
+  - [Genshin Impact](#genshin-impact)
+    - [Standard Banner](#standard-banner-1)
+    - [Limited Banner](#limited-banner-1)
+    - [Weapon Banner](#weapon-banner)
+  - [Zenless Zone Zero](#zenless-zone-zero)
+    - [Standard Banner](#standard-banner-2)
+    - [Limited Banner](#limited-banner-2)
+    - [W-Engine Banner](#w-engine-banner)
+    - [Bangboo Banner](#bangboo-banner)
 
 ## Honkai: Star Rail
 
@@ -65,3 +68,8 @@
 
 ![W-Engine Banner Cumulative Probability](/stats/graph/zenless_w_engine_banner_stats_cumulative.jpg)
 ![W-Engine Banner Probability per Roll](/stats/graph/zenless_w_engine_banner_stats_distribution.jpg)
+
+### Bangboo Banner
+
+![Bangboo Banner Cumulative Probability](/stats/graph/zenless_bangboo_banner_stats_cumulative.jpg)
+![Bangbo Banner Probability per Roll](/stats/graph/zenless_bangboo_banner_stats_distribution.jpg)
