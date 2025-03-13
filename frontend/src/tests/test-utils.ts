@@ -2,6 +2,8 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import type { HttpHandler } from 'msw';
 import type { MockInstance } from 'vitest';
+import type { ResizeObserverEntry } from '@juggle/resize-observer';
+import type { CalculateRequest } from '../types';
 
 // Common mock data
 export const mockVisualizationData = {
@@ -15,59 +17,56 @@ export const mockVisualizationData = {
 };
 
 export const mockCalculationResponse = {
-  total_5_star_probability: 15.5,
+  total_5_star_probability: 15.50,
   character_probability: 7.75,
   light_cone_probability: 7.75,
-  rate_up_probability: 10.0,
-  standard_char_probability: 10.0
+  rate_up_probability: 10.00,
+  standard_char_probability: 7.75
 };
 
-// Mock server setup helper
-export const createMockServer = (customHandlers: HttpHandler[] = []) => {
-  const defaultHandlers = [
-    http.post('/api/visualization', () => {
-      return HttpResponse.json(mockVisualizationData);
-    }),
-    http.post('/api/standard', () => {
-      return HttpResponse.json(mockCalculationResponse);
-    }),
-    http.post('/api/limited', () => {
-      return HttpResponse.json(mockCalculationResponse);
-    }),
-    http.post('/api/light_cone', () => {
-      return HttpResponse.json(mockCalculationResponse);
-    }),
-    // Zenless Zone Zero endpoints
-    http.post('/api/zenless/standard', () => {
-      return HttpResponse.json(mockCalculationResponse);
-    }),
-    http.post('/api/zenless/limited', () => {
-      return HttpResponse.json(mockCalculationResponse);
-    }),
-    http.post('/api/zenless/w_engine', () => {
-      return HttpResponse.json(mockCalculationResponse);
-    })
-  ];
+// Create a default handler for all game types and banner types
+const defaultHandlers = [
+  'star_rail',
+  'genshin',
+  'zenless'
+].flatMap(game => [
+  'standard',
+  'limited',
+  'light_cone',
+  'weapon',
+  'w_engine',
+  'bangboo'
+].map(banner => 
+  http.post(`/api/${game}/${banner}`, async ({ request }) => {
+    const body = await request.json() as CalculateRequest;
+    if (!body || typeof body.current_pity !== 'number' || typeof body.planned_pulls !== 'number') {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockCalculationResponse);
+  })
+));
 
-  return setupServer(...defaultHandlers, ...customHandlers);
-};
+export function createMockServer(handlers: HttpHandler[] = []) {
+  return setupServer(...defaultHandlers, ...handlers);
+}
 
 interface MockVitest {
-  fn: () => MockInstance;
+  fn: (...args: any[]) => any;
+  stubGlobal: (name: string, value: any) => void;
 }
 
 // Mock ResizeObserver for canvas tests
-export const setupResizeObserverMock = (vi: MockVitest) => {
-  const mockResizeObserver = vi.fn().mockImplementation(() => ({
+export function setupResizeObserverMock(vi: MockVitest) {
+  const ResizeObserverMock = vi.fn(() => ({
     observe: vi.fn(),
     unobserve: vi.fn(),
-    disconnect: vi.fn()
+    disconnect: vi.fn(),
   }));
 
-  // @ts-ignore - ResizeObserver is available in jsdom environment
-  window.ResizeObserver = mockResizeObserver;
-  return mockResizeObserver;
-};
+  vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+
+  return ResizeObserverMock;
+}
 
 // Common test props
 export const mockBannerProps = {

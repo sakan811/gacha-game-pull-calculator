@@ -59,8 +59,13 @@ describe('Core Banner Calculation', () => {
     await fireEvent.update(screen.getByLabelText('Current Pity'), '0');
     await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
-    expect(screen.queryByTestId('probability-results')).toBeFalsy();
-    expect(screen.queryByTestId('probability-plots')).toBeFalsy();
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('0.00%');
+      expect(results.textContent).toContain('0.00%');
+      expect(results.textContent).toContain('0.00%');
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
+    });
   });
 
   it('should validate maximum planned pulls', async () => {
