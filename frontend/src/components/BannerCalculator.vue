@@ -2,7 +2,7 @@
   <div class="calculator-layout">
     <div class="top-section">
       <div class="calculator-wrapper">
-        <form @submit.prevent="calculateProbability" class="form-container">
+        <div class="form-container">
           <div class="form-group">
             <div class="form-input-container">
               <label class="form-label" for="game-type">Game</label>
@@ -48,10 +48,8 @@
                 id="planned-pulls"
               />
             </div>
-
-            <button type="submit" class="calculate-button">Calculate</button>
           </div>
-        </form>
+        </div>
       </div>
 
       <div v-if="result" class="results-wrapper">
@@ -103,13 +101,31 @@ watch(gameType, () => {
   } else if (bannerType.value === 'w_engine' && gameType.value !== 'zenless') {
     bannerType.value = gameType.value === 'star_rail' ? 'light_cone' : 'weapon';
   }
+  calculateProbability()
+})
+
+// Watch for changes and validate immediately
+watch(currentPity, (newValue) => {
+  if (newValue < 0) currentPity.value = 0
+  if (newValue > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
+  calculateProbability()
+})
+
+watch(plannedPulls, (newValue) => {
+  if (newValue < 1) plannedPulls.value = 1
+  if (newValue > 200) plannedPulls.value = 200
+  calculateProbability()
+})
+
+watch(bannerType, () => {
+  calculateProbability()
 })
 
 const maxPityForBannerType = computed(() => {
   if (gameType.value === 'star_rail') {
     return bannerType.value === 'light_cone' ? 79 : 89
   } else if (gameType.value === 'zenless') {
-    return bannerType.value === 'w_engine' ? 79 : 89
+    return bannerType.value === 'w_engine' || bannerType.value === 'bangboo' ? 79 : 89
   } else {
     // Genshin Impact pity values
     switch (bannerType.value) {
@@ -119,17 +135,6 @@ const maxPityForBannerType = computed(() => {
         return 89
     }
   }
-})
-
-// Watch for changes and validate immediately
-watch(currentPity, (newValue) => {
-  if (newValue < 0) currentPity.value = 0
-  if (newValue > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
-})
-
-watch(plannedPulls, (newValue) => {
-  if (newValue < 1) plannedPulls.value = 1
-  if (newValue > 200) plannedPulls.value = 200
 })
 
 function validateInputs() {

@@ -44,6 +44,7 @@ import {
   ChartOptions
 } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
+import type { GameType, BannerType } from '../types'
 
 ChartJS.register(
   CategoryScale,
@@ -61,15 +62,21 @@ export interface ProbabilityPlotMethods {
   updateCharts: () => Promise<void>;
 }
 
-const props = defineProps<{
-  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine'
-  gameType: 'star_rail' | 'genshin' | 'zenless'
+interface Props {
+  gameType: GameType
+  bannerType: BannerType
   currentPity: number
   plannedPulls: number
   result: {
     total_5_star_probability: number
+    character_probability?: number
+    light_cone_probability?: number
+    rate_up_probability?: number
+    standard_char_probability?: number
   }
-}>()
+}
+
+const props = defineProps<Props>()
 
 const visualizationData = ref<VisualizationData | null>(null)
 const chartData = ref<ChartData | null>(null)

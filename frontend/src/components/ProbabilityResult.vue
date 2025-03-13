@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GameType } from '../types'
+import type { GameType, BannerType } from '../types'
 import { computed } from 'vue'
 
 interface Props {
@@ -46,9 +46,10 @@ interface Props {
     character_probability?: number
     light_cone_probability?: number
     rate_up_probability?: number
+    standard_char_probability?: number
   }
-  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine'
   gameType: GameType
+  bannerType: BannerType
 }
 
 const props = defineProps<Props>()
