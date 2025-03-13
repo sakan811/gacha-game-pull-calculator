@@ -18,6 +18,7 @@ const (
 	ZenlessStandard
 	ZenlessLimited
 	ZenlessWEngine
+	ZenlessBangboo
 )
 
 // Config holds the configuration for different banner types
@@ -114,6 +115,16 @@ func GetConfig(bannerType Type) Config {
 			RateUpChance:     0.0,
 			GuaranteedRateUp: false,
 		}
+	case ZenlessBangboo:
+		return Config{
+			BaseRate:         0.01, // 1%
+			FourStarRate:     0.051,
+			SoftPityStart:    64,
+			HardPity:         80,
+			RateIncrease:     0.07,
+			RateUpChance:     1.0,
+			GuaranteedRateUp: true,
+		}
 	default: // StarRailStandard
 		return Config{
 			BaseRate:         0.006, // 0.6%
@@ -148,6 +159,8 @@ func GetBannerTypeFromGameAndBanner(gameType, bannerType string) Type {
 		return ZenlessLimited
 	case gameType == "zenless" && bannerType == "w_engine":
 		return ZenlessWEngine
+	case gameType == "zenless" && bannerType == "bangboo":
+		return ZenlessBangboo
 	default:
 		return StarRailStandard
 	}

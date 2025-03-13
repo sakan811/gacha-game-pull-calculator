@@ -1,6 +1,6 @@
 export type GameType = 'genshin' | 'star_rail' | 'zenless';
 
-export type BannerType = 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine';
+export type BannerType = 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine' | 'bangboo';
 
 export interface BannerRequest {
   current_pity: number;
@@ -14,4 +14,9 @@ export interface BannerResponse {
   light_cone_probability?: number;
   rate_up_probability?: number;
   standard_char_probability?: number;
+}
+
+export interface CalculateRequest {
+  current_pity: number;
+  planned_pulls: number;
 } 

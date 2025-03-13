@@ -99,3 +99,13 @@ func CalculateZenlessWEngineBannerProbability(currentPity, plannedPulls int, gua
 		StandardCharProbability: (total5StarProb - rateUpProb) * 100,
 	}
 }
+
+func CalculateZenlessBangbooBannerProbability(currentPity, plannedPulls int, guaranteed bool) models.ProbabilityResponse {
+	total5StarProb, rateUpProb := banner.CalculateWarpProbability(banner.ZenlessBangboo, currentPity, plannedPulls, guaranteed)
+
+	return models.ProbabilityResponse{
+		Total5StarProbability:   total5StarProb * 100,
+		RateUpProbability:       rateUpProb * 100,
+		StandardCharProbability: (total5StarProb - rateUpProb) * 100,
+	}
+}

@@ -38,7 +38,10 @@ describe('Form Validation', () => {
     expect(pullsInput.value).toBe('1');
 
     // Verify no results shown
-    expect(screen.queryByTestId('probability-results')).toBeFalsy();
+    const results = screen.getByTestId('probability-results');
+    expect(results.textContent).toContain('0.00%');
+    expect(results.textContent).toContain('0.00%');
+    expect(results.textContent).toContain('0.00%');
   });
 
   it('should validate maximum values', async () => {

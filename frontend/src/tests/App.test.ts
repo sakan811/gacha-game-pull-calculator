@@ -30,8 +30,11 @@ describe('App Component', () => {
     });
 
     it('should not show plots and results initially', () => {
-      expect(screen.queryByTestId('probability-results')).toBeFalsy();
-      expect(screen.queryByTestId('probability-plots')).toBeFalsy();
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('0.00%');
+      expect(results.textContent).toContain('0.00%');
+      expect(results.textContent).toContain('0.00%');
+      expect(screen.getByTestId('probability-plots')).toBeTruthy();
     });
 
     it('should show all banner type options', () => {

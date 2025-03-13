@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -44,6 +44,7 @@ import {
   ChartOptions
 } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
+import type { GameType, BannerType } from '../types'
 
 ChartJS.register(
   CategoryScale,
@@ -61,18 +62,40 @@ export interface ProbabilityPlotMethods {
   updateCharts: () => Promise<void>;
 }
 
-const props = defineProps<{
-  bannerType: 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine'
-  gameType: 'star_rail' | 'genshin' | 'zenless'
+interface Props {
+  gameType: GameType
+  bannerType: BannerType
   currentPity: number
   plannedPulls: number
   result: {
     total_5_star_probability: number
+    character_probability?: number
+    light_cone_probability?: number
+    rate_up_probability?: number
+    standard_char_probability?: number
   }
-}>()
+}
+
+const props = defineProps<Props>()
 
 const visualizationData = ref<VisualizationData | null>(null)
-const chartData = ref<ChartData | null>(null)
+const chartData = ref<ChartData>({
+  labels: [],
+  datasets: [
+    {
+      label: 'Probability Distribution',
+      data: [],
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    },
+    {
+      label: 'Cumulative Probability',
+      data: [],
+      borderColor: 'rgb(153, 102, 255)',
+      tension: 0.1
+    }
+  ]
+})
 
 interface VisualizationData {
   rolls: number[];
@@ -83,6 +106,11 @@ interface VisualizationData {
   current_pity: number;
   planned_pulls: number;
 }
+
+// Fetch initial visualization data
+onMounted(() => {
+  fetchVisualizationData()
+})
 
 async function fetchVisualizationData() {
   try {
@@ -128,7 +156,7 @@ async function fetchVisualizationData() {
     }
   } catch (error) {
     console.error('Error fetching visualization data:', error)
-    // Set empty data on error
+    // Keep the existing chart data structure but clear the data
     chartData.value = {
       labels: [],
       datasets: [

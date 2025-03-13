@@ -2,7 +2,7 @@
   <div class="calculator-layout">
     <div class="top-section">
       <div class="calculator-wrapper">
-        <form @submit.prevent="calculateProbability" class="form-container">
+        <div class="form-container">
           <div class="form-group">
             <div class="form-input-container">
               <label class="form-label" for="game-type">Game</label>
@@ -21,6 +21,7 @@
                 <option v-if="gameType === 'star_rail'" value="light_cone">Light Cone Banner</option>
                 <option v-if="gameType === 'genshin'" value="weapon">Weapon Banner</option>
                 <option v-if="gameType === 'zenless'" value="w_engine">W-Engine Banner</option>
+                <option v-if="gameType === 'zenless'" value="bangboo">Bangboo Banner</option>
               </select>
             </div>
 
@@ -47,18 +48,16 @@
                 id="planned-pulls"
               />
             </div>
-
-            <button type="submit" class="calculate-button">Calculate</button>
           </div>
-        </form>
+        </div>
       </div>
 
-      <div v-if="result" class="results-wrapper">
+      <div class="results-wrapper">
         <ProbabilityResult :result="result" :bannerType="bannerType" :gameType="gameType" />
       </div>
     </div>
 
-    <div v-if="result" class="plots-layout">
+    <div class="plots-layout">
       <ProbabilityPlot
         ref="plotRef"
         :bannerType="bannerType"
@@ -72,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, computed } from 'vue'
+import { ref, watch, nextTick, computed, onMounted } from 'vue'
 import ProbabilityResult from './ProbabilityResult.vue'
 import ProbabilityPlot from './ProbabilityPlot.vue'
 import type { ProbabilityPlotMethods } from './types'
@@ -90,8 +89,19 @@ const gameType = ref<GameType>('star_rail')
 const bannerType = ref<BannerType>('standard')
 const currentPity = ref(0)
 const plannedPulls = ref(1)
-const result = ref<CalculationResult | null>(null)
+const result = ref<CalculationResult>({
+  total_5_star_probability: 0,
+  character_probability: 0,
+  light_cone_probability: 0,
+  rate_up_probability: 0,
+  standard_char_probability: 0
+})
 const plotRef = ref<ProbabilityPlotMethods | null>(null)
+
+// Calculate initial probabilities when component is mounted
+onMounted(() => {
+  calculateProbability()
+})
 
 // Reset banner type when game changes
 watch(gameType, () => {
@@ -102,13 +112,31 @@ watch(gameType, () => {
   } else if (bannerType.value === 'w_engine' && gameType.value !== 'zenless') {
     bannerType.value = gameType.value === 'star_rail' ? 'light_cone' : 'weapon';
   }
+  calculateProbability()
+})
+
+// Watch for changes and validate immediately
+watch(currentPity, (newValue) => {
+  if (newValue < 0) currentPity.value = 0
+  if (newValue > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
+  calculateProbability()
+})
+
+watch(plannedPulls, (newValue) => {
+  if (newValue < 1) plannedPulls.value = 1
+  if (newValue > 200) plannedPulls.value = 200
+  calculateProbability()
+})
+
+watch(bannerType, () => {
+  calculateProbability()
 })
 
 const maxPityForBannerType = computed(() => {
   if (gameType.value === 'star_rail') {
     return bannerType.value === 'light_cone' ? 79 : 89
   } else if (gameType.value === 'zenless') {
-    return bannerType.value === 'w_engine' ? 79 : 89
+    return bannerType.value === 'w_engine' || bannerType.value === 'bangboo' ? 79 : 89
   } else {
     // Genshin Impact pity values
     switch (bannerType.value) {
@@ -118,17 +146,6 @@ const maxPityForBannerType = computed(() => {
         return 89
     }
   }
-})
-
-// Watch for changes and validate immediately
-watch(currentPity, (newValue) => {
-  if (newValue < 0) currentPity.value = 0
-  if (newValue > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
-})
-
-watch(plannedPulls, (newValue) => {
-  if (newValue < 1) plannedPulls.value = 1
-  if (newValue > 200) plannedPulls.value = 200
 })
 
 function validateInputs() {
@@ -160,12 +177,25 @@ async function calculateProbability() {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    result.value = await response.json()
+    const newResult = await response.json()
+    result.value = {
+      total_5_star_probability: newResult.total_5_star_probability ?? 0,
+      character_probability: newResult.character_probability ?? 0,
+      light_cone_probability: newResult.light_cone_probability ?? 0,
+      rate_up_probability: newResult.rate_up_probability ?? 0,
+      standard_char_probability: newResult.standard_char_probability ?? 0
+    }
     await nextTick()
     await plotRef.value?.updateCharts()
   } catch (error) {
     console.error('Error:', error)
-    result.value = null
+    result.value = {
+      total_5_star_probability: 0,
+      character_probability: 0,
+      light_cone_probability: 0,
+      rate_up_probability: 0,
+      standard_char_probability: 0
+    }
   }
 }
 </script>
