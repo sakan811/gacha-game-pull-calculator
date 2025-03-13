@@ -30,3 +30,5 @@ stats.plot_statistics("graph/zenless_standard_banner_stats")
 stats = WarpStats("zenless", "w_engine")
 stats.plot_statistics("graph/zenless_w_engine_banner_stats")
 
+stats = WarpStats("zenless", "bangboo")
+stats.plot_statistics("graph/zenless_bangboo_banner_stats")

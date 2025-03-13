@@ -40,6 +40,7 @@ func main() {
 			zenless.POST("/standard", handlers.HandleZenlessStandardBannerCalculation)
 			zenless.POST("/limited", handlers.HandleZenlessLimitedBannerCalculation)
 			zenless.POST("/w_engine", handlers.HandleZenlessWEngineBannerCalculation)
+			zenless.POST("/bangboo", handlers.HandleZenlessBangbooBannerCalculation)
 		}
 
 		api.POST("/visualization", handlers.HandleVisualizationData)

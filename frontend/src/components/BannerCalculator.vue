@@ -21,6 +21,7 @@
                 <option v-if="gameType === 'star_rail'" value="light_cone">Light Cone Banner</option>
                 <option v-if="gameType === 'genshin'" value="weapon">Weapon Banner</option>
                 <option v-if="gameType === 'zenless'" value="w_engine">W-Engine Banner</option>
+                <option v-if="gameType === 'zenless'" value="bangboo">Bangboo Banner</option>
               </select>
             </div>
 

@@ -113,5 +113,12 @@ export const mockBannerProps = {
     currentPity: 0,
     plannedPulls: 10,
     result: mockCalculationResponse
+  },
+  zenlessBangboo: {
+    bannerType: 'bangboo' as const,
+    gameType: 'zenless' as const,
+    currentPity: 0,
+    plannedPulls: 10,
+    result: mockCalculationResponse
   }
 }; 
