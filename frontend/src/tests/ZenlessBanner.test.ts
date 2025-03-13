@@ -45,8 +45,6 @@ describe('Zenless Zone Zero Banner Calculations', () => {
     await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
     await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
-    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
-
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
       expect(results.textContent).toContain('15.50%');
@@ -63,8 +61,6 @@ describe('Zenless Zone Zero Banner Calculations', () => {
     await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
     await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
-    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
-
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
       expect(results.textContent).toContain('15.50%');
@@ -79,8 +75,6 @@ describe('Zenless Zone Zero Banner Calculations', () => {
     await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
     await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
-    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
-
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
       expect(results.textContent).toContain('15.50%');

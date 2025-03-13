@@ -26,7 +26,8 @@ describe('Core Banner Calculation', () => {
   });
 
   it('should show results and plots after calculation', async () => {
-    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '0');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
     await waitFor(() => {
       expect(screen.getByTestId('probability-results')).toBeTruthy();
@@ -37,13 +38,8 @@ describe('Core Banner Calculation', () => {
   });
 
   it('should show chart on first calculation with 0 pity', async () => {
-    const pityInput = screen.getByLabelText('Current Pity') as HTMLInputElement;
-    const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
-    const calculateButton = screen.getAllByRole('button', { name: /calculate/i })[0];
-
-    await fireEvent.update(pityInput, '0');
-    await fireEvent.update(pullsInput, '10');
-    await fireEvent.click(calculateButton);
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '0');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
 
     await waitFor(() => {
       expect(screen.getByTestId('probability-plots')).toBeTruthy();
@@ -60,18 +56,18 @@ describe('Core Banner Calculation', () => {
       })
     );
     
-    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+    await fireEvent.update(screen.getByLabelText('Current Pity'), '0');
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
     
     expect(screen.queryByTestId('probability-results')).toBeFalsy();
     expect(screen.queryByTestId('probability-plots')).toBeFalsy();
   });
 
   it('should validate maximum planned pulls', async () => {
-    const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
-    await fireEvent.update(pullsInput, '300');
-    await fireEvent.click(screen.getByRole('button', { name: /calculate/i }));
+    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '300');
 
     await waitFor(() => {
+      const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
       expect(pullsInput.value).toBe('200');
     });
   });
