@@ -22,7 +22,10 @@ class BannerVisualizer:
         Args:
             data (pd.DataFrame): DataFrame containing roll numbers and probabilities
             game_type (str): Type of game ('star_rail', 'genshin', or 'zenless')
-            banner_type (str): Type of banner ('standard', 'limited', 'light_cone', 'weapon', or 'w_engine')
+            banner_type (str): Type of banner. Available types per game:
+                - Star Rail: 'standard', 'limited', 'light_cone'
+                - Genshin: 'standard', 'limited', 'weapon'
+                - Zenless: 'standard', 'limited', 'w_engine', 'bangboo'
             save_path (str, optional): Path to save the plot. If None, plot is not saved.
 
         Returns:
@@ -123,7 +126,10 @@ class BannerVisualizer:
         Args:
             data (pd.DataFrame): DataFrame containing roll numbers and probabilities
             game_type (str): Type of game ('star_rail', 'genshin', or 'zenless')
-            banner_type (str): Type of banner ('standard', 'limited', 'light_cone', 'weapon', or 'w_engine')
+            banner_type (str): Type of banner. Available types per game:
+                - Star Rail: 'standard', 'limited', 'light_cone'
+                - Genshin: 'standard', 'limited', 'weapon'
+                - Zenless: 'standard', 'limited', 'w_engine', 'bangboo'
             save_path (str, optional): Path to save the plot. If None, plot is not saved.
 
         Returns:
@@ -199,7 +205,10 @@ class BannerVisualizer:
         Args:
             data (pd.DataFrame): DataFrame containing roll numbers and probabilities
             game_type (str): Type of game ('star_rail', 'genshin', or 'zenless')
-            banner_type (str): Type of banner ('standard', 'limited', 'light_cone', 'weapon', or 'w_engine')
+            banner_type (str): Type of banner. Available types per game:
+                - Star Rail: 'standard', 'limited', 'light_cone'
+                - Genshin: 'standard', 'limited', 'weapon'
+                - Zenless: 'standard', 'limited', 'w_engine', 'bangboo'
             save_path (str, optional): Path to save the plots. If None, plots are not saved.
         """
         # Ensure the directory exists for all plots

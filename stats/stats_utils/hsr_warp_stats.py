@@ -16,7 +16,10 @@ class WarpStats(ProbabilityCalculator):
 
         Args:
             game_type (str): Type of game ('star_rail', 'genshin', or 'zenless')
-            banner_type (str): Type of banner ('standard', 'limited', 'light_cone', 'weapon', or 'w_engine')
+            banner_type (str): Type of banner. Available types per game:
+                - Star Rail: 'standard', 'limited', 'light_cone'
+                - Genshin: 'standard', 'limited', 'weapon'
+                - Zenless: 'standard', 'limited', 'w_engine', 'bangboo'
 
         Raises:
             ValueError: If game_type or banner_type is not valid
