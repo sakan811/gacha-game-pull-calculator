@@ -22,3 +22,4 @@ backend/internal/web/embedded/dist
 /test-all.sh
 /test-macos-app.ps1
 /.cursor
+/post-template.txt
