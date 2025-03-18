@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"hsrbannercalculator/internal/domain/banner"
 	"net/http"
+
+	"hsrbannercalculator/internal/domain/banner"
 
 	"github.com/gin-gonic/gin"
 )

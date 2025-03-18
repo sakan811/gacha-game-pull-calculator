@@ -1,8 +1,9 @@
 package banner
 
 import (
-	"hsrbannercalculator/internal/domain/banner"
 	"testing"
+
+	"hsrbannercalculator/internal/domain/banner"
 )
 
 func TestZenlessBangbooBanner(t *testing.T) {
