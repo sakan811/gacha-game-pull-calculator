@@ -1,167 +1,216 @@
 package handlers
 
 import (
-	"net/http"
-
+	"fmt"
 	"hsrbannercalculator/internal/api/models"
-	"hsrbannercalculator/internal/api/services"
+	"hsrbannercalculator/internal/domain/banner"
+	"hsrbannercalculator/internal/errors"
+	"hsrbannercalculator/internal/service"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func HandleStandardBannerCalculation(c *gin.Context) {
+var (
+	starRailService = service.NewStarRailService()
+	genshinService  = service.NewGenshinService()
+	zenlessService  = service.NewZenlessService()
+)
+
+func validateRequest(c *gin.Context, bannerType banner.Type) (models.ProbabilityRequest, error) {
 	var req models.ProbabilityRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return req, errors.NewInvalidInputError(fmt.Sprintf("invalid request body: %v", err))
+	}
+
+	config := banner.GetConfig(bannerType)
+	if req.CurrentPity < 0 || req.CurrentPity > config.HardPity-1 {
+		return req, errors.NewInvalidPityError(fmt.Sprintf("current pity must be between 0 and %d", config.HardPity-1))
+	}
+
+	if req.PlannedPulls < 1 {
+		return req, errors.NewInvalidPullsError("planned pulls must be at least 1")
+	}
+
+	return req, nil
+}
+
+func handleError(c *gin.Context, err error) {
+	if appErr, ok := err.(*errors.Error); ok {
+		switch appErr.Code {
+		case errors.ErrInvalidInput, errors.ErrInvalidPity, errors.ErrInvalidPulls:
+			c.JSON(http.StatusBadRequest, gin.H{"error": appErr.Message})
+		case errors.ErrInvalidBannerType:
+			c.JSON(http.StatusNotFound, gin.H{"error": appErr.Message})
+		case errors.ErrCalculation:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": appErr.Message})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		}
+
 		return
 	}
 
-	result := services.CalculateStarRailStandardBannerProbability(req.CurrentPity, req.PlannedPulls)
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+}
+
+func HandleStandardBannerCalculation(c *gin.Context) {
+	req, err := validateRequest(c, banner.StarRailStandard)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	result, err := starRailService.CalculateStandardBanner(req.PlannedPulls)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleLimitedBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.StarRailLimited)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateStarRailLimitedBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
+	result, err := starRailService.CalculateLimitedBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleLightConeBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.StarRailLightCone)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	// Add validation for light cone pity
-	if req.CurrentPity < 0 || req.CurrentPity > 79 { // Light cone has max pity of 79
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 79 for light cone banner"})
+	result, err := starRailService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.PlannedPulls < 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "planned pulls must be at least 1"})
-		return
-	}
-
-	result := services.CalculateStarRailLightConeBannerProbability(req.CurrentPity, req.PlannedPulls)
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleGenshinStandardBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.GenshinStandard)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 89 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 89 for Genshin standard banner"})
+	result, err := genshinService.CalculateStandardBanner(req.PlannedPulls)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateGenshinStandardBannerProbability(req.CurrentPity, req.PlannedPulls)
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleGenshinLimitedBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.GenshinLimited)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 89 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 89 for Genshin limited banner"})
+	result, err := genshinService.CalculateLimitedBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateGenshinLimitedBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleGenshinWeaponBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.GenshinWeapon)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 76 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 76 for Genshin weapon banner"})
+	result, err := genshinService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateGenshinWeaponBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }
 
-// Zenless Zone Zero handlers
+// Zenless Zone Zero handlers.
 func HandleZenlessStandardBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.ZenlessStandard)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 89 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 89 for Zenless standard banner"})
+	result, err := zenlessService.CalculateStandardBanner(req.PlannedPulls)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateZenlessStandardBannerProbability(req.CurrentPity, req.PlannedPulls)
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleZenlessLimitedBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.ZenlessLimited)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 89 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 89 for Zenless limited banner"})
+	result, err := zenlessService.CalculateLimitedBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateZenlessLimitedBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleZenlessWEngineBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.ZenlessWEngine)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 79 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 79 for Zenless W-Engine banner"})
+	result, err := zenlessService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateZenlessWEngineBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }
 
 func HandleZenlessBangbooBannerCalculation(c *gin.Context) {
-	var req models.ProbabilityRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	req, err := validateRequest(c, banner.ZenlessBangboo)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	if req.CurrentPity < 0 || req.CurrentPity > 79 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "current pity must be between 0 and 79 for Zenless Bangboo banner"})
+	result, err := zenlessService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 
-	result := services.CalculateZenlessBangbooBannerProbability(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	c.JSON(http.StatusOK, result)
 }

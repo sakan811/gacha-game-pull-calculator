@@ -1,27 +1,23 @@
 package banner
 
-// Type represents different types of banners in the game
+// Type represents different types of banners in the game.
 type Type int
 
 const (
-	// Star Rail banners
-	StarRailStandard Type = iota
+	Unknown Type = iota
+	StarRailStandard
 	StarRailLimited
 	StarRailLightCone
-
-	// Genshin banners
 	GenshinStandard
 	GenshinLimited
 	GenshinWeapon
-
-	// Zenless Zone Zero banners
 	ZenlessStandard
 	ZenlessLimited
 	ZenlessWEngine
 	ZenlessBangboo
 )
 
-// Config holds the configuration for different banner types
+// Config holds the configuration for different banner types.
 type Config struct {
 	BaseRate         float64
 	FourStarRate     float64
@@ -32,7 +28,7 @@ type Config struct {
 	GuaranteedRateUp bool
 }
 
-// GetConfig returns the configuration for a specific banner type
+// GetConfig returns the configuration for a specific banner type.
 func GetConfig(bannerType Type) Config {
 	switch bannerType {
 	case StarRailLimited:
@@ -138,30 +134,31 @@ func GetConfig(bannerType Type) Config {
 	}
 }
 
-// GetBannerTypeFromGameAndBanner returns the appropriate banner type based on game and banner type strings
+var bannerTypeMap = map[string]map[string]Type{
+	"star_rail": {
+		"standard":   StarRailStandard,
+		"limited":    StarRailLimited,
+		"light_cone": StarRailLightCone,
+	},
+	"genshin": {
+		"standard": GenshinStandard,
+		"limited":  GenshinLimited,
+		"weapon":   GenshinWeapon,
+	},
+	"zenless": {
+		"standard": ZenlessStandard,
+		"limited":  ZenlessLimited,
+		"w_engine": ZenlessWEngine,
+		"bangboo":  ZenlessBangboo,
+	},
+}
+
 func GetBannerTypeFromGameAndBanner(gameType, bannerType string) Type {
-	switch {
-	case gameType == "star_rail" && bannerType == "standard":
-		return StarRailStandard
-	case gameType == "star_rail" && bannerType == "limited":
-		return StarRailLimited
-	case gameType == "star_rail" && bannerType == "light_cone":
-		return StarRailLightCone
-	case gameType == "genshin" && bannerType == "standard":
-		return GenshinStandard
-	case gameType == "genshin" && bannerType == "limited":
-		return GenshinLimited
-	case gameType == "genshin" && bannerType == "weapon":
-		return GenshinWeapon
-	case gameType == "zenless" && bannerType == "standard":
-		return ZenlessStandard
-	case gameType == "zenless" && bannerType == "limited":
-		return ZenlessLimited
-	case gameType == "zenless" && bannerType == "w_engine":
-		return ZenlessWEngine
-	case gameType == "zenless" && bannerType == "bangboo":
-		return ZenlessBangboo
-	default:
-		return StarRailStandard
+	if gameTypes, ok := bannerTypeMap[gameType]; ok {
+		if banner, ok := gameTypes[bannerType]; ok {
+			return banner
+		}
 	}
+
+	return Unknown
 }

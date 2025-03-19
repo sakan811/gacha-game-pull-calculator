@@ -12,6 +12,7 @@ import (
 func setupTestRouter() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
+
 	return r
 }
 
@@ -19,7 +20,9 @@ func performRequest(r http.Handler, method, path string, body interface{}) *http
 	jsonBytes, _ := json.Marshal(body)
 	req, _ := http.NewRequest(method, path, bytes.NewBuffer(jsonBytes))
 	req.Header.Set("Content-Type", "application/json")
+
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+
 	return w
 }

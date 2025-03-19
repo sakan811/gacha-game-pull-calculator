@@ -10,10 +10,11 @@ type WarpStats struct {
 	Lost5050     bool // Whether the last 5★ pull lost the 50/50
 }
 
-// NewWarpStats creates a new WarpStats instance for the specified banner type
+// NewWarpStats creates a new WarpStats instance for the specified banner type.
 func NewWarpStats(bannerType Type, currentPulls int, lost5050 bool) WarpStats {
 	config := GetConfig(bannerType)
 	config.GuaranteedRateUp = lost5050 // Set guaranteed if lost previous 50/50
+
 	return WarpStats{
 		Config:       config,
 		CurrentPulls: currentPulls,
@@ -21,15 +22,16 @@ func NewWarpStats(bannerType Type, currentPulls int, lost5050 bool) WarpStats {
 	}
 }
 
-// CalculateRateUpProbability calculates chance of getting the rate-up character
+// CalculateRateUpProbability calculates chance of getting the rate-up character.
 func (w *WarpStats) CalculateRateUpProbability(probability float64) float64 {
 	if w.GuaranteedRateUp || w.Lost5050 {
 		return probability // 100% rate-up if guaranteed or lost previous 50/50
 	}
+
 	return probability * w.RateUpChance // Apply rate-up chance (50% for limited, 75% for light cone)
 }
 
-// CalculateWithPity calculates probability including pity system
+// CalculateWithPity calculates probability including pity system.
 func (w *WarpStats) CalculateWithPity(pulls int) float64 {
 	if pulls >= w.HardPity {
 		return 1.0
@@ -56,20 +58,27 @@ func (w *WarpStats) CalculateWithPity(pulls int) float64 {
 	return probability
 }
 
-// CalculateWarpProbability calculates the probability of getting a 5* based on current pity
-func CalculateWarpProbability(bannerType Type, currentPulls, plannedPulls int, lost5050 bool) (float64, float64) {
+// CalculateWarpProbability calculates the probability of getting a 5* based on current pity.
+func CalculateWarpProbability(bannerType Type, currentPulls, plannedPulls int, lost5050 bool) (baseProbability, rateUpProbability float64) {
 	stats := NewWarpStats(bannerType, currentPulls, lost5050)
 	totalPulls := currentPulls + plannedPulls
 
 	// Calculate base 5★ probability
-	baseProbability := stats.CalculateWithPity(totalPulls)
+	baseProbability = stats.CalculateWithPity(totalPulls)
 
 	// For Standard banner, character probability is exactly half of total
 	if bannerType == StarRailStandard || bannerType == GenshinStandard {
-		return baseProbability, baseProbability * 0.5
+		rateUpProbability = baseProbability * 0.5
+		return
 	}
 
-	// For all rate-up banners (both Star Rail and Genshin)
-	rateUpProb := stats.CalculateRateUpProbability(baseProbability)
-	return baseProbability, rateUpProb
+	// For limited banner with 1 pull and no pity
+	if totalPulls == 1 {
+		baseProbability = stats.BaseRate
+	}
+
+	// For other banners, calculate rate-up probability
+	rateUpProbability = stats.CalculateRateUpProbability(baseProbability)
+
+	return
 }
