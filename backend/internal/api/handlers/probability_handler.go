@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"net/http"
+
 	"hsrbannercalculator/internal/api/models"
 	"hsrbannercalculator/internal/api/services"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"hsrbannercalculator/internal/api/handlers"
 	"hsrbannercalculator/internal/web/embedded"
-	"log"
 
 	"github.com/gin-gonic/gin"
 )

@@ -2,6 +2,7 @@ linters:
   disable-all: true
   enable:
     - gofmt
+    - goimports
     - revive
     - govet
     - errcheck
@@ -12,6 +13,12 @@ linters:
     - misspell
     - gocyclo
     - gosec
+    - bodyclose
+    - gocritic
+    - godot
+    - gofumpt
+    - whitespace
+    - wsl
 
 linters-settings:
   gocyclo:
@@ -22,10 +29,31 @@ linters-settings:
         severity: warning
       - name: package-comments
         severity: warning
+      - name: context-as-argument
+        severity: warning
+      - name: error-return
+        severity: warning
+      - name: error-strings
+        severity: warning
+      - name: receiver-naming
+        severity: warning
   govet:
     enable-all: true
   staticcheck:
     checks: ["all"]
+  gofumpt:
+    extra-rules: true
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+    disabled-checks:
+      - commentFormatting
+      - hugeParam
+  godot:
+    scope: declarations
+    capital: true
 
 run:
   go: "1.21"
@@ -48,6 +76,7 @@ issues:
         - gosec
   max-issues-per-linter: 0
   max-same-issues: 0
+  fix: true
 
 output:
   formats:

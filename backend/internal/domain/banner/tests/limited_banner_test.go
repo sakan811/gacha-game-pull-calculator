@@ -1,8 +1,9 @@
 package banner
 
 import (
-	"hsrbannercalculator/internal/domain/banner"
 	"testing"
+
+	"hsrbannercalculator/internal/domain/banner"
 )
 
 func TestStarRailLimitedBanner(t *testing.T) {
