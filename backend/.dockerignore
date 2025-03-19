@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+*.md
+.DS_Store
+.cursor
+.venv
+tmp/
+vendor/
+*.log
+*.test
+*.out
+coverage.txt
+.idea/
+.vscode/
+*.swp
+*.swo 
