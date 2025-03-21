@@ -26,26 +26,14 @@
             </div>
 
             <div class="form-input-container">
-              <label class="form-label" for="current-pity">Current Pity</label>
+              <label class="form-label" for="pulls">Pulls</label>
               <input
                 type="number"
-                v-model.number="currentPity"
-                min="0"
-                :max="maxPityForBannerType"
-                class="form-input"
-                id="current-pity"
-              />
-            </div>
-
-            <div class="form-input-container">
-              <label class="form-label" for="planned-pulls">Planned Pulls</label>
-              <input
-                type="number"
-                v-model.number="plannedPulls"
+                v-model.number="totalPulls"
                 min="1"
                 max="200"
                 class="form-input"
-                id="planned-pulls"
+                id="pulls"
               />
             </div>
           </div>
@@ -62,8 +50,7 @@
         ref="plotRef"
         :bannerType="bannerType"
         :gameType="gameType"
-        :currentPity="currentPity"
-        :plannedPulls="plannedPulls"
+        :totalPulls="totalPulls"
         :result="result"
       />
     </div>
@@ -87,8 +74,7 @@ interface CalculationResult {
 
 const gameType = ref<GameType>('star_rail')
 const bannerType = ref<BannerType>('standard')
-const currentPity = ref(0)
-const plannedPulls = ref(1)
+const totalPulls = ref(1)
 const result = ref<CalculationResult>({
   total_5_star_probability: 0,
   character_probability: 0,
@@ -116,15 +102,9 @@ watch(gameType, () => {
 })
 
 // Watch for changes and validate immediately
-watch(currentPity, (newValue) => {
-  if (newValue < 0) currentPity.value = 0
-  if (newValue > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
-  calculateProbability()
-})
-
-watch(plannedPulls, (newValue) => {
-  if (newValue < 1) plannedPulls.value = 1
-  if (newValue > 200) plannedPulls.value = 200
+watch(totalPulls, (newValue) => {
+  if (newValue < 1) totalPulls.value = 1
+  if (newValue > 200) totalPulls.value = 200
   calculateProbability()
 })
 
@@ -134,42 +114,40 @@ watch(bannerType, () => {
 
 const maxPityForBannerType = computed(() => {
   if (gameType.value === 'star_rail') {
-    return bannerType.value === 'light_cone' ? 79 : 89
+    return bannerType.value === 'light_cone' ? 80 : 90
   } else if (gameType.value === 'zenless') {
-    return bannerType.value === 'w_engine' || bannerType.value === 'bangboo' ? 79 : 89
+    return bannerType.value === 'w_engine' || bannerType.value === 'bangboo' ? 80 : 90
   } else {
     // Genshin Impact pity values
     switch (bannerType.value) {
       case 'weapon':
-        return 79
+        return 80
       default:
-        return 89
+        return 90
     }
   }
 })
 
 function validateInputs() {
-  // Clamp current pity to valid range
-  if (currentPity.value < 0) currentPity.value = 0
-  if (currentPity.value > maxPityForBannerType.value) currentPity.value = maxPityForBannerType.value
-
-  // Clamp planned pulls to valid range
-  if (plannedPulls.value < 1) plannedPulls.value = 1
-  if (plannedPulls.value > 200) plannedPulls.value = 200
+  // Clamp pulls to valid range
+  if (totalPulls.value < 1) totalPulls.value = 1
+  if (totalPulls.value > 200) totalPulls.value = 200
 }
 
 async function calculateProbability() {
   validateInputs()
 
   try {
+    // Make the API call with the total pulls (no more current pity)
     const response = await fetch(`/api/${gameType.value}/${bannerType.value}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        current_pity: currentPity.value,
-        planned_pulls: plannedPulls.value,
+        current_pity: 0, // Always start at 0 pity
+        planned_pulls: totalPulls.value, // Use the total pulls value
+        guaranteed: false // Always false for now
       }),
     })
 
@@ -185,6 +163,8 @@ async function calculateProbability() {
       rate_up_probability: newResult.rate_up_probability ?? 0,
       standard_char_probability: newResult.standard_char_probability ?? 0
     }
+
+    // Wait for Vue to update the DOM, then update the charts
     await nextTick()
     await plotRef.value?.updateCharts()
   } catch (error) {
