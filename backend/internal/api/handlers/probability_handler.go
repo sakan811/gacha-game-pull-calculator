@@ -61,7 +61,7 @@ func HandleStandardBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := starRailService.CalculateStandardBanner(req.PlannedPulls)
+	result, err := starRailService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -77,7 +77,7 @@ func HandleLimitedBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := starRailService.CalculateLimitedBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := starRailService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -93,7 +93,7 @@ func HandleLightConeBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := starRailService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := starRailService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -109,7 +109,7 @@ func HandleGenshinStandardBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := genshinService.CalculateStandardBanner(req.PlannedPulls)
+	result, err := genshinService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -125,7 +125,7 @@ func HandleGenshinLimitedBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := genshinService.CalculateLimitedBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := genshinService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -141,7 +141,7 @@ func HandleGenshinWeaponBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := genshinService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := genshinService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -158,7 +158,7 @@ func HandleZenlessStandardBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := zenlessService.CalculateStandardBanner(req.PlannedPulls)
+	result, err := zenlessService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -174,7 +174,7 @@ func HandleZenlessLimitedBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := zenlessService.CalculateLimitedBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := zenlessService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -190,7 +190,7 @@ func HandleZenlessWEngineBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := zenlessService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := zenlessService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -206,7 +206,7 @@ func HandleZenlessBangbooBannerCalculation(c *gin.Context) {
 		return
 	}
 
-	result, err := zenlessService.CalculateWeaponBanner(req.PlannedPulls, req.Guaranteed)
+	result, err := zenlessService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	if err != nil {
 		handleError(c, err)
 		return

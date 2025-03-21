@@ -41,8 +41,8 @@ func main() {
 	api.POST(constants.Visualization, handlers.HandleVisualizationData)
 
 	// Print the access URL before starting the server
-	fmt.Printf("\nWarp Calculator API is running!\nAPI is available at: \033[36mhttp://localhost:%s%s\033[0m\n\n", cfg.Port, constants.APIPrefix)
+	fmt.Printf("\nWarp Calculator API is running!\nAPI is available at: \033[36mhttp://%s:%s%s\033[0m\n\n", cfg.BindAddress, cfg.Port, constants.APIPrefix)
 
 	// Start the server
-	log.Fatal(r.Run(":" + cfg.Port))
+	log.Fatal(r.Run(cfg.BindAddress + ":" + cfg.Port))
 }
