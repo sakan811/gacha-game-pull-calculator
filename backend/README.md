@@ -1,23 +1,23 @@
-# Honkai: Star Rail Warp Calculator Backend
+# Gacha Game Pull Calculator Backend
 
-This is the backend service for the Honkai: Star Rail Warp Calculator. It provides probability calculations for different types of banners in Honkai: Star Rail, Genshin Impact, and Zenless Zone Zero.
+A backend service for calculating gacha pull probabilities in various gacha games. This API provides probability calculations for different banner types in games like Honkai: Star Rail, Genshin Impact, and Zenless Zone Zero, with support for more games in the future.
 
 ## Features
 
-- Probability calculations for:
-  - Standard banners
-  - Limited character banners
-  - Light cone/weapon banners
-- Support for multiple games:
+- Probability calculations for multiple gacha systems:
+  - 5-star character/item drop rates
+  - Pity system mechanics
+  - Rate-up guarantee mechanics
+- Support for multiple games (currently):
   - Honkai: Star Rail
   - Genshin Impact
   - Zenless Zone Zero
-- Pity system calculations
-- Rate-up probability calculations
+- Easily extendable for additional games
+- Visualization data endpoints for probability charts
 
 ## Prerequisites
 
-- Go 1.21 or later
+- Go 1.24 or later
 - Docker (optional, for containerized deployment)
 
 ## Setup
@@ -25,22 +25,18 @@ This is the backend service for the Honkai: Star Rail Warp Calculator. It provid
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/honkai-star-rail-warp-calculator.git
-cd honkai-star-rail-warp-calculator
+git clone https://github.com/sakan811/gacha-game-pull-calculator.git
+cd hsr-warp-calculator
 ```
 
-2. Run with Docker Compose (recommended):
+2. Run with Docker (recommended):
 
 ```bash
-docker-compose up
+docker pull sakanbeer88/gacha-pull-calculator-backend:latest
+docker run -p 8080:8080 sakanbeer88/gacha-pull-calculator-backend:latest
 ```
 
-This will start both the frontend and backend services:
-
-- Frontend will be available at <http://localhost:5173>
-- Backend API will be available at <http://localhost:8080>
-
-3. For local development without Docker:
+3. For local development:
 
 ```bash
 cd backend
@@ -48,15 +44,17 @@ go mod download
 go run cmd/main.go
 ```
 
+The API will be available at `http://0.0.0.0:8080/api`
+
 ## API Endpoints
 
 ### Honkai: Star Rail
 
-- `POST /api/star-rail/standard`
+- `POST /api/star_rail/standard`
   - Calculate standard banner probabilities
-- `POST /api/star-rail/limited`
-  - Calculate limited banner probabilities
-- `POST /api/star-rail/light-cone`
+- `POST /api/star_rail/limited`
+  - Calculate limited character banner probabilities
+- `POST /api/star_rail/light_cone`
   - Calculate light cone banner probabilities
 
 ### Genshin Impact
@@ -64,7 +62,7 @@ go run cmd/main.go
 - `POST /api/genshin/standard`
   - Calculate standard banner probabilities
 - `POST /api/genshin/limited`
-  - Calculate limited banner probabilities
+  - Calculate limited character banner probabilities
 - `POST /api/genshin/weapon`
   - Calculate weapon banner probabilities
 
@@ -74,10 +72,15 @@ go run cmd/main.go
   - Calculate standard banner probabilities
 - `POST /api/zenless/limited`
   - Calculate limited banner probabilities
-- `POST /api/zenless/w-engine`
+- `POST /api/zenless/w_engine`
   - Calculate W-Engine banner probabilities
 - `POST /api/zenless/bangboo`
   - Calculate Bangboo banner probabilities
+
+### Visualization
+
+- `POST /api/visualization`
+  - Get data for probability visualization charts
 
 ### Request Format
 
@@ -93,28 +96,35 @@ go run cmd/main.go
 
 ```json
 {
-  "base_probability": 0.5,
-  "rate_up_probability": 0.25
+  "total_5_star_probability": 0.8,
+  "character_probability": 0.6,
+  "rate_up_probability": 0.5,
+  "light_cone_probability": 0.2,
+  "standard_char_probability": 0.1
 }
 ```
 
-## Development
-
-### Project Structure
+## Project Structure
 
 ```
 backend/
 ├── cmd/            # Application entry point
 ├── config/         # Configuration management
 ├── internal/       # Internal packages
-│   ├── api/       # API handlers and models
-│   ├── domain/    # Core business logic
-│   ├── service/   # Business service layer
-│   ├── middleware/# HTTP middleware
-│   ├── constants/ # Application constants
-│   └── errors/    # Error handling
+│   ├── api/        # API handlers and models
+│   │   ├── handlers/  # HTTP request handlers
+│   │   ├── models/    # Request/response structures
+│   │   └── services/  # API services
+│   ├── domain/     # Core business logic
+│   ├── service/    # Business service layer
+│   ├── middleware/ # HTTP middleware
+│   ├── constants/  # Application constants
+│   ├── errors/     # Error handling
+│   └── web/        # Web-related utilities
 └── scripts/       # Utility scripts
 ```
+
+## Development
 
 ### Running Tests
 
