@@ -2,12 +2,11 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
-
 	"hsrbannercalculator/internal/api/models"
 	"hsrbannercalculator/internal/domain/banner"
 	"hsrbannercalculator/internal/errors"
 	"hsrbannercalculator/internal/service"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,170 +47,110 @@ func handleError(c *gin.Context, err error) {
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		}
-
 		return
 	}
-
 	c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 }
 
-func HandleStandardBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.StarRailStandard)
+type bannerHandler struct {
+	validateFunc  func(c *gin.Context, bannerType banner.Type) (models.ProbabilityRequest, error)
+	calculateFunc func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error)
+	bannerType    banner.Type
+}
+
+func newBannerHandler(bannerType banner.Type, calculateFunc func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error)) bannerHandler {
+	return bannerHandler{
+		validateFunc:  validateRequest,
+		calculateFunc: calculateFunc,
+		bannerType:    bannerType,
+	}
+}
+
+func (h bannerHandler) Handle(c *gin.Context) {
+	req, err := h.validateFunc(c, h.bannerType)
 	if err != nil {
 		handleError(c, err)
 		return
 	}
 
-	result, err := starRailService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
+	result, err := h.calculateFunc(req, h.bannerType)
 	if err != nil {
 		handleError(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// StarRail handlers
+func HandleStandardBannerCalculation(c *gin.Context) {
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return starRailService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
+	}
+	newBannerHandler(banner.StarRailStandard, calculateFunc).Handle(c)
 }
 
 func HandleLimitedBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.StarRailLimited)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return starRailService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	}
-
-	result, err := starRailService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.StarRailLimited, calculateFunc).Handle(c)
 }
 
 func HandleLightConeBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.StarRailLightCone)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return starRailService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.StarRailLightCone)
 	}
-
-	result, err := starRailService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.StarRailLightCone)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.StarRailLightCone, calculateFunc).Handle(c)
 }
 
+// Genshin handlers
 func HandleGenshinStandardBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.GenshinStandard)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return genshinService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
 	}
-
-	result, err := genshinService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.GenshinStandard, calculateFunc).Handle(c)
 }
 
 func HandleGenshinLimitedBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.GenshinLimited)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return genshinService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	}
-
-	result, err := genshinService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.GenshinLimited, calculateFunc).Handle(c)
 }
 
 func HandleGenshinWeaponBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.GenshinWeapon)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return genshinService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.GenshinWeapon)
 	}
-
-	result, err := genshinService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.GenshinWeapon)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.GenshinWeapon, calculateFunc).Handle(c)
 }
 
-// Zenless Zone Zero handlers.
+// Zenless handlers
 func HandleZenlessStandardBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.ZenlessStandard)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return zenlessService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
 	}
-
-	result, err := zenlessService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.ZenlessStandard, calculateFunc).Handle(c)
 }
 
 func HandleZenlessLimitedBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.ZenlessLimited)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return zenlessService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
 	}
-
-	result, err := zenlessService.CalculateLimitedBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.ZenlessLimited, calculateFunc).Handle(c)
 }
 
 func HandleZenlessWEngineBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.ZenlessWEngine)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return zenlessService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.ZenlessWEngine)
 	}
-
-	result, err := zenlessService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.ZenlessWEngine)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.ZenlessWEngine, calculateFunc).Handle(c)
 }
 
 func HandleZenlessBangbooBannerCalculation(c *gin.Context) {
-	req, err := validateRequest(c, banner.ZenlessBangboo)
-	if err != nil {
-		handleError(c, err)
-		return
+	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
+		return zenlessService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.ZenlessBangboo)
 	}
-
-	result, err := zenlessService.CalculateWeaponBanner(req.CurrentPity, req.PlannedPulls, req.Guaranteed, banner.ZenlessBangboo)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	newBannerHandler(banner.ZenlessBangboo, calculateFunc).Handle(c)
 }

@@ -2,12 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"hsrbannercalculator/internal/api/handlers"
+	"hsrbannercalculator/internal/api/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"hsrbannercalculator/internal/api/handlers"
-	"hsrbannercalculator/internal/api/models"
 
 	"github.com/stretchr/testify/assert"
 )

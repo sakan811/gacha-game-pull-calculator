@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
-
 	"hsrbannercalculator/config"
 	"hsrbannercalculator/internal/api/handlers"
 	"hsrbannercalculator/internal/constants"
 	"hsrbannercalculator/internal/middleware"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +17,16 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.Logger())
 
+	registerRoutes(r)
+
+	// Print the access URL before starting the server
+	fmt.Printf("\nWarp Calculator API is running!\nAPI is available at: \033[36mhttp://%s:%s%s\033[0m\n\n", cfg.BindAddress, cfg.Port, constants.APIPrefix)
+
+	// Start the server
+	log.Fatal(r.Run(cfg.BindAddress + ":" + cfg.Port))
+}
+
+func registerRoutes(r *gin.Engine) {
 	api := r.Group(constants.APIPrefix)
 
 	// Star Rail routes
@@ -40,10 +49,4 @@ func main() {
 	zenless.POST(constants.ZenlessBangboo, handlers.HandleZenlessBangbooBannerCalculation)
 
 	api.POST(constants.Visualization, handlers.HandleVisualizationData)
-
-	// Print the access URL before starting the server
-	fmt.Printf("\nWarp Calculator API is running!\nAPI is available at: \033[36mhttp://%s:%s%s\033[0m\n\n", cfg.BindAddress, cfg.Port, constants.APIPrefix)
-
-	// Start the server
-	log.Fatal(r.Run(cfg.BindAddress + ":" + cfg.Port))
 }

@@ -10,6 +10,7 @@ type BannerService interface {
 	CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error)
 }
 
+// Service implementations should focus on game-specific logic
 type (
 	StarRailService struct{}
 	GenshinService  struct{}
@@ -43,6 +44,7 @@ func (s *StarRailService) CalculateLimitedBanner(currentPity, plannedPulls int, 
 
 func (s *StarRailService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error) {
 	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.StarRailLightCone, currentPity, plannedPulls, guaranteed)
+
 	return map[string]interface{}{
 		"total_5_star_probability": baseProb,
 		"rate_up_probability":      rateUpProb,
@@ -70,6 +72,7 @@ func (s *GenshinService) CalculateLimitedBanner(currentPity, plannedPulls int, g
 
 func (s *GenshinService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error) {
 	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.GenshinWeapon, currentPity, plannedPulls, guaranteed)
+
 	return map[string]interface{}{
 		"total_5_star_probability": baseProb,
 		"rate_up_probability":      rateUpProb,
@@ -99,6 +102,7 @@ func (s *ZenlessService) CalculateWeaponBanner(currentPity, plannedPulls int, gu
 	// Check if it's a Bangboo banner
 	if bannerType == banner.ZenlessBangboo {
 		baseProb, rateUpProb := banner.CalculateWarpProbability(banner.ZenlessBangboo, currentPity, plannedPulls, guaranteed)
+
 		return map[string]interface{}{
 			"total_5_star_probability": baseProb,
 			"rate_up_probability":      rateUpProb,
@@ -107,6 +111,7 @@ func (s *ZenlessService) CalculateWeaponBanner(currentPity, plannedPulls int, gu
 
 	// Regular W-Engine banner
 	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.ZenlessWEngine, currentPity, plannedPulls, guaranteed)
+
 	return map[string]interface{}{
 		"total_5_star_probability": baseProb,
 		"rate_up_probability":      rateUpProb,

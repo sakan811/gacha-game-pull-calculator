@@ -1,9 +1,8 @@
 package banner
 
 import (
-	"testing"
-
 	"hsrbannercalculator/internal/domain/banner"
+	"testing"
 )
 
 func TestGetBannerTypeFromGameAndBanner(t *testing.T) {

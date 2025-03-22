@@ -59,96 +59,83 @@ func (w *WarpStats) CalculateWithPity(pulls int) float64 {
 	return probability
 }
 
-// CalculateWarpProbability calculates the probability of getting a 5* based on current pity.
-func CalculateWarpProbability(bannerType Type, currentPity, plannedPulls int, lost5050 bool) (baseProbability, rateUpProbability float64) {
-	// Get the banner configuration
+// calculateRateForPull calculates the rate for a specific pull considering pity
+func calculateRateForPull(config Config, pullNumber int) float64 {
+	rate := config.BaseRate
+
+	// Apply soft pity if applicable
+	if pullNumber >= config.SoftPityStart {
+		increasedRate := config.BaseRate + float64(pullNumber-config.SoftPityStart+1)*config.RateIncrease
+		rate = math.Min(1.0, increasedRate)
+	}
+
+	return rate
+}
+
+// calculateBaseProbability calculates the base probability for multiple pulls
+func calculateBaseProbability(config Config, currentPity, plannedPulls int) float64 {
+	// Hard pity check
+	if currentPity+plannedPulls >= config.HardPity {
+		return 1.0
+	}
+
+	// Single pull case
+	if plannedPulls == 1 {
+		pullNumber := currentPity + 1
+		return calculateRateForPull(config, pullNumber)
+	}
+
+	// Multiple pulls case
+	probability := 0.0
+	notGettingBefore := 1.0
+
+	for i := 0; i < plannedPulls; i++ {
+		pullNumber := currentPity + i + 1
+		currentRate := calculateRateForPull(config, pullNumber)
+
+		probability += notGettingBefore * currentRate
+		notGettingBefore *= (1.0 - currentRate)
+	}
+
+	return probability
+}
+
+// calculateRateUpProbability calculates rate-up probability based on banner type and 50/50 status
+func calculateRateUpProbability(bannerType Type, baseProbability float64, lost5050 bool) float64 {
 	config := GetConfig(bannerType)
 
-	// For safety, make sure the planned pulls is at least 1
+	// For standard banners, character probability is half of total
+	if bannerType == StarRailStandard || bannerType == GenshinStandard || bannerType == ZenlessStandard {
+		return baseProbability * 0.5
+	}
+
+	// For rate-up banners
+	if lost5050 {
+		return baseProbability // 100% rate-up if guaranteed
+	}
+
+	return baseProbability * config.RateUpChance
+}
+
+// CalculateWarpProbability calculates the probability of getting a 5* based on current pity.
+func CalculateWarpProbability(bannerType Type, currentPity, plannedPulls int, lost5050 bool) (baseProbability, rateUpProbability float64) {
+	// For safety, ensure planned pulls is at least 1
 	if plannedPulls < 1 {
 		plannedPulls = 1
 	}
 
-	// Hard pity check - if current pity + planned pulls reaches hard pity, return 100%
-	if currentPity+plannedPulls >= config.HardPity {
-		baseProbability = 1.0
+	// Get the banner configuration
+	config := GetConfig(bannerType)
 
-		// For Standard banner, character probability is exactly half of total
-		if bannerType == StarRailStandard || bannerType == GenshinStandard || bannerType == ZenlessStandard {
-			rateUpProbability = 0.5
-			return
-		}
+	// Calculate base probability
+	baseProbability = calculateBaseProbability(config, currentPity, plannedPulls)
 
-		// For other banners, calculate rate-up probability
-		if lost5050 {
-			rateUpProbability = 1.0 // Guaranteed if lost previous 50/50
-		} else {
-			rateUpProbability = config.RateUpChance
-		}
+	// Calculate rate-up probability
+	rateUpProbability = calculateRateUpProbability(bannerType, baseProbability, lost5050)
 
-		return
-	}
-
-	// Handle case where planned pulls is very low (e.g., 1 pull)
-	// Need to ensure we calculate base probability for a single pull
-	if plannedPulls == 1 {
-		// Calculate probability for just one pull
-		pullNumber := currentPity + 1
-		currentRate := config.BaseRate
-
-		// Apply soft pity if applicable
-		if pullNumber >= config.SoftPityStart {
-			increasedRate := config.BaseRate + float64(pullNumber-config.SoftPityStart+1)*config.RateIncrease
-			currentRate = math.Min(1.0, increasedRate)
-		}
-
-		// For a single pull, the probability is just the current rate
-		baseProbability = currentRate
-	} else {
-		// Initialize calculation variables
-		probability := 0.0
-		notGettingBefore := 1.0
-
-		// Calculate for each planned pull, considering current pity
-		for i := 0; i < plannedPulls; i++ {
-			// Current pull number including current pity
-			pullNumber := currentPity + i + 1
-			currentRate := config.BaseRate
-
-			// Apply soft pity if applicable
-			if pullNumber >= config.SoftPityStart {
-				increasedRate := config.BaseRate + float64(pullNumber-config.SoftPityStart+1)*config.RateIncrease
-				currentRate = math.Min(1.0, increasedRate)
-			}
-
-			// Calculate probability of getting 5★ on this specific pull
-			pullProbability := notGettingBefore * currentRate
-			probability += pullProbability
-
-			// Update probability of not getting 5★ before next pull
-			notGettingBefore *= (1.0 - currentRate)
-		}
-
-		// Set the base probability result
-		baseProbability = probability
-	}
-
-	// Print debug values to help diagnose issues
+	// Debug output
 	fmt.Printf("Debug - BannerType: %v, CurrentPity: %d, PlannedPulls: %d, BaseProbability: %.4f\n",
 		bannerType, currentPity, plannedPulls, baseProbability)
-
-	// For Standard banner, character probability is exactly half of total
-	if bannerType == StarRailStandard || bannerType == GenshinStandard || bannerType == ZenlessStandard {
-		rateUpProbability = baseProbability * 0.5
-		return
-	}
-
-	// For other banners with rate-up
-	if lost5050 {
-		rateUpProbability = baseProbability // 100% rate-up if guaranteed
-	} else {
-		rateUpProbability = baseProbability * config.RateUpChance
-	}
 
 	return
 }
