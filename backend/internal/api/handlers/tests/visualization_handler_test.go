@@ -3,11 +3,12 @@ package handlers_test
 import (
 	"bytes"
 	"encoding/json"
-	"hsrbannercalculator/internal/api/handlers"
-	"hsrbannercalculator/internal/api/services"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"hsrbannercalculator/internal/api/handlers"
+	"hsrbannercalculator/internal/api/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+
 	"hsrbannercalculator/internal/api/models"
 	"hsrbannercalculator/internal/domain/banner"
 	"hsrbannercalculator/internal/errors"
 	"hsrbannercalculator/internal/service"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,8 +1,9 @@
 package services_test
 
 import (
-	"hsrbannercalculator/internal/api/services"
 	"testing"
+
+	"hsrbannercalculator/internal/api/services"
 
 	"github.com/stretchr/testify/assert"
 )
