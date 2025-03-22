@@ -1,6 +1,12 @@
-# Honkai Star Rail 5-Star Warp Probability Calculator
+# Gacha Game Pull Probability Calculator
 
-This is a simple calculator to help you estimate the probability of getting a 5-star character in Honkai Star Rail.
+This is a simple calculator to help you estimate the probability of getting a 5-star character in Gacha Games.
+
+Supporting Games:
+
+- Honkai: Star Rail
+- Genshin Impact
+- Zenless Zone Zero
 
 ## Status
 
@@ -10,14 +16,14 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 [![Binary Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/binary-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/binary-test.yml)
 
-## How to use
+## How to Use the Calculator
 
 1. Download the executable file from the [hsr-warp-calculator-app](./hsr-warp-calculator-app/) folder depending on your operating system.
     - [Windows](./hsr-warp-calculator-app/windows/hsrbannercalc.exe)
     - [MacOS Intel](./hsr-warp-calculator-app/macos-intel/HSRBannerCalc.app/Contents/MacOS/hsrbannercalc)
     - [MacOS Apple Silicon](./hsr-warp-calculator-app/macos-silicon/HSRBannerCalc.app/Contents/MacOS/hsrbannercalc)
 2. Run the executable file.
-3. Navigate to the <http://localhost:8080> in your browser.
+3. Navigate to the <http://localhost:5173> in your browser.
 
 ## Disclaimer
 
