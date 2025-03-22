@@ -8,29 +8,31 @@ BACKEND_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
 ORIGINAL_DIR="$(pwd)"
 cd "$BACKEND_DIR"
 
-# Set up GOPATH and add the binary directory to PATH
-GOPATH=${GOPATH:-$(go env GOPATH)}
-export PATH=$GOPATH/bin:$PATH
+# Use native Go environment variables for Windows compatibility
+GOROOT=$(go env GOROOT)
+GOPATH=$(go env GOPATH)
+export GOROOT GOPATH
+export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
 
 # Install golangci-lint if not already installed
 if ! command -v golangci-lint &> /dev/null; then
     echo "Installing golangci-lint..."
-    go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    GO111MODULE=on go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 fi
 
-# Install gofumpt if not already installed
-if ! command -v gofumpt &> /dev/null; then
+# Install gofumpt with explicit path check
+if ! command -v gofumpt >/dev/null; then
     echo "Installing gofumpt..."
-    go install mvdan.cc/gofumpt@latest
+    GO111MODULE=on go install mvdan.cc/gofumpt@latest
 fi
 
-# Run gofumpt to format the code
+# Cross-platform file processing
 echo "Running gofumpt..."
 gofumpt -l -w .
 
-# Run golangci-lint
+# Run golangci-lint with Windows-compatible path
 echo "Running golangci-lint..."
-golangci-lint run --fix
+golangci-lint run --fix ./...
 
 # Return to original directory
 cd "$ORIGINAL_DIR"
