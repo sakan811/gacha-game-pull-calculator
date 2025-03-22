@@ -7,7 +7,7 @@ import (
 type BannerService interface {
 	CalculateStandardBanner(currentPity, plannedPulls int) (map[string]interface{}, error)
 	CalculateLimitedBanner(currentPity, plannedPulls int, guaranteed bool) (map[string]interface{}, error)
-	CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool) (map[string]interface{}, error)
+	CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error)
 }
 
 type (
@@ -41,9 +41,8 @@ func (s *StarRailService) CalculateLimitedBanner(currentPity, plannedPulls int, 
 	}, nil
 }
 
-func (s *StarRailService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool) (map[string]interface{}, error) {
+func (s *StarRailService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error) {
 	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.StarRailLightCone, currentPity, plannedPulls, guaranteed)
-
 	return map[string]interface{}{
 		"total_5_star_probability": baseProb,
 		"rate_up_probability":      rateUpProb,
@@ -69,9 +68,8 @@ func (s *GenshinService) CalculateLimitedBanner(currentPity, plannedPulls int, g
 	}, nil
 }
 
-func (s *GenshinService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool) (map[string]interface{}, error) {
+func (s *GenshinService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error) {
 	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.GenshinWeapon, currentPity, plannedPulls, guaranteed)
-
 	return map[string]interface{}{
 		"total_5_star_probability": baseProb,
 		"rate_up_probability":      rateUpProb,
@@ -97,9 +95,18 @@ func (s *ZenlessService) CalculateLimitedBanner(currentPity, plannedPulls int, g
 	}, nil
 }
 
-func (s *ZenlessService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool) (map[string]interface{}, error) {
-	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.ZenlessWEngine, currentPity, plannedPulls, guaranteed)
+func (s *ZenlessService) CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error) {
+	// Check if it's a Bangboo banner
+	if bannerType == banner.ZenlessBangboo {
+		baseProb, rateUpProb := banner.CalculateWarpProbability(banner.ZenlessBangboo, currentPity, plannedPulls, guaranteed)
+		return map[string]interface{}{
+			"total_5_star_probability": baseProb,
+			"rate_up_probability":      rateUpProb,
+		}, nil
+	}
 
+	// Regular W-Engine banner
+	baseProb, rateUpProb := banner.CalculateWarpProbability(banner.ZenlessWEngine, currentPity, plannedPulls, guaranteed)
 	return map[string]interface{}{
 		"total_5_star_probability": baseProb,
 		"rate_up_probability":      rateUpProb,
