@@ -26,7 +26,7 @@ A backend service for calculating gacha pull probabilities in various gacha game
 
 ```bash
 git clone https://github.com/sakan811/gacha-game-pull-calculator.git
-cd hsr-warp-calculator
+cd gacha-game-pull-calculator
 ```
 
 2. Run with Docker (recommended):
