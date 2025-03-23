@@ -65,8 +65,7 @@ export interface ProbabilityPlotMethods {
 interface Props {
   gameType: GameType
   bannerType: BannerType
-  currentPity: number
-  plannedPulls: number
+  totalPulls: number
   result: {
     total_5_star_probability: number
     character_probability?: number
@@ -107,6 +106,11 @@ interface VisualizationData {
   planned_pulls: number;
 }
 
+interface DataPoint {
+  x: number;
+  y: number;
+}
+
 // Fetch initial visualization data
 onMounted(() => {
   fetchVisualizationData()
@@ -122,8 +126,9 @@ async function fetchVisualizationData() {
       body: JSON.stringify({
         game_type: props.gameType,
         banner_type: props.bannerType,
-        current_pity: props.currentPity,
-        planned_pulls: props.plannedPulls
+        current_pity: 0,
+        planned_pulls: props.totalPulls,
+        guaranteed: false
       }),
     })
 
@@ -193,10 +198,14 @@ const distributionChartData = computed<ChartData<'line'>>(() => ({
   labels: chartData.value?.labels ?? [],
   datasets: [{
     label: 'Pull Distribution',
-    data: (chartData.value?.datasets[0].data ?? []) as number[],
+    data: (chartData.value?.datasets[0].data ?? []).map((y, i) => ({
+      x: i + 1,
+      y: y as number
+    })) as DataPoint[],
     borderColor: 'rgb(75, 192, 192)',
     tension: 0.1,
-    fill: false
+    fill: false,
+    parsing: false
   }]
 }))
 
@@ -204,31 +213,43 @@ const cumulativeChartData = computed<ChartData<'line'>>(() => ({
   labels: chartData.value?.labels ?? [],
   datasets: [{
     label: 'Cumulative Probability',
-    data: (chartData.value?.datasets[1].data ?? []) as number[],
+    data: (chartData.value?.datasets[1].data ?? []).map((y, i) => ({
+      x: i + 1,
+      y: y as number
+    })) as DataPoint[],
     borderColor: 'rgb(153, 102, 255)',
     tension: 0.1,
-    fill: false
+    fill: false,
+    parsing: false
   }]
 }))
 
 const chartAnnotations = computed(() => ({
   totalPulls: {
     type: 'line' as const,
-    xMin: (visualizationData.value?.current_pity ?? 0) + (visualizationData.value?.planned_pulls ?? 0),
-    xMax: (visualizationData.value?.current_pity ?? 0) + (visualizationData.value?.planned_pulls ?? 0),
+    xMin: props.totalPulls,
+    xMax: props.totalPulls,
     borderColor: 'rgba(255, 0, 0, 0.8)',
     borderWidth: 2,
+    borderDash: [6, 6],
+    drawTime: 'afterDatasetsDraw' as const,
     label: {
-      content: `Total Pulls: ${(visualizationData.value?.current_pity ?? 0) + (visualizationData.value?.planned_pulls ?? 0)}`,
+      content: `Total Pulls: ${props.totalPulls}`,
       display: true,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      color: 'rgb(255, 0, 0)'
+      position: 'start' as const,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      color: 'rgb(255, 0, 0)',
+      font: {
+        weight: 'bold' as const
+      },
+      padding: 6,
+      yAdjust: -10
     }
   },
   softPity: {
     type: 'line' as const,
-    xMin: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 64 : 74),
-    xMax: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 64 : 74),
+    xMin: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 65 : 74),
+    xMax: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 65 : 74),
     borderColor: 'rgba(255, 165, 0, 0.5)',
     borderWidth: 2,
     borderDash: [5, 5],
@@ -242,8 +263,8 @@ const chartAnnotations = computed(() => ({
   },
   hardPity: {
     type: 'line' as const,
-    xMin: visualizationData.value?.hard_pity ?? 90,
-    xMax: visualizationData.value?.hard_pity ?? 90,
+    xMin: visualizationData.value?.hard_pity ?? (props.bannerType === 'light_cone' ? 80 : 90),
+    xMax: visualizationData.value?.hard_pity ?? (props.bannerType === 'light_cone' ? 80 : 90),
     borderColor: 'rgba(255, 69, 0, 0.5)',
     borderWidth: 2,
     borderDash: [5, 5],
@@ -268,9 +289,18 @@ const baseChartOptions = computed<ChartOptions<'line'>>(() => ({
       }
     },
     x: {
+      type: 'linear' as const,
+      min: 0,
+      offset: false,
+      grid: {
+        offset: false
+      },
       title: {
         display: true,
         text: 'Number of Pulls'
+      },
+      ticks: {
+        stepSize: 1
       }
     }
   },

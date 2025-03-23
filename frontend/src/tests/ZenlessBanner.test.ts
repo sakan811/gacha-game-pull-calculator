@@ -42,8 +42,7 @@ describe('Zenless Zone Zero Banner Calculations', () => {
   it('should calculate standard banner probabilities', async () => {
     await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
     await fireEvent.update(screen.getByLabelText('Banner Type'), 'standard');
-    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
-    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
     
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
@@ -58,8 +57,7 @@ describe('Zenless Zone Zero Banner Calculations', () => {
   it('should calculate limited banner probabilities', async () => {
     await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
     await fireEvent.update(screen.getByLabelText('Banner Type'), 'limited');
-    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
-    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
     
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
@@ -72,8 +70,7 @@ describe('Zenless Zone Zero Banner Calculations', () => {
   it('should calculate W-Engine banner probabilities', async () => {
     await fireEvent.update(screen.getByLabelText('Game'), 'zenless');
     await fireEvent.update(screen.getByLabelText('Banner Type'), 'w_engine');
-    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
-    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
     
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');

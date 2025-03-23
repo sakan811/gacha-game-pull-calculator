@@ -60,9 +60,9 @@ describe('ProbabilityResult.vue', () => {
       props: {
         ...mockBannerProps.standard,
         result: {
-          total_5_star_probability: 15.5,
-          character_probability: 7.75,
-          light_cone_probability: 7.75
+          total_5_star_probability: 0.155,
+          character_probability: 0.0775,
+          light_cone_probability: 0.0775
         }
       }
     });

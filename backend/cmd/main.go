@@ -2,63 +2,51 @@ package main
 
 import (
 	"fmt"
-	"log"
-
+	"hsrbannercalculator/config"
 	"hsrbannercalculator/internal/api/handlers"
-	"hsrbannercalculator/internal/web/embedded"
+	"hsrbannercalculator/internal/constants"
+	"hsrbannercalculator/internal/middleware"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Set Gin to release mode
-	gin.SetMode(gin.ReleaseMode)
+	cfg := config.LoadConfig()
 
 	r := gin.Default()
+	r.Use(middleware.Logger())
 
-	// API routes
-	api := r.Group("/api")
-	{
-		// Star Rail routes
-		starRail := api.Group("/star_rail")
-		{
-			starRail.POST("/standard", handlers.HandleStandardBannerCalculation)
-			starRail.POST("/limited", handlers.HandleLimitedBannerCalculation)
-			starRail.POST("/light_cone", handlers.HandleLightConeBannerCalculation)
-		}
-
-		// Genshin routes
-		genshin := api.Group("/genshin")
-		{
-			genshin.POST("/standard", handlers.HandleGenshinStandardBannerCalculation)
-			genshin.POST("/limited", handlers.HandleGenshinLimitedBannerCalculation)
-			genshin.POST("/weapon", handlers.HandleGenshinWeaponBannerCalculation)
-		}
-
-		// Zenless Zone Zero routes
-		zenless := api.Group("/zenless")
-		{
-			zenless.POST("/standard", handlers.HandleZenlessStandardBannerCalculation)
-			zenless.POST("/limited", handlers.HandleZenlessLimitedBannerCalculation)
-			zenless.POST("/w_engine", handlers.HandleZenlessWEngineBannerCalculation)
-			zenless.POST("/bangboo", handlers.HandleZenlessBangbooBannerCalculation)
-		}
-
-		api.POST("/visualization", handlers.HandleVisualizationData)
-	}
-
-	// Serve embedded static files
-	staticFS := embedded.GetFileSystem()
-	r.StaticFS("/", staticFS)
-
-	// Ensure index.html is served for all unmatched routes
-	r.NoRoute(func(c *gin.Context) {
-		c.FileFromFS("/index.html", staticFS)
-	})
+	registerRoutes(r)
 
 	// Print the access URL before starting the server
-	fmt.Printf("\nWarp Calculator is running!\nOpen your browser and visit: \033[36mhttp://localhost:8080\033[0m\n\n")
+	fmt.Printf("\nWarp Calculator API is running!\nAPI is available at: \033[36mhttp://%s:%s%s\033[0m\n\n", cfg.BindAddress, cfg.Port, constants.APIPrefix)
 
 	// Start the server
-	log.Fatal(r.Run(":8080"))
+	log.Fatal(r.Run(cfg.BindAddress + ":" + cfg.Port))
+}
+
+func registerRoutes(r *gin.Engine) {
+	api := r.Group(constants.APIPrefix)
+
+	// Star Rail routes
+	starRail := api.Group(constants.StarRailPrefix)
+	starRail.POST(constants.StarRailStandard, handlers.HandleStandardBannerCalculation)
+	starRail.POST(constants.StarRailLimited, handlers.HandleLimitedBannerCalculation)
+	starRail.POST(constants.StarRailLightCone, handlers.HandleLightConeBannerCalculation)
+
+	// Genshin routes
+	genshin := api.Group(constants.GenshinPrefix)
+	genshin.POST(constants.GenshinStandard, handlers.HandleGenshinStandardBannerCalculation)
+	genshin.POST(constants.GenshinLimited, handlers.HandleGenshinLimitedBannerCalculation)
+	genshin.POST(constants.GenshinWeapon, handlers.HandleGenshinWeaponBannerCalculation)
+
+	// Zenless Zone Zero routes
+	zenless := api.Group(constants.ZenlessPrefix)
+	zenless.POST(constants.ZenlessStandard, handlers.HandleZenlessStandardBannerCalculation)
+	zenless.POST(constants.ZenlessLimited, handlers.HandleZenlessLimitedBannerCalculation)
+	zenless.POST(constants.ZenlessWEngine, handlers.HandleZenlessWEngineBannerCalculation)
+	zenless.POST(constants.ZenlessBangboo, handlers.HandleZenlessBangbooBannerCalculation)
+
+	api.POST(constants.Visualization, handlers.HandleVisualizationData)
 }

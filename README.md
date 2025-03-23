@@ -1,6 +1,12 @@
-# Honkai Star Rail 5-Star Warp Probability Calculator
+# Gacha Game Pull Probability Calculator
 
-This is a simple calculator to help you estimate the probability of getting a 5-star character in Honkai Star Rail.
+This is a simple calculator to help you estimate the probability of getting a 5-star character in Gacha Games.
+
+Supporting Games:
+
+- Honkai: Star Rail
+- Genshin Impact
+- Zenless Zone Zero
 
 ## Status
 
@@ -8,25 +14,29 @@ This is a simple calculator to help you estimate the probability of getting a 5-
 
 [![Frontend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml)
 
-[![Binary Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/binary-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/binary-test.yml)
+[![Docker Build](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml)
 
-## How to use
+## How to Use the Calculator
 
-1. Download the executable file from the [hsr-warp-calculator-app](./hsr-warp-calculator-app/) folder depending on your operating system.
-    - [Windows](./hsr-warp-calculator-app/windows/hsrbannercalc.exe)
-    - [MacOS Intel](./hsr-warp-calculator-app/macos-intel/HSRBannerCalc.app/Contents/MacOS/hsrbannercalc)
-    - [MacOS Apple Silicon](./hsr-warp-calculator-app/macos-silicon/HSRBannerCalc.app/Contents/MacOS/hsrbannercalc)
-2. Run the executable file.
-3. Navigate to the <http://localhost:8080> in your browser.
+1. Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed on your system.
+2. Download the [docker-compose.yml](./docker-compose.yml) file from this repository.
+3. Place the `docker-compose.yml` in any directory of your choice.
+4. Run the following command to start the application:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+5. Navigate to <http://localhost:5173> in your browser to access the calculator.
+6. When you're done, you can stop the application with:
+
+   ```bash
+   docker-compose down
+   ```
 
 ## Disclaimer
 
 Assumes that the rate-increase is 7% for all banners in Genshin Impact, Honkai Star Rail, and Zenless Zone Zero.
-
-## General Guidelines
-
-- **Current Pity** is the number of pulls you have done without getting a 5-star character.
-- **Planned Pulls** is the number of pulls you plan to do.
 
 ## Probability Statistics Visualizations
 

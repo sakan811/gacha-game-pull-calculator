@@ -25,8 +25,7 @@ describe('App Component', () => {
     it('should render initial components', () => {
       expect(screen.getByText('Gacha Game Pull Probability Calculator')).toBeTruthy();
       expect(screen.getByLabelText('Banner Type')).toBeTruthy();
-      expect(screen.getByLabelText('Current Pity')).toBeTruthy();
-      expect(screen.getByLabelText('Planned Pulls')).toBeTruthy();
+      expect(screen.getByLabelText('Pulls')).toBeTruthy();
     });
 
     it('should not show plots and results initially', () => {

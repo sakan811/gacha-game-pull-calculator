@@ -27,7 +27,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: process.env.VITE_API_URL || 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path,
@@ -46,6 +46,8 @@ export default defineConfig({
     }
   },
   define: {
-    'process.env': {}
+    'process.env': Object.fromEntries(
+      Object.entries(process.env).filter(([key]) => key.startsWith('VITE_'))
+    )
   }
 })

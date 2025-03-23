@@ -23,15 +23,9 @@ describe('Form Validation', () => {
   });
 
   it('should validate form inputs', async () => {
-    const pityInput = screen.getByLabelText('Current Pity') as HTMLInputElement;
-    const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
+    const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
 
     // Test invalid values
-    await fireEvent.update(pityInput, '-1');
-    // Wait for Vue reactivity
-    await nextTick();
-    expect(pityInput.value).toBe('0');
-
     await fireEvent.update(pullsInput, '0');
     // Wait for Vue reactivity
     await nextTick();
@@ -45,16 +39,11 @@ describe('Form Validation', () => {
   });
 
   it('should validate maximum values', async () => {
-    const pityInput = screen.getByLabelText('Current Pity') as HTMLInputElement;
-    const pullsInput = screen.getByLabelText('Planned Pulls') as HTMLInputElement;
+    const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
 
     // Test values above maximum
-    await fireEvent.update(pityInput, '100');
-    await nextTick();
-    expect(pityInput.value).toBe('89'); // Max pity is 89
-
     await fireEvent.update(pullsInput, '1000');
     await nextTick();
-    expect(pullsInput.value).toBe('200'); // Max planned pulls is 200
+    expect(pullsInput.value).toBe('200'); // Max pulls is 200
   });
 }); 

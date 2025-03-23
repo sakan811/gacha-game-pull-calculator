@@ -1,9 +1,8 @@
 package banner
 
 import (
-	"testing"
-
 	"hsrbannercalculator/internal/domain/banner"
+	"testing"
 )
 
 func TestGetBannerTypeFromGameAndBanner(t *testing.T) {
@@ -53,13 +52,13 @@ func TestGetBannerTypeFromGameAndBanner(t *testing.T) {
 			name:       "invalid game type",
 			gameType:   "invalid",
 			bannerType: "standard",
-			want:       banner.StarRailStandard,
+			want:       banner.Unknown,
 		},
 		{
 			name:       "invalid banner type",
 			gameType:   "star_rail",
 			bannerType: "invalid",
-			want:       banner.StarRailStandard,
+			want:       banner.Unknown,
 		},
 	}
 

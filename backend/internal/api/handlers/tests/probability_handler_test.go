@@ -2,12 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"hsrbannercalculator/internal/api/handlers"
+	"hsrbannercalculator/internal/api/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"hsrbannercalculator/internal/api/handlers"
-	"hsrbannercalculator/internal/api/models"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -110,6 +109,7 @@ func TestHandleLightConeBannerCalculation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			w := performRequest(router, "POST", "/light_cone", tt.request)
 			assert.Equal(t, tt.expectedStatus, w.Code)
+
 			if tt.expectedStatus == http.StatusOK {
 				assertValidResponse(t, w, false)
 			}

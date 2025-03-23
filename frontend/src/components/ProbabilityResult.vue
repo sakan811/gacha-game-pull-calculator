@@ -5,7 +5,7 @@
       <div class="result-item">
         <dt class="form-label">Total 5★ Probability</dt>
         <dd class="result-value">
-          {{ formatProbability(result.total_5_star_probability) }}%
+          {{ formatProbability(result.total_5_star_probability) }}
         </dd>
       </div>
 
@@ -13,13 +13,13 @@
         <div class="result-item">
           <dt class="form-label">Character Probability</dt>
           <dd class="result-value">
-            {{ formatProbability(result.character_probability) }}%
+            {{ formatProbability(result.character_probability) }}
           </dd>
         </div>
         <div class="result-item">
           <dt class="form-label">{{ getEquipmentLabel }} Probability</dt>
           <dd class="result-value">
-            {{ formatProbability(result.light_cone_probability) }}%
+            {{ formatProbability(result.light_cone_probability) }}
           </dd>
         </div>
       </template>
@@ -28,7 +28,7 @@
         <div class="result-item">
           <dt class="form-label">Rate-Up Probability</dt>
           <dd class="result-value">
-            {{ formatProbability(result.rate_up_probability) }}%
+            {{ formatProbability(result.rate_up_probability) }}
           </dd>
         </div>
       </template>
@@ -65,11 +65,11 @@ const getEquipmentLabel = computed(() => {
   }
 })
 
+console.log(props.result)
+
 function formatProbability(value?: number): string {
-  return value?.toFixed(2) ?? '0.00'
+  if (value === undefined || value === null) return '0.00%';
+  // Convert decimal to percentage by multiplying by 100
+  return (value * 100).toFixed(2) + '%';
 }
 </script>
-
-<style>
-/* Styles moved to app.css */
-</style> 

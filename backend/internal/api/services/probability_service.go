@@ -66,7 +66,7 @@ func CalculateGenshinWeaponBannerProbability(currentPity, plannedPulls int, guar
 	}
 }
 
-// Zenless Zone Zero banner probability calculations
+// Zenless Zone Zero banner probability calculations.
 func CalculateZenlessStandardBannerProbability(currentPity, plannedPulls int) models.ProbabilityResponse {
 	stats := banner.NewWarpStats(banner.ZenlessStandard, currentPity, false)
 	totalProb := stats.CalculateWithPity(currentPity + plannedPulls)

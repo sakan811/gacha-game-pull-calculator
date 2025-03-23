@@ -42,8 +42,7 @@ describe('Star Rail Banner Calculations', () => {
   it('should calculate standard banner probabilities', async () => {
     await fireEvent.update(screen.getByLabelText('Game'), 'star_rail');
     await fireEvent.update(screen.getByLabelText('Banner Type'), 'standard');
-    await fireEvent.update(screen.getByLabelText('Current Pity'), '70');
-    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
     
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
@@ -57,8 +56,7 @@ describe('Star Rail Banner Calculations', () => {
   it('should calculate limited banner probabilities', async () => {
     await fireEvent.update(screen.getByLabelText('Game'), 'star_rail');
     await fireEvent.update(screen.getByLabelText('Banner Type'), 'limited');
-    await fireEvent.update(screen.getByLabelText('Current Pity'), '80');
-    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
     
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');
@@ -71,8 +69,7 @@ describe('Star Rail Banner Calculations', () => {
   it('should calculate light cone banner probabilities', async () => {
     await fireEvent.update(screen.getByLabelText('Game'), 'star_rail');
     await fireEvent.update(screen.getByLabelText('Banner Type'), 'light_cone');
-    await fireEvent.update(screen.getByLabelText('Current Pity'), '65');
-    await fireEvent.update(screen.getByLabelText('Planned Pulls'), '10');
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
     
     await waitFor(() => {
       const results = screen.getByTestId('probability-results');

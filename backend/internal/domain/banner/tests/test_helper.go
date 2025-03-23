@@ -6,8 +6,8 @@ import (
 )
 
 type testCase struct {
-	name     string
 	testFunc func(*testing.T)
+	name     string
 }
 
 func almostEqual(a, b float64) bool {

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ${DOCKERHUB_USERNAME:-username}/gacha-pull-calculator-frontend:latest
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://backend:8080
+    depends_on:
+      - backend
+
+  backend:
+    image: ${DOCKERHUB_USERNAME:-username}/gacha-pull-calculator-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - GIN_MODE=debug
+      - GIN_BIND=0.0.0.0 

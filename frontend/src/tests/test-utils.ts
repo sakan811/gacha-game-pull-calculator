@@ -17,11 +17,11 @@ export const mockVisualizationData = {
 };
 
 export const mockCalculationResponse = {
-  total_5_star_probability: 15.50,
-  character_probability: 7.75,
-  light_cone_probability: 7.75,
-  rate_up_probability: 10.00,
-  standard_char_probability: 7.75
+  total_5_star_probability: 0.1550,
+  character_probability: 0.0775,
+  light_cone_probability: 0.0775,
+  rate_up_probability: 0.1000,
+  standard_char_probability: 0.0775
 };
 
 // Create a default handler for all game types and banner types
