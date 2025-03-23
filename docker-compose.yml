@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    image: ${DOCKERHUB_USERNAME:-username}/gacha-pull-calculator-frontend:latest
+    image: sakanbeer88/gacha-pull-calculator-frontend:latest
     ports:
       - "5173:5173"
     volumes:
@@ -14,7 +14,7 @@ services:
       - backend
 
   backend:
-    image: ${DOCKERHUB_USERNAME:-username}/gacha-pull-calculator-backend:latest
+    image: sakanbeer88/gacha-pull-calculator-backend:latest
     ports:
       - "8080:8080"
     environment:
