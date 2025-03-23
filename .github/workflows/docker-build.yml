@@ -8,6 +8,8 @@ on:
 permissions:
   contents: read
   packages: write
+  actions: write  # For build cache
+  checks: write   # For status updates
 
 jobs:
   build:

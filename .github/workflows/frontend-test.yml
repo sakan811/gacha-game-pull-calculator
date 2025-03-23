@@ -34,3 +34,7 @@ jobs:
 
     - name: Run tests
       run: npm test
+
+permissions:
+  contents: read
+  actions: write  # For npm cache
