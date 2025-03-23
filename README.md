@@ -14,8 +14,6 @@ Supporting Games:
 
 [![Frontend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml)
 
-[![Binary Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/binary-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/binary-test.yml)
-
 ## How to Use the Calculator
 
 1. Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed on your system.
