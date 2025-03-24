@@ -1,6 +1,12 @@
-export type GameType = 'genshin' | 'star_rail' | 'zenless';
+export type GameType = "genshin" | "star_rail" | "zenless";
 
-export type BannerType = 'standard' | 'limited' | 'light_cone' | 'weapon' | 'w_engine' | 'bangboo';
+export type BannerType =
+  | "standard"
+  | "limited"
+  | "light_cone"
+  | "weapon"
+  | "w_engine"
+  | "bangboo";
 
 export interface BannerRequest {
   current_pity: number;
@@ -22,25 +28,25 @@ export interface CalculateRequest {
 }
 
 export interface GameBanner {
-  id: string
-  name: string
-  type: 'character' | 'weapon' | 'standard'
-  baseRate: number
-  softPity: number
-  hardPity: number
-  rateUpGuarantee: boolean
+  id: string;
+  name: string;
+  type: "character" | "weapon" | "standard";
+  baseRate: number;
+  softPity: number;
+  hardPity: number;
+  rateUpGuarantee: boolean;
 }
 
 export interface CalculatorInput {
-  currentPity: number
-  plannedPulls: number
-  hasGuarantee: boolean
-  selectedGame: string
-  selectedBanner: string
+  currentPity: number;
+  plannedPulls: number;
+  hasGuarantee: boolean;
+  selectedGame: string;
+  selectedBanner: string;
 }
 
 export interface ProbabilityResult {
-  overallProbability: number
-  rateUpProbability: number
-  expectedPulls: number
+  overallProbability: number;
+  rateUpProbability: number;
+  expectedPulls: number;
 }
