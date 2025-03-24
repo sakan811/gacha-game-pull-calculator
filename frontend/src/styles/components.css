@@ -1,6 +1,22 @@
+/* Base Component Styles */
+.base-container {
+  width: 100%;
+  min-width: 300px;
+  height: 100%;
+  min-height: 320px;
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-md);
+  transition: transform 200ms;
+}
+
 /* Form Components */
 .form-group {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .form-label {
@@ -34,45 +50,4 @@
   color: var(--text-primary);
   margin-bottom: var(--spacing-sm);
   text-align: center;
-}
-
-/* Results Components */
-.results-container {
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  transition: transform 200ms;
-}
-
-.result-item {
-  background-color: #F8FAFC;
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
-  transition: all 200ms;
-}
-
-.calculator-wrapper {
-  width: 100%;
-  min-width: 300px;
-  height: 100%;
-  min-height: 320px;
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  transition: transform 200ms;
-}
-
-.results-container {
-  width: 100%;
-  min-width: 300px;
-  height: 100%;
-  min-height: 320px;
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  transition: transform 200ms;
 }

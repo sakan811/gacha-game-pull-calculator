@@ -1,5 +1,5 @@
 <template>
-  <div class="results-container" data-testid="probability-results">
+  <div class="base-container" data-testid="probability-results">
     <h3 class="results-title">Probability Results</h3>
     <dl class="results-text">
       <div class="result-item">
