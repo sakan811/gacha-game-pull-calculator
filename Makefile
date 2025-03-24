@@ -18,7 +18,7 @@ format-frontend:
 # Backend commands
 .PHONY: test-backend
 test-backend:
-	cd $(BACKEND_DIR) && go test ./...
+	cd $(BACKEND_DIR) && go test -v ./...
 
 .PHONY: lint-backend
 lint-backend:
