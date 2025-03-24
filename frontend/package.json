@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "lint": "npx eslint .",
+    "lint": "npx eslint . --fix",
     "format": "npx prettier . --write"
   },
   "dependencies": {

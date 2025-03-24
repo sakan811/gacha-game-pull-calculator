@@ -54,12 +54,12 @@ const props = defineProps<Props>();
 
 const getEquipmentLabel = computed(() => {
   switch (props.gameType) {
-    case "genshin":
-      return "Weapon";
-    case "zenless":
-      return "W-Engine";
-    default:
-      return "Light Cone";
+  case "genshin":
+    return "Weapon";
+  case "zenless":
+    return "W-Engine";
+  default:
+    return "Light Cone";
   }
 });
 
