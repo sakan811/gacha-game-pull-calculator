@@ -3,6 +3,7 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import pluginVue from 'eslint-plugin-vue';
+import * as espreeParser from 'espree';
 import globals from 'globals';
 
 export default tseslint.config(
@@ -10,7 +11,13 @@ export default tseslint.config(
     files: ["**/*.{js,ts,vue}"],
     ignores: ["node_modules/", "dist/"],
     languageOptions: {
-      parser: tseslint.parser,
+      parser: espreeParser,
+      parserOptions: {
+        parser: tseslint.parser,
+        extraFileExtensions: ['.vue'],
+        ecmaVersion: 'latest',
+        sourceType: 'module'
+      },
       sourceType: 'module',
       globals: {
         ...globals.browser,

@@ -42,8 +42,8 @@ describe("ProbabilityPlot Component", () => {
   beforeEach(() => setupResizeObserverMock(vi));
 
   // Add return type for renderComponent
-  const renderComponent = (props = mockBannerProps.standard) => {
-    return render(ProbabilityPlot, { props }) as unknown as {
+  const renderComponent = (_props: Partial<typeof mockBannerProps.standard>) => {
+    return render(ProbabilityPlot, { _props }) as unknown as {
       container: HTMLElement;
       rerender: (props: any) => void;
     };
