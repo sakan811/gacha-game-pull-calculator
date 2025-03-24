@@ -51,4 +51,4 @@ if (typeof CustomEvent === 'undefined') {
 // Clean up after each test
 afterEach(() => {
   vi.clearAllMocks();
-}); 
+});

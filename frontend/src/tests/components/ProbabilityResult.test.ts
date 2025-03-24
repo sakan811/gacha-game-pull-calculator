@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/vue';
 import { describe, it, expect } from 'vitest';
-import ProbabilityResult from '../components/ProbabilityResult.vue';
-import { mockBannerProps } from './test-utils';
+import ProbabilityResult from '../../components/ProbabilityResult.vue';
+import { mockBannerProps } from '../utils/test-utils';
 
 describe('ProbabilityResult.vue', () => {
   it('should display correct labels for Star Rail standard banner', () => {
@@ -70,4 +70,4 @@ describe('ProbabilityResult.vue', () => {
     expect(screen.getByText('15.50%')).toBeTruthy();
     expect(screen.getAllByText('7.75%').length).toBe(2);
   });
-}); 
+});
