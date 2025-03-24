@@ -52,7 +52,7 @@ export function getChartAnnotations(
         color: "rgb(255, 0, 0)",
         font: { weight: "bold" as const },
         padding: 6,
-        yAdjust: -10,
+        yAdjust: -100,
       },
     },
     softPity: {
