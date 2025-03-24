@@ -1,3 +1,16 @@
+/* Base Component Styles */
+.base-container {
+  width: 100%;
+  min-width: 300px;
+  height: 100%;
+  min-height: 320px;
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-md);
+  transition: transform 200ms;
+}
+
 /* Form Components */
 .form-group {
   margin-bottom: var(--spacing-sm);
@@ -23,30 +36,14 @@
   background-color: var(--card-background);
 }
 
-/* Container Components */
+/* Calculator Components */
 .calculator-wrapper {
-  width: 100%;
-  min-width: 300px;
-  height: 100%;
-  min-height: 320px;
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  transition: transform 200ms;
+  composes: base-container;
 }
 
 /* Results Components */
 .results-container {
-  width: 100%;
-  min-width: 300px;
-  height: 100%;
-  min-height: 320px;
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  transition: transform 200ms;
+  composes: base-container;
 }
 
 .result-item {
