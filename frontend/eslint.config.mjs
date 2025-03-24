@@ -14,10 +14,13 @@ export default tseslint.config(
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: './tsconfig.json',
+        project: ['./tsconfig.json', './tsconfig.node.json'],
         extraFileExtensions: ['.vue'],
         parser: '@typescript-eslint/parser',
         tsconfigRootDir: '.',
+        ecmaFeatures: {
+          jsx: true
+        }
       },
       sourceType: 'module',
       globals: {
@@ -33,6 +36,12 @@ export default tseslint.config(
         it: true,
         expect: true,
         vi: true
+      }
+    },
+    settings: {
+      'import/resolver': {
+        typescript: true,
+        node: true
       }
     },
     processor: pluginVue.processors['.vue'],

@@ -43,9 +43,9 @@ describe("ProbabilityPlot Component", () => {
 
   // Add return type for renderComponent
   const renderComponent = (_props: Partial<typeof mockBannerProps.standard>) => {
-    return render(ProbabilityPlot, { _props }) as unknown as {
+    return render(ProbabilityPlot, { props: _props }) as unknown as {
       container: HTMLElement;
-      rerender: (props: any) => void;
+      rerender: (props: Partial<typeof mockBannerProps.standard>) => void;
     };
   };
 

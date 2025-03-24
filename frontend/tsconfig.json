@@ -30,13 +30,16 @@
     /* Ignore specific errors */
     "ignoreDeprecations": "5.0",
 
-    "types": ["vue"]
+    "types": ["vue", "node", "vitest/globals"],
+    "allowJs": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
+    "*.config.ts",
+    "*.config.js",
     "vite.config.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

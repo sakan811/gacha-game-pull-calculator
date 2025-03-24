@@ -19,10 +19,10 @@ const createApiHandler = (endpoint: string) =>
     return HttpResponse.json(mockCalculationResponse);
   });
 
-const isValidRequest = (body: any): body is CalculateRequest =>
+const isValidRequest = (body: unknown): body is CalculateRequest =>
   body &&
-  typeof body.current_pity === "number" &&
-  typeof body.planned_pulls === "number";
+  typeof (body as CalculateRequest).current_pity === "number" &&
+  typeof (body as CalculateRequest).planned_pulls === "number";
 
 const defaultHandlers = ["star_rail", "genshin", "zenless"].flatMap((game) =>
   ["standard", "limited", "light_cone", "weapon", "w_engine", "bangboo"].map(

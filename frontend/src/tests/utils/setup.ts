@@ -6,7 +6,7 @@ interface CustomEventInit {
   bubbles?: boolean;
   cancelable?: boolean;
   composed?: boolean;
-  detail?: any;
+  detail?: unknown;
 }
 
 // Mock Chart.js
