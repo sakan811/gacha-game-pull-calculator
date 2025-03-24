@@ -11,8 +11,5 @@
 
 <script setup lang="ts">
 import BannerCalculator from './components/BannerCalculator.vue'
+import './app.css'
 </script>
-
-<style>
-/* Styles moved to app.css */
-</style> 
