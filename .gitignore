@@ -23,3 +23,4 @@ backend/internal/web/embedded/dist
 /test-macos-app.ps1
 /.cursor
 /post-template.txt
+/.github/prompts

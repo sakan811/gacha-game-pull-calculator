@@ -19,4 +19,28 @@ export interface BannerResponse {
 export interface CalculateRequest {
   current_pity: number;
   planned_pulls: number;
-} 
+}
+
+export interface GameBanner {
+  id: string
+  name: string
+  type: 'character' | 'weapon' | 'standard'
+  baseRate: number
+  softPity: number
+  hardPity: number
+  rateUpGuarantee: boolean
+}
+
+export interface CalculatorInput {
+  currentPity: number
+  plannedPulls: number
+  hasGuarantee: boolean
+  selectedGame: string
+  selectedBanner: string
+}
+
+export interface ProbabilityResult {
+  overallProbability: number
+  rateUpProbability: number
+  expectedPulls: number
+}
