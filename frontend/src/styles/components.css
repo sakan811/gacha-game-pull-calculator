@@ -1,6 +1,6 @@
 /* Form Components */
 .form-group {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .form-label {
@@ -23,36 +23,7 @@
   background-color: var(--card-background);
 }
 
-/* Chart Components */
-.chart-container {
-  margin-bottom: var(--spacing-sm);
-}
-
-.chart-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-sm);
-  text-align: center;
-}
-
-/* Results Components */
-.results-container {
-  background-color: var(--card-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  transition: transform 200ms;
-}
-
-.result-item {
-  background-color: #F8FAFC;
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
-  transition: all 200ms;
-}
-
+/* Container Components */
 .calculator-wrapper {
   width: 100%;
   min-width: 300px;
@@ -65,6 +36,7 @@
   transition: transform 200ms;
 }
 
+/* Results Components */
 .results-container {
   width: 100%;
   min-width: 300px;
@@ -75,4 +47,25 @@
   box-shadow: var(--shadow-md);
   padding: var(--spacing-md);
   transition: transform 200ms;
+}
+
+.result-item {
+  background-color: var(--background-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  transition: all 200ms;
+}
+
+/* Chart Components */
+.chart-container {
+  margin-bottom: var(--spacing-sm);
+}
+
+.chart-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
 }

@@ -6,13 +6,13 @@
 .main-container {
   min-height: 100vh;
   background-color: var(--background-color);
-  padding: 2rem;
+  padding: var(--spacing-lg);
 }
 
 .layout-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-lg);
   background-color: var(--card-background);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-lg);
@@ -22,20 +22,20 @@
 .calculator-layout {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--spacing-lg);
   width: 100%;
   max-width: 80rem;
 }
 
 .top-section {
   display: grid;
-  gap: 2rem;
+  gap: var(--spacing-lg);
   grid-template-columns: 1fr;
 }
 
 @media (min-width: 768px) {
   .top-section {
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
