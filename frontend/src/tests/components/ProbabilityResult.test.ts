@@ -104,4 +104,16 @@ describe('ProbabilityResult.vue', () => {
     const results = screen.getAllByText('0.00%');
     expect(results).toHaveLength(3);
   });
+
+  it('should handle missing probability data gracefully', () => {
+    render(ProbabilityResult, {
+      props: {
+        ...mockBannerProps.standard,
+        result: {}
+      }
+    });
+
+    const results = screen.getAllByText('0.00%');
+    expect(results).toHaveLength(3);
+  });
 });

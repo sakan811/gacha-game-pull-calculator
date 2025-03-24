@@ -34,4 +34,13 @@ describe('Star Rail Banner Calculations', () => {
       character: '10.00%'
     });
   });
+
+  it('should handle invalid banner type gracefully', async () => {
+    await updateBannerInputs('star_rail', 'invalid_banner', '10');
+    await assertProbabilityResults({
+      total: '0.00%',
+      character: '0.00%',
+      equipment: '0.00%'
+    });
+  });
 });

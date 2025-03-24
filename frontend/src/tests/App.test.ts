@@ -44,4 +44,11 @@ describe('App Component', () => {
       expect(bannerSelect.options[2].value).toBe('light_cone');
     });
   });
+
+  describe('Error Handling', () => {
+    it('should handle missing banner type options gracefully', () => {
+      const bannerSelect = screen.getByLabelText('Banner Type') as HTMLSelectElement;
+      expect(bannerSelect.options.length).toBeGreaterThan(0);
+    });
+  });
 });

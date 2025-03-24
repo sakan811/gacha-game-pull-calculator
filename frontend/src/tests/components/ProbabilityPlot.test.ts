@@ -182,5 +182,25 @@ describe('ProbabilityPlot Component', () => {
         expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
       });
     });
+
+    it('should handle missing visualization data gracefully', async () => {
+      server.use(
+        http.post('/api/visualization', () => {
+          return HttpResponse.json({});
+        })
+      );
+
+      const { container } = renderComponent({
+        ...mockBannerProps.standard,
+        currentPity: 0,
+        plannedPulls: 0
+      });
+
+      await triggerChartUpdate(container);
+      
+      await vi.waitFor(() => {
+        expect(container.querySelector('.chart-canvas-container')).toBeTruthy();
+      });
+    });
   });
 });

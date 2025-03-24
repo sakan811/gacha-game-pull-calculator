@@ -75,4 +75,18 @@ describe('Form Validation', () => {
     await nextTick();
     expect(pullsInput.value).toBe('90');
   });
+
+  it('should handle non-numeric input gracefully', async () => {
+    const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
+    await fireEvent.update(pullsInput, 'abc');
+    await nextTick();
+    expect(pullsInput.value).toBe('1'); // Default to minimum valid value
+  });
+
+  it('should handle empty input gracefully', async () => {
+    const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
+    await fireEvent.update(pullsInput, '');
+    await nextTick();
+    expect(pullsInput.value).toBe('1'); // Default to minimum valid value
+  });
 });
