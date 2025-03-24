@@ -8,7 +8,6 @@
           {{ formatProbability(result.total_5_star_probability) }}
         </dd>
       </div>
-
       <template v-if="bannerType === 'standard'">
         <div class="result-item">
           <dt class="form-label">Character Probability</dt>
@@ -23,7 +22,6 @@
           </dd>
         </div>
       </template>
-
       <template v-else>
         <div class="result-item">
           <dt class="form-label">Rate-Up Probability</dt>

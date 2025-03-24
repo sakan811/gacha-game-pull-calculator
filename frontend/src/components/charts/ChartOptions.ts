@@ -1,7 +1,10 @@
 import type { ChartOptions } from "chart.js";
 import type { BannerType } from "../../types";
+import type { AnnotationOptions } from "chartjs-plugin-annotation";
 
-export function createBaseChartOptions(annotations: any): ChartOptions<"line"> {
+export function createBaseChartOptions(
+  annotations: Record<string, AnnotationOptions>,
+): ChartOptions<"line"> {
   return {
     responsive: true,
     maintainAspectRatio: false,

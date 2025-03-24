@@ -12,7 +12,6 @@
                 <option value="zenless">Zenless Zone Zero</option>
               </select>
             </div>
-
             <div class="form-input-container">
               <label class="form-label" for="banner-type">Banner Type</label>
               <select v-model="bannerType" class="form-input" id="banner-type">
@@ -32,7 +31,6 @@
                 </option>
               </select>
             </div>
-
             <div class="form-input-container">
               <label class="form-label" for="pulls">Pulls</label>
               <input
@@ -50,7 +48,6 @@
           </div>
         </div>
       </div>
-
       <div class="results-wrapper">
         <ProbabilityResult
           :result="result"
@@ -59,7 +56,6 @@
         />
       </div>
     </div>
-
     <div class="plots-layout">
       <ProbabilityPlot
         ref="plotRef"
