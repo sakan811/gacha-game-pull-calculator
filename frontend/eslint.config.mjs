@@ -2,23 +2,28 @@
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
-import vueParser from "vue-eslint-parser";
+import pluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-  eslintConfigPrettier,
   {
     files: ["**/*.{js,ts,vue}"],
     ignores: ["node_modules/", "dist/"],
     languageOptions: {
-      parser: vueParser,
-      parserOptions: {
-        parser: "@typescript-eslint/parser",
-        extraFileExtensions: [".vue"],
-        ecmaVersion: 2020,
-        sourceType: "module",
-      },
+      parser: tseslint.parser,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser
+      }
     },
-  },
+    plugins: {
+      vue: pluginVue
+    },
+    rules: {
+      ...eslint.configs.recommended.rules,
+      ...tseslint.configs.recommended[0].rules,
+      ...pluginVue.configs['flat/recommended'][0].rules,
+      ...eslintConfigPrettier.rules
+    }
+  }
 );
