@@ -12,13 +12,16 @@ export default tseslint.config(
     ignores: ["**/dist/**", "**/node_modules/**"],
     languageOptions: {
       sourceType: 'module',
-      parser: vueParser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
         project: ['./tsconfig.app.json', './tsconfig.node.json'],
         extraFileExtensions: ['.vue'],
-        parser: tseslint.parser,
+        parser: {
+          ts: tseslint.parser,
+          js: 'espree',
+          vue: vueParser
+        },
         tsconfigRootDir: '.',
         ecmaFeatures: {
           jsx: true

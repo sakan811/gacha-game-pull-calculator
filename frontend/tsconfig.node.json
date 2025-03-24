@@ -14,5 +14,11 @@
     "declaration": true,
     "outDir": "dist"
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "tailwind.config.js",
+    "*.config.ts",
+    "*.config.js"
+  ]
 }
