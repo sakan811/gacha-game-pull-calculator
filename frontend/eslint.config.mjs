@@ -3,7 +3,6 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import pluginVue from 'eslint-plugin-vue';
-import * as espreeParser from 'espree';
 import globals from 'globals';
 
 export default tseslint.config(
@@ -11,12 +10,14 @@ export default tseslint.config(
     files: ["**/*.{js,ts,vue}"],
     ignores: ["node_modules/", "dist/"],
     languageOptions: {
-      parser: espreeParser,
+      parser: tseslint.parser,
       parserOptions: {
-        parser: tseslint.parser,
-        extraFileExtensions: ['.vue'],
         ecmaVersion: 'latest',
-        sourceType: 'module'
+        sourceType: 'module',
+        project: './tsconfig.json',
+        extraFileExtensions: ['.vue'],
+        parser: '@typescript-eslint/parser',
+        tsconfigRootDir: '.',
       },
       sourceType: 'module',
       globals: {
@@ -34,8 +35,10 @@ export default tseslint.config(
         vi: true
       }
     },
+    processor: pluginVue.processors['.vue'],
     plugins: {
-      vue: pluginVue
+      vue: pluginVue,
+      '@typescript-eslint': tseslint.plugin,
     },
     rules: {
       ...eslint.configs.recommended.rules,
@@ -43,11 +46,16 @@ export default tseslint.config(
       ...pluginVue.configs['flat/recommended'][0].rules,
       ...eslintConfigPrettier.rules,
       'vue/valid-template-root': 'off',
-      'no-unused-vars': ['error', { 
+      'vue/comment-directive': 'off',
+      'no-unused-vars': 'off', // Disable base rule
+      '@typescript-eslint/no-unused-vars': ['error', {
         'argsIgnorePattern': '^_',
         'varsIgnorePattern': '^_'
       }],
-      'no-undef': 'error'
+      'no-undef': 'off', // TypeScript handles this
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'vue/html-indent': ['error', 2],
+      'vue/script-indent': ['error', 2],
     }
   }
 );
