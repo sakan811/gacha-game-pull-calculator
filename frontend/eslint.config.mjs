@@ -13,7 +13,18 @@ export default tseslint.config(
       parser: tseslint.parser,
       sourceType: 'module',
       globals: {
-        ...globals.browser
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2021,
+        global: true,
+        require: true,
+        process: true,
+        __dirname: true,
+        beforeEach: true,
+        describe: true,
+        it: true,
+        expect: true,
+        vi: true
       }
     },
     plugins: {
@@ -23,7 +34,13 @@ export default tseslint.config(
       ...eslint.configs.recommended.rules,
       ...tseslint.configs.recommended[0].rules,
       ...pluginVue.configs['flat/recommended'][0].rules,
-      ...eslintConfigPrettier.rules
+      ...eslintConfigPrettier.rules,
+      'vue/valid-template-root': 'off',
+      'no-unused-vars': ['error', { 
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_'
+      }],
+      'no-undef': 'error'
     }
   }
 );
