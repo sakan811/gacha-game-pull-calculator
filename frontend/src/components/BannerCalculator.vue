@@ -30,11 +30,12 @@
               <input
                 type="number"
                 v-model.number="totalPulls"
-                min="1"
-                max="200"
+                :min="1"
+                :max="maxPityForBannerType"
                 class="form-input"
                 id="pulls"
               />
+              <small class="form-help">Max pulls: {{ maxPityForBannerType }}</small>
             </div>
           </div>
         </div>
@@ -70,6 +71,7 @@ const {
   bannerType,
   totalPulls,
   result,
+  maxPityForBannerType,
   calculateProbability
 } = useBannerCalculator()
 
@@ -81,3 +83,11 @@ watch([gameType, bannerType, totalPulls], async () => {
   await plotRef.value?.updateCharts()
 })
 </script>
+
+<style scoped>
+.form-help {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+</style>

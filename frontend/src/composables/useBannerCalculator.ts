@@ -41,9 +41,17 @@ export function useBannerCalculator() {
     }
   })
 
+  // Watch totalPulls to validate against maxPity
+  watch([totalPulls, maxPityForBannerType], ([pulls, maxPity]) => {
+    if (pulls < 1) totalPulls.value = 1
+    if (pulls > maxPity) totalPulls.value = maxPity
+  })
+
   async function calculateProbability() {
     if (totalPulls.value < 1) totalPulls.value = 1
-    if (totalPulls.value > 200) totalPulls.value = 200
+    if (totalPulls.value > maxPityForBannerType.value) {
+      totalPulls.value = maxPityForBannerType.value
+    }
 
     try {
       const response = await fetch(`/api/${gameType.value}/${bannerType.value}`, {
