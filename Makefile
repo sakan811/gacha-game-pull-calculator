@@ -11,6 +11,10 @@ test-frontend:
 lint-frontend:
 	cd $(FRONTEND_DIR) && npm run lint
 
+.PHONY: format-frontend
+format-frontend:
+	cd $(FRONTEND_DIR) && npm run format
+
 # Backend commands
 .PHONY: test-backend
 test-backend:
@@ -35,6 +39,9 @@ test-all: test-backend test-frontend
 .PHONY: lint-all
 lint-all: lint-backend lint-frontend
 
+.PHONY: format-all
+format-all: format-frontend
+
 # Default target
 .PHONY: all
 all: lint-all test-all
@@ -48,5 +55,7 @@ help:
 	@echo "  lint-frontend   - Run frontend linting"
 	@echo "  lint-backend    - Run backend linting"
 	@echo "  lint-all       - Run all linting"
+	@echo "  format-frontend - Format frontend code"
+	@echo "  format-all      - Format all code"
 	@echo "  all            - Run all linting and tests"
 	@echo "  help           - Show this help message"
