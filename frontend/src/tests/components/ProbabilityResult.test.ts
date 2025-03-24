@@ -70,4 +70,38 @@ describe('ProbabilityResult.vue', () => {
     expect(screen.getByText('15.50%')).toBeTruthy();
     expect(screen.getAllByText('7.75%').length).toBe(2);
   });
+
+  it('should handle guaranteed rate up state', () => {
+    render(ProbabilityResult, {
+      props: {
+        ...mockBannerProps.limited,
+        guaranteed: true,
+        result: {
+          total_5_star_probability: 1.0,
+          rate_up_probability: 1.0
+        }
+      }
+    });
+
+    // Use getAllByText instead of getByText for multiple matches
+    const hundredPercent = screen.getAllByText('100.00%');
+    expect(hundredPercent).toHaveLength(2);
+    expect(screen.getByText('Rate-Up Probability')).toBeTruthy();
+  });
+
+  it('should handle edge case probability values', () => {
+    render(ProbabilityResult, {
+      props: {
+        ...mockBannerProps.standard,
+        result: {
+          total_5_star_probability: 0,
+          character_probability: 0,
+          light_cone_probability: 0
+        }
+      }
+    });
+
+    const results = screen.getAllByText('0.00%');
+    expect(results).toHaveLength(3);
+  });
 });

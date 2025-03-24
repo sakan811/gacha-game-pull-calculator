@@ -31,8 +31,8 @@ describe('Core Banner Calculation', () => {
     await waitFor(() => {
       expect(screen.getByTestId('probability-results')).toBeTruthy();
       expect(screen.getByTestId('probability-plots')).toBeTruthy();
-      expect(screen.getByText('Successful Pull Distribution')).toBeTruthy();
-      expect(screen.getByText('Cumulative Probability')).toBeTruthy();
+      expect(screen.getAllByText('Successful Pull Distribution')).toBeTruthy();
+      expect(screen.getAllByText('Cumulative Probability')).toBeTruthy();
     });
   });
 
@@ -41,8 +41,8 @@ describe('Core Banner Calculation', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('probability-plots')).toBeTruthy();
-      expect(screen.getByText('Successful Pull Distribution')).toBeTruthy();
-      expect(screen.getByText('Cumulative Probability')).toBeTruthy();
+      expect(screen.getAllByText('Successful Pull Distribution')).toBeTruthy();
+      expect(screen.getAllByText('Cumulative Probability')).toBeTruthy();
       expect(screen.getByTestId('probability-results')).toBeTruthy();
     });
   });
@@ -71,6 +71,47 @@ describe('Core Banner Calculation', () => {
     await waitFor(() => {
       const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
       expect(pullsInput.value).toBe('90');
+    });
+  });
+
+  it('should handle pity calculation correctly', async () => {
+    server.use(
+      http.post('/api/star_rail/standard', () => {
+        return HttpResponse.json({
+          ...mockCalculationResponse,
+          total_5_star_probability: 1.0,
+          character_probability: 0.5,
+          light_cone_probability: 0.5
+        });
+      })
+    );
+    
+    await fireEvent.update(screen.getByLabelText('Pulls'), '90');
+    
+    await waitFor(() => {
+      const results = screen.getByTestId('probability-results');
+      expect(results.textContent).toContain('100.00%');
+    });
+  });
+
+  it('should handle successful API submission', async () => {
+    let submittedData: CalculateRequest | null = null;
+    
+    server.use(
+      http.post('/api/star_rail/standard', async ({ request }) => {
+        submittedData = await request.json();
+        return HttpResponse.json(mockCalculationResponse);
+      })
+    );
+
+    await fireEvent.update(screen.getByLabelText('Pulls'), '10');
+    
+    await waitFor(() => {
+      expect(submittedData).toEqual({
+        current_pity: 0,
+        planned_pulls: 10,
+        guaranteed: false  // Account for guaranteed field
+      });
     });
   });
 });

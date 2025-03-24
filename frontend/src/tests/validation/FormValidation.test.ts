@@ -46,4 +46,33 @@ describe('Form Validation', () => {
     await nextTick();
     expect(pullsInput.value).toBe('90'); // Match actual max pulls value
   });
+
+  it('should validate pity range', async () => {
+    const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
+
+    await fireEvent.update(pullsInput, '91');
+    await nextTick();
+    expect(pullsInput.value).toBe('90'); // Max pity
+
+    await fireEvent.update(pullsInput, '0');
+    await nextTick(); 
+    expect(pullsInput.value).toBe('1'); // Min pity
+  });
+
+  it('should apply different max values by banner type', async () => {
+    const bannerSelect = screen.getByLabelText('Banner Type');
+    const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
+
+    // Light cone banner (max 80)
+    await fireEvent.update(bannerSelect, 'light_cone');
+    await fireEvent.update(pullsInput, '90');
+    await nextTick();
+    expect(pullsInput.value).toBe('80');
+
+    // Standard banner (max 90)
+    await fireEvent.update(bannerSelect, 'standard');
+    await fireEvent.update(pullsInput, '100');
+    await nextTick();
+    expect(pullsInput.value).toBe('90');
+  });
 });
