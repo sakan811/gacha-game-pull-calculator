@@ -1,7 +1,7 @@
 <template>
   <div class="calculator-layout">
     <div class="top-section">
-      <div class="calculator-wrapper">
+      <div class="base-container">
         <div class="form-container">
           <div class="form-group">
             <div class="form-input-container">
@@ -182,4 +182,4 @@ async function calculateProbability() {
 
 <style>
 /* No need to import app.css here as it's imported in main.ts */
-</style> 
+</style>

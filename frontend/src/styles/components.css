@@ -36,24 +36,6 @@
   background-color: var(--card-background);
 }
 
-/* Calculator Components */
-.calculator-wrapper {
-  composes: base-container;
-}
-
-/* Results Components */
-.results-container {
-  composes: base-container;
-}
-
-.result-item {
-  background-color: var(--background-color);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
-  transition: all 200ms;
-}
-
 /* Chart Components */
 .chart-container {
   margin-bottom: var(--spacing-sm);
