@@ -33,10 +33,10 @@
   --font-size-xl: clamp(1.5rem, 2vw, 1.75rem);
   
   /* Chart dimensions - with better bounds */
-  --chart-min-height: clamp(200px, 30vh, 250px);
-  --chart-max-height: clamp(250px, 40vh, 300px);
-  --chart-width: clamp(300px, 100%, 1000px);
-  --chart-aspect: calc(16 / 9);
+  --chart-min-height: clamp(180px, 25vh, 200px);
+  --chart-max-height: clamp(200px, 30vh, 250px);
+  --chart-width: clamp(280px, 100%, 800px);
+  --chart-aspect: calc(4 / 3);
 }
 
 /* Base styles */
