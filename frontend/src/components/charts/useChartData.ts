@@ -86,13 +86,13 @@ export function useChartData(props: ChartProps): {
         datasets: [
           {
             label: 'Probability Distribution',
-            data: data.probability_per_roll.map(p => p * 100),
+            data: data.probability_per_roll.map((p: number) => p * 100),
             borderColor: 'rgb(75, 192, 192)',
             tension: 0.1
           },
           {
             label: 'Cumulative Probability',
-            data: data.cumulative_probability.map(p => p * 100),
+            data: data.cumulative_probability.map((p: number) => p * 100),
             borderColor: 'rgb(153, 102, 255)',
             tension: 0.1
           }
