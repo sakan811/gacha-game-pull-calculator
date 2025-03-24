@@ -65,8 +65,6 @@ const getEquipmentLabel = computed(() => {
   }
 })
 
-console.log(props.result)
-
 function formatProbability(value?: number): string {
   if (value === undefined || value === null) return '0.00%';
   // Convert decimal to percentage by multiplying by 100

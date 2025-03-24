@@ -29,314 +29,58 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { Line } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartData,
-  ChartOptions
-} from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
-import type { GameType, BannerType } from '../types'
+import { createBaseChartOptions, getChartAnnotations } from './charts/ChartOptions'
+import { useChartData } from './charts/useChartData'
+import type { ChartProps } from './charts/types'
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  annotationPlugin
+  CategoryScale, LinearScale, PointElement, LineElement,
+  Title, Tooltip, Legend, annotationPlugin
 )
 
-// Define an interface for the component's exposed methods
-export interface ProbabilityPlotMethods {
-  updateCharts: () => Promise<void>;
-}
+const props = defineProps<ChartProps>()
 
-interface Props {
-  gameType: GameType
-  bannerType: BannerType
-  totalPulls: number
-  result: {
-    total_5_star_probability: number
-    character_probability?: number
-    light_cone_probability?: number
-    rate_up_probability?: number
-    standard_char_probability?: number
-  }
-}
+const {
+  visualizationData,
+  chartData,
+  distributionChartData,
+  cumulativeChartData,
+  fetchVisualizationData
+} = useChartData(props)
 
-const props = defineProps<Props>()
+onMounted(() => fetchVisualizationData())
 
-const visualizationData = ref<VisualizationData | null>(null)
-const chartData = ref<ChartData>({
-  labels: [],
-  datasets: [
-    {
-      label: 'Probability Distribution',
-      data: [],
-      borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1
-    },
-    {
-      label: 'Cumulative Probability',
-      data: [],
-      borderColor: 'rgb(153, 102, 255)',
-      tension: 0.1
-    }
-  ]
+defineExpose<{ updateCharts: () => Promise<void> }>({ 
+  updateCharts: fetchVisualizationData 
 })
 
-interface VisualizationData {
-  rolls: number[];
-  probability_per_roll: number[];
-  cumulative_probability: number[];
-  soft_pity_start: number;
-  hard_pity: number;
-  current_pity: number;
-  planned_pulls: number;
-}
+const chartAnnotations = computed(() => 
+  getChartAnnotations(
+    props.totalPulls,
+    props.bannerType,
+    visualizationData.value?.soft_pity_start,
+    visualizationData.value?.hard_pity
+  )
+)
 
-interface DataPoint {
-  x: number;
-  y: number;
-}
-
-// Fetch initial visualization data
-onMounted(() => {
-  fetchVisualizationData()
-})
-
-async function fetchVisualizationData() {
-  try {
-    const response = await fetch('/api/visualization', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        game_type: props.gameType,
-        banner_type: props.bannerType,
-        current_pity: 0,
-        planned_pulls: props.totalPulls,
-        guaranteed: false
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json() as VisualizationData
-    if (!Array.isArray(data.rolls) || !Array.isArray(data.probability_per_roll) || !Array.isArray(data.cumulative_probability)) {
-      throw new Error('Invalid data format received')
-    }
-
-    visualizationData.value = data
-    chartData.value = {
-      labels: data.rolls,
-      datasets: [
-        {
-          label: 'Probability Distribution',
-          data: data.probability_per_roll.map(p => p * 100),
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        },
-        {
-          label: 'Cumulative Probability',
-          data: data.cumulative_probability.map(p => p * 100),
-          borderColor: 'rgb(153, 102, 255)',
-          tension: 0.1
-        }
-      ]
-    }
-  } catch (error) {
-    console.error('Error fetching visualization data:', error)
-    // Keep the existing chart data structure but clear the data
-    chartData.value = {
-      labels: [],
-      datasets: [
-        {
-          label: 'Probability Distribution',
-          data: [],
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        },
-        {
-          label: 'Cumulative Probability',
-          data: [],
-          borderColor: 'rgb(153, 102, 255)',
-          tension: 0.1
-        }
-      ]
-    }
-  }
-}
-
-// Function to update charts
-async function updateCharts() {
-  try {
-    await fetchVisualizationData()
-  } catch (error) {
-    console.error('Error fetching visualization data:', error)
-  }
-}
-
-// Expose update function
-defineExpose<ProbabilityPlotMethods>({ updateCharts })
-
-const distributionChartData = computed<ChartData<'line'>>(() => ({
-  labels: chartData.value?.labels ?? [],
-  datasets: [{
-    label: 'Pull Distribution',
-    data: (chartData.value?.datasets[0].data ?? []).map((y, i) => ({
-      x: i + 1,
-      y: y as number
-    })) as DataPoint[],
-    borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1,
-    fill: false,
-    parsing: false
-  }]
-}))
-
-const cumulativeChartData = computed<ChartData<'line'>>(() => ({
-  labels: chartData.value?.labels ?? [],
-  datasets: [{
-    label: 'Cumulative Probability',
-    data: (chartData.value?.datasets[1].data ?? []).map((y, i) => ({
-      x: i + 1,
-      y: y as number
-    })) as DataPoint[],
-    borderColor: 'rgb(153, 102, 255)',
-    tension: 0.1,
-    fill: false,
-    parsing: false
-  }]
-}))
-
-const chartAnnotations = computed(() => ({
-  totalPulls: {
-    type: 'line' as const,
-    xMin: props.totalPulls,
-    xMax: props.totalPulls,
-    borderColor: 'rgba(255, 0, 0, 0.8)',
-    borderWidth: 2,
-    borderDash: [6, 6],
-    drawTime: 'afterDatasetsDraw' as const,
-    label: {
-      content: `Total Pulls: ${props.totalPulls}`,
-      display: true,
-      position: 'start' as const,
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      color: 'rgb(255, 0, 0)',
-      font: {
-        weight: 'bold' as const
-      },
-      padding: 6,
-      yAdjust: -10
-    }
-  },
-  softPity: {
-    type: 'line' as const,
-    xMin: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 65 : 74),
-    xMax: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 65 : 74),
-    borderColor: 'rgba(255, 165, 0, 0.5)',
-    borderWidth: 2,
-    borderDash: [5, 5],
-    label: {
-      content: 'Soft Pity',
-      position: 'start' as const,
-      display: true,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      color: 'rgb(255, 165, 0)'
-    }
-  },
-  hardPity: {
-    type: 'line' as const,
-    xMin: visualizationData.value?.hard_pity ?? (props.bannerType === 'light_cone' ? 80 : 90),
-    xMax: visualizationData.value?.hard_pity ?? (props.bannerType === 'light_cone' ? 80 : 90),
-    borderColor: 'rgba(255, 69, 0, 0.5)',
-    borderWidth: 2,
-    borderDash: [5, 5],
-    label: {
-      content: 'Hard Pity',
-      display: true,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      color: 'rgb(255, 69, 0)'
-    }
-  }
-}))
-
-const baseChartOptions = computed<ChartOptions<'line'>>(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Probability (%)'
-      }
-    },
-    x: {
-      type: 'linear' as const,
-      min: 0,
-      offset: false,
-      grid: {
-        offset: false
-      },
-      title: {
-        display: true,
-        text: 'Number of Pulls'
-      },
-      ticks: {
-        stepSize: 1
-      }
-    }
-  },
-  plugins: {
-    legend: {
-      position: 'top'
-    },
-    annotation: {
-      annotations: chartAnnotations.value
-    }
-  }
-}))
-
-const distributionChartOptions = computed<ChartOptions<'line'>>(() => ({
+const baseChartOptions = computed(() => createBaseChartOptions(chartAnnotations.value))
+const distributionChartOptions = computed(() => ({
   ...baseChartOptions.value,
   plugins: {
     ...baseChartOptions.value.plugins,
-    title: {
-      display: true,
-      text: 'Probability of getting 5★ at each pull'
-    }
+    title: { display: true, text: 'Probability of getting 5★ at each pull' }
   }
 }))
 
-const cumulativeChartOptions = computed<ChartOptions<'line'>>(() => ({
+const cumulativeChartOptions = computed(() => ({
   ...baseChartOptions.value,
   plugins: {
     ...baseChartOptions.value.plugins,
-    title: {
-      display: true,
-      text: 'Cumulative probability of getting 5★'
-    }
+    title: { display: true, text: 'Cumulative probability of getting 5★' }
   }
 }))
 </script>
-
-<style>
-/* Styles moved to app.css */
-</style> 

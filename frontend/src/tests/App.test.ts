@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/vue';
 import { describe, it, expect, beforeEach, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import App from '../App.vue';
-import { createMockServer, setupResizeObserverMock } from './test-utils';
+import { createMockServer, setupResizeObserverMock } from './utils/test-utils';
 
 // Setup MSW server
 const server = createMockServer();

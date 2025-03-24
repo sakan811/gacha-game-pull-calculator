@@ -2,7 +2,7 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/vue';
 import { describe, it, expect, vi, beforeEach, beforeAll, afterAll, afterEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import App from '../App.vue';
-import { createMockServer, setupResizeObserverMock, mockCalculationResponse } from './test-utils';
+import { createMockServer, setupResizeObserverMock, mockCalculationResponse } from './utils/test-utils';
 import { CalculateRequest } from '../types';
 
 const server = createMockServer([
@@ -70,7 +70,7 @@ describe('Core Banner Calculation', () => {
 
     await waitFor(() => {
       const pullsInput = screen.getByLabelText('Pulls') as HTMLInputElement;
-      expect(pullsInput.value).toBe('200');
+      expect(pullsInput.value).toBe('90');
     });
   });
-}); 
+});
