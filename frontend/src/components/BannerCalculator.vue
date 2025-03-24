@@ -83,11 +83,3 @@ watch([gameType, bannerType, totalPulls], async () => {
   await plotRef.value?.updateCharts()
 })
 </script>
-
-<style scoped>
-.form-help {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin-top: 0.25rem;
-}
-</style>

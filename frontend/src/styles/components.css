@@ -39,6 +39,12 @@
   background-color: var(--card-background);
 }
 
+.form-help {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
 /* Chart Components */
 .chart-container {
   margin-bottom: var(--spacing-sm);
