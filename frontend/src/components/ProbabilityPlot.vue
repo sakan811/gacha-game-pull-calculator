@@ -31,20 +31,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { Line } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartData,
-  ChartOptions
-} from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import type { GameType, BannerType } from '../types'
+import { createBaseChartOptions, getChartAnnotations } from './charts/ChartOptions'
+import type { VisualizationData, ChartData } from './types'
 
 ChartJS.register(
   CategoryScale,
@@ -56,11 +47,6 @@ ChartJS.register(
   Legend,
   annotationPlugin
 )
-
-// Define an interface for the component's exposed methods
-export interface ProbabilityPlotMethods {
-  updateCharts: () => Promise<void>;
-}
 
 interface Props {
   gameType: GameType
@@ -90,26 +76,11 @@ const chartData = ref<ChartData>({
     {
       label: 'Cumulative Probability',
       data: [],
-      borderColor: 'rgb(153, 102, 255)',
+      borderColor: 'rgb(153, 102, 255)', 
       tension: 0.1
     }
   ]
 })
-
-interface VisualizationData {
-  rolls: number[];
-  probability_per_roll: number[];
-  cumulative_probability: number[];
-  soft_pity_start: number;
-  hard_pity: number;
-  current_pity: number;
-  planned_pulls: number;
-}
-
-interface DataPoint {
-  x: number;
-  y: number;
-}
 
 // Fetch initial visualization data
 onMounted(() => {
@@ -224,119 +195,34 @@ const cumulativeChartData = computed<ChartData<'line'>>(() => ({
   }]
 }))
 
-const chartAnnotations = computed(() => ({
-  totalPulls: {
-    type: 'line' as const,
-    xMin: props.totalPulls,
-    xMax: props.totalPulls,
-    borderColor: 'rgba(255, 0, 0, 0.8)',
-    borderWidth: 2,
-    borderDash: [6, 6],
-    drawTime: 'afterDatasetsDraw' as const,
-    label: {
-      content: `Total Pulls: ${props.totalPulls}`,
-      display: true,
-      position: 'start' as const,
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      color: 'rgb(255, 0, 0)',
-      font: {
-        weight: 'bold' as const
-      },
-      padding: 6,
-      yAdjust: -10
-    }
-  },
-  softPity: {
-    type: 'line' as const,
-    xMin: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 65 : 74),
-    xMax: visualizationData.value?.soft_pity_start ?? (props.bannerType === 'light_cone' ? 65 : 74),
-    borderColor: 'rgba(255, 165, 0, 0.5)',
-    borderWidth: 2,
-    borderDash: [5, 5],
-    label: {
-      content: 'Soft Pity',
-      position: 'start' as const,
-      display: true,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      color: 'rgb(255, 165, 0)'
-    }
-  },
-  hardPity: {
-    type: 'line' as const,
-    xMin: visualizationData.value?.hard_pity ?? (props.bannerType === 'light_cone' ? 80 : 90),
-    xMax: visualizationData.value?.hard_pity ?? (props.bannerType === 'light_cone' ? 80 : 90),
-    borderColor: 'rgba(255, 69, 0, 0.5)',
-    borderWidth: 2,
-    borderDash: [5, 5],
-    label: {
-      content: 'Hard Pity',
-      display: true,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      color: 'rgb(255, 69, 0)'
-    }
-  }
-}))
+const chartAnnotations = computed(() => 
+  getChartAnnotations(
+    props.totalPulls,
+    props.bannerType,
+    visualizationData.value?.soft_pity_start,
+    visualizationData.value?.hard_pity
+  )
+)
 
-const baseChartOptions = computed<ChartOptions<'line'>>(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Probability (%)'
-      }
-    },
-    x: {
-      type: 'linear' as const,
-      min: 0,
-      offset: false,
-      grid: {
-        offset: false
-      },
-      title: {
-        display: true,
-        text: 'Number of Pulls'
-      },
-      ticks: {
-        stepSize: 1
-      }
-    }
-  },
-  plugins: {
-    legend: {
-      position: 'top'
-    },
-    annotation: {
-      annotations: chartAnnotations.value
-    }
-  }
-}))
+const baseChartOptions = computed(() => createBaseChartOptions(chartAnnotations.value))
 
-const distributionChartOptions = computed<ChartOptions<'line'>>(() => ({
+const distributionChartOptions = computed(() => ({
   ...baseChartOptions.value,
   plugins: {
     ...baseChartOptions.value.plugins,
-    title: {
-      display: true,
-      text: 'Probability of getting 5★ at each pull'
-    }
+    title: { display: true, text: 'Probability of getting 5★ at each pull' }
   }
 }))
 
-const cumulativeChartOptions = computed<ChartOptions<'line'>>(() => ({
+const cumulativeChartOptions = computed(() => ({
   ...baseChartOptions.value,
   plugins: {
     ...baseChartOptions.value.plugins,
-    title: {
-      display: true,
-      text: 'Cumulative probability of getting 5★'
-    }
+    title: { display: true, text: 'Cumulative probability of getting 5★' }
   }
 }))
 </script>
 
 <style>
 /* Styles moved to app.css */
-</style> 
+</style>
