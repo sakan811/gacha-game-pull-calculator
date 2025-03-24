@@ -31,8 +31,5 @@
     "src/**/*.js",
     "src/**/*.svelte"
   ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "exclude": ["dist", "node_modules"]
 }

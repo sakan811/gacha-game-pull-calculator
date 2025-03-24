@@ -11,7 +11,7 @@ type Config struct {
 	GuaranteedRateUp bool
 }
 
-// bannerConfigs stores the configuration for all banner types
+// bannerConfigs stores the configuration for all banner types.
 var bannerConfigs = map[Type]Config{
 	StarRailLimited: {
 		BaseRate:         0.006, // 0.6%

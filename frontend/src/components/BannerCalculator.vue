@@ -42,7 +42,7 @@
                 id="pulls"
               />
               <small class="form-help"
-              >Max pulls: {{ maxPityForBannerType }}</small
+                >Max pulls: {{ maxPityForBannerType }}</small
               >
             </div>
           </div>
