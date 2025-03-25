@@ -1,34 +1,41 @@
-from stats_utils.hsr_warp_stats import WarpStats
+"""Main script for generating banner statistics visualizations.
+
+This script generates probability distribution and cumulative probability plots
+for different banner types across multiple games (Star Rail, Genshin Impact,
+and Zenless Zone Zero). The plots are saved in the graph/ directory.
+"""
+
+from stats_utils.banner_stats import BannerStats
 
 # Star Rail banners
-stats = WarpStats("star_rail", "limited")
+stats = BannerStats("star_rail", "limited")
 stats.plot_statistics("graph/hsr_limited_banner_stats")
 
-stats = WarpStats("star_rail", "standard")
+stats = BannerStats("star_rail", "standard")
 stats.plot_statistics("graph/hsr_standard_banner_stats")
 
-stats = WarpStats("star_rail", "light_cone")
+stats = BannerStats("star_rail", "light_cone")
 stats.plot_statistics("graph/hsr_light_cone_banner_stats")
 
 # Genshin banners
-stats = WarpStats("genshin", "limited")
+stats = BannerStats("genshin", "limited")
 stats.plot_statistics("graph/genshin_limited_banner_stats")
 
-stats = WarpStats("genshin", "standard")
+stats = BannerStats("genshin", "standard")
 stats.plot_statistics("graph/genshin_standard_banner_stats")
 
-stats = WarpStats("genshin", "weapon")
+stats = BannerStats("genshin", "weapon")
 stats.plot_statistics("graph/genshin_weapon_banner_stats")
 
 # Zenless Zone Zero banners
-stats = WarpStats("zenless", "limited")
+stats = BannerStats("zenless", "limited")
 stats.plot_statistics("graph/zenless_limited_banner_stats")
 
-stats = WarpStats("zenless", "standard")
+stats = BannerStats("zenless", "standard")
 stats.plot_statistics("graph/zenless_standard_banner_stats")
 
-stats = WarpStats("zenless", "w_engine")
+stats = BannerStats("zenless", "w_engine")
 stats.plot_statistics("graph/zenless_w_engine_banner_stats")
 
-stats = WarpStats("zenless", "bangboo")
+stats = BannerStats("zenless", "bangboo")
 stats.plot_statistics("graph/zenless_bangboo_banner_stats")
