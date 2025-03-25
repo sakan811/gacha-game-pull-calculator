@@ -1,3 +1,10 @@
+"""Main script for generating banner statistics visualizations.
+
+This script generates probability distribution and cumulative probability plots
+for different banner types across multiple games (Star Rail, Genshin Impact,
+and Zenless Zone Zero). The plots are saved in the graph/ directory.
+"""
+
 from stats_utils.banner_stats import BannerStats
 
 # Star Rail banners
