@@ -1,69 +1,92 @@
 # Gacha Game Pull Probability Calculator
 
-This is a simple calculator to help you estimate the probability of getting a 5-star character in Gacha Games.
+A web-based calculator that helps you estimate the probability of obtaining 5-star characters in various Gacha games.
 
-Supporting Games:
+## Supported Games
 
 - Honkai: Star Rail
 - Genshin Impact
 - Zenless Zone Zero
 
-## Status
+## Build Status
 
 [![Go Backend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml)
-
 [![Frontend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml)
-
 [![Docker Build](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml)
 
-## How to Use the Calculator
+## Quick Start Guide
 
-1. Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed on your system.
-2. Download the [docker-compose.yml](./docker-compose.yml) file from this repository.
-3. Place the `docker-compose.yml` in any directory of your choice.
-4. Run the following command to start the application:
+### Docker Requirements
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/sakan811/gacha-game-pull-calculator.git
+   cd gacha-game-pull-calculator
+   ```
+
+2. Download the [docker-compose.yml](./docker-compose.yml) file from the repository:
+
+3. Open a terminal in the directory containing the file
+
+4. Run:
 
    ```bash
    docker-compose up -d
    ```
 
-5. Navigate to <http://localhost:5173> in your browser to access the calculator.
-6. When you're done, you can stop the application with:
+5. Visit [http://localhost:5173](http://localhost:5173) in your browser
+
+## Statistics Visualization
+
+View detailed probability statistics and visualizations in our [Visual Guide](/docs/VISUAL.md).
+
+## Running Statistics Script
+
+### Python Requirements
+
+- [Python](https://www.python.org/downloads/)
+- [UV Package Manager](https://docs.astral.sh/uv/getting-started/installation/)
+
+### Setup and Execution
+
+1. Navigate to stats directory:
 
    ```bash
-   docker-compose down
+   cd stats
    ```
 
-## Disclaimer
+2. Set up Python environment:
 
-Assumes that the rate-increase is 7% for all banners in Genshin Impact, Honkai Star Rail, and Zenless Zone Zero.
+   ```bash
+   uv venv
+   # Windows
+   venv\Scripts\activate
+   # macOS/Linux
+   source venv/bin/activate
+   ```
 
-## Probability Statistics Visualizations
+3. Install dependencies:
 
-[Click here](/docs/VISUAL.md) to view the visualizations.
+   ```bash
+   uv pip install -r requirements.txt
+   ```
 
-Reference:
+4. Run the script:
 
-<https://www.hoyolab.com/article/497840>
+   ```bash
+   python stats_main.py
+   ```
 
-<https://starrailstation.com/en/warp#global>
+## Technical Notes
 
-<https://paimon.moe/wish/tally?id=300077>
-
-<https://zzz.rng.moe/en/tracker/global#3001>
-
-## How to run the statistics script
-
-1. Install [Python](https://www.python.org/downloads/) on your machine.
-2. Install [UV](https://docs.astral.sh/uv/getting-started/installation/), a Python package manager.
-3. Navigate to the `stats` folder.
-   - `cd stats`
-4. Create a virtual environment.
-   - `uv venv`
-5. Activate the virtual environment.
-   - On Windows: `venv\Scripts\activate`
-   - On macOS/Linux: `source venv/bin/activate`
-6. Install the requirements.
-   - `uv pip install -r requirements.txt`
-7. Run the `stats_main.py` file.
-   - `python stats_main.py`
+- Rate-increase assumption: 7% for all banners across supported games
+- Data sources:
+  - [HoYoLAB Article](https://www.hoyolab.com/article/497840)
+  - [Star Rail Station](https://starrailstation.com/en/warp#global)
+  - [Paimon.moe](https://paimon.moe/wish/tally?id=300077)
+  - [ZZZ RNG](https://zzz.rng.moe/en/tracker/global#3001)
