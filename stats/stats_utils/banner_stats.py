@@ -1,4 +1,4 @@
-"""Main module for HSR Warp Statistics calculation."""
+"""Module for calculating gacha banner statistics across multiple games."""
 
 import numpy as np
 import pandas as pd
@@ -8,11 +8,11 @@ from stats_utils.probability_calculator import ProbabilityCalculator
 from stats_utils.visualization import BannerVisualizer
 
 
-class WarpStats(ProbabilityCalculator):
-    """Class for calculating and visualizing warp statistics."""
+class BannerStats(ProbabilityCalculator):
+    """Class for calculating and visualizing banner statistics."""
 
     def __init__(self, game_type="star_rail", banner_type="standard"):
-        """Initialize warp statistics calculator.
+        """Initialize banner statistics calculator.
 
         Args:
             game_type (str): Type of game ('star_rail', 'genshin', or 'zenless')
