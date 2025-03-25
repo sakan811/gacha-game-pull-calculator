@@ -43,7 +43,7 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 
 ## Statistics Visualization
 
-View detailed probability statistics and visualizations in our [Visual Guide](/docs/VISUAL.md).
+View detailed probability statistics and visualizations [here](/docs/VISUAL.md).
 
 ## Running Statistics Script
 
