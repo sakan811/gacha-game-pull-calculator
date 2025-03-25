@@ -5,13 +5,21 @@ export const mockVisualizationData = {
   soft_pity_start: 74,
   hard_pity: 90,
   current_pity: 0,
-  total_pulls: 90
+  total_pulls: 90,
 };
 
 export const mockCalculationResponse = {
-  total_5_star_probability: 0.1550,
+  total_5_star_probability: 0.155,
   character_probability: 0.0775,
   light_cone_probability: 0.0775,
-  rate_up_probability: 0.1000,
-  standard_char_probability: 0.0775
+  rate_up_probability: 0.1,
+  standard_char_probability: 0.0775,
+};
+
+export const hardPityResponse = {
+  total_5_star_probability: 1.0,
+  character_probability: 0.5,
+  light_cone_probability: 0.5,
+  rate_up_probability: 1.0,
+  standard_char_probability: 0.0,
 };

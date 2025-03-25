@@ -47,8 +47,10 @@ func handleError(c *gin.Context, err error) {
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		}
+
 		return
 	}
+
 	c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 }
 
@@ -82,7 +84,7 @@ func (h bannerHandler) Handle(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// StarRail handlers
+// StarRail handlers.
 func HandleStandardBannerCalculation(c *gin.Context) {
 	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
 		return starRailService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
@@ -104,7 +106,7 @@ func HandleLightConeBannerCalculation(c *gin.Context) {
 	newBannerHandler(banner.StarRailLightCone, calculateFunc).Handle(c)
 }
 
-// Genshin handlers
+// Genshin handlers.
 func HandleGenshinStandardBannerCalculation(c *gin.Context) {
 	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
 		return genshinService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)
@@ -126,7 +128,7 @@ func HandleGenshinWeaponBannerCalculation(c *gin.Context) {
 	newBannerHandler(banner.GenshinWeapon, calculateFunc).Handle(c)
 }
 
-// Zenless handlers
+// Zenless handlers.
 func HandleZenlessStandardBannerCalculation(c *gin.Context) {
 	calculateFunc := func(req models.ProbabilityRequest, bannerType banner.Type) (interface{}, error) {
 		return zenlessService.CalculateStandardBanner(req.CurrentPity, req.PlannedPulls)

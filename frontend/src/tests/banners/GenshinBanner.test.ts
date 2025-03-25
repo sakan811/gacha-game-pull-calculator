@@ -7,7 +7,7 @@ import {
   assertProbabilityResults,
 } from "../utils/test-utils";
 
-describe("Star Rail Banner Calculations", () => {
+describe("Genshin Impact Banner Calculations", () => {
   setupBannerTest();
 
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe("Star Rail Banner Calculations", () => {
   });
 
   it("should calculate standard banner probabilities", async () => {
-    await updateBannerInputs("star_rail", "standard", "10");
+    await updateBannerInputs("genshin", "standard", "10");
     await assertProbabilityResults({
       total: "15.50%",
       character: "7.75%",
@@ -24,15 +24,15 @@ describe("Star Rail Banner Calculations", () => {
   });
 
   it("should calculate limited banner probabilities", async () => {
-    await updateBannerInputs("star_rail", "limited", "10");
+    await updateBannerInputs("genshin", "limited", "10");
     await assertProbabilityResults({
       total: "15.50%",
       character: "10.00%",
     });
   });
 
-  it("should calculate light cone banner probabilities", async () => {
-    await updateBannerInputs("star_rail", "light_cone", "10");
+  it("should calculate weapon banner probabilities", async () => {
+    await updateBannerInputs("genshin", "weapon", "10");
     await assertProbabilityResults({
       total: "15.50%",
       character: "10.00%",
@@ -40,7 +40,7 @@ describe("Star Rail Banner Calculations", () => {
   });
 
   it("should handle invalid banner type gracefully", async () => {
-    await updateBannerInputs("star_rail", "invalid_banner", "10");
+    await updateBannerInputs("genshin", "invalid_banner", "10");
     await assertProbabilityResults({
       total: "0.00%",
       character: "0.00%",

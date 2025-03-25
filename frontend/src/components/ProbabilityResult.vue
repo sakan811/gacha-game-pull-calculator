@@ -8,7 +8,6 @@
           {{ formatProbability(result.total_5_star_probability) }}
         </dd>
       </div>
-
       <template v-if="bannerType === 'standard'">
         <div class="result-item">
           <dt class="form-label">Character Probability</dt>
@@ -23,7 +22,6 @@
           </dd>
         </div>
       </template>
-
       <template v-else>
         <div class="result-item">
           <dt class="form-label">Rate-Up Probability</dt>
@@ -37,37 +35,37 @@
 </template>
 
 <script setup lang="ts">
-import type { GameType, BannerType } from '../types'
-import { computed } from 'vue'
+import type { GameType, BannerType } from "../types";
+import { computed } from "vue";
 
 interface Props {
   result: {
-    total_5_star_probability: number
-    character_probability?: number
-    light_cone_probability?: number
-    rate_up_probability?: number
-    standard_char_probability?: number
-  }
-  gameType: GameType
-  bannerType: BannerType
+    total_5_star_probability: number;
+    character_probability?: number;
+    light_cone_probability?: number;
+    rate_up_probability?: number;
+    standard_char_probability?: number;
+  };
+  gameType: GameType;
+  bannerType: BannerType;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const getEquipmentLabel = computed(() => {
   switch (props.gameType) {
-    case 'genshin':
-      return 'Weapon'
-    case 'zenless':
-      return 'W-Engine'
+    case "genshin":
+      return "Weapon";
+    case "zenless":
+      return "W-Engine";
     default:
-      return 'Light Cone'
+      return "Light Cone";
   }
-})
+});
 
 function formatProbability(value?: number): string {
-  if (value === undefined || value === null) return '0.00%';
+  if (value === undefined || value === null) return "0.00%";
   // Convert decimal to percentage by multiplying by 100
-  return (value * 100).toFixed(2) + '%';
+  return (value * 100).toFixed(2) + "%";
 }
 </script>

@@ -59,7 +59,7 @@ func (w *WarpStats) CalculateWithPity(pulls int) float64 {
 	return probability
 }
 
-// calculateRateForPull calculates the rate for a specific pull considering pity
+// calculateRateForPull calculates the rate for a specific pull considering pity.
 func calculateRateForPull(config Config, pullNumber int) float64 {
 	rate := config.BaseRate
 
@@ -72,7 +72,7 @@ func calculateRateForPull(config Config, pullNumber int) float64 {
 	return rate
 }
 
-// calculateBaseProbability calculates the base probability for multiple pulls
+// calculateBaseProbability calculates the base probability for multiple pulls.
 func calculateBaseProbability(config Config, currentPity, plannedPulls int) float64 {
 	// Hard pity check
 	if currentPity+plannedPulls >= config.HardPity {
@@ -100,7 +100,7 @@ func calculateBaseProbability(config Config, currentPity, plannedPulls int) floa
 	return probability
 }
 
-// calculateRateUpProbability calculates rate-up probability based on banner type and 50/50 status
+// calculateRateUpProbability calculates rate-up probability based on banner type and 50/50 status.
 func calculateRateUpProbability(bannerType Type, baseProbability float64, lost5050 bool) float64 {
 	config := GetConfig(bannerType)
 

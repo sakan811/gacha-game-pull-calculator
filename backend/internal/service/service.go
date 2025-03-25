@@ -10,7 +10,7 @@ type BannerService interface {
 	CalculateWeaponBanner(currentPity, plannedPulls int, guaranteed bool, bannerType banner.Type) (map[string]interface{}, error)
 }
 
-// Service implementations should focus on game-specific logic
+// Service implementations should focus on game-specific logic.
 type (
 	StarRailService struct{}
 	GenshinService  struct{}
