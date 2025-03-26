@@ -45,6 +45,10 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 
 View detailed probability statistics and visualizations [here](/docs/VISUAL.md).
 
+## Application Flow Documentation
+
+View the application architecture and flow diagrams [here](/docs/FLOW.md).
+
 ## Running Statistics Script
 
 ### Python Requirements
