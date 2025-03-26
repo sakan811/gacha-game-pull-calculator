@@ -1,0 +1,39 @@
+flowchart TB
+    %% Main Components
+    client([User/Browser]) -->|"Interaction"| frontend
+    
+    subgraph frontend["Frontend (Vue)"]
+        ui["UI Components"] 
+        logic["Business Logic"]
+        api["API Client"]
+    end
+    
+    subgraph backend["Backend (Go/Gin)"]
+        router["API Router"]
+        service["Probability Service"]
+        models["Data Models"]
+    end
+    
+    %% Core Flow
+    ui -->|"User Input"| logic
+    logic -->|"Request"| api
+    api -->|"HTTP Request"| router
+    router --> service
+    service --> models
+    
+    service -->|"Results"| router
+    router -->|"Response"| api
+    api -->|"Data"| logic
+    logic -->|"Visualization"| ui
+    ui -->|"Display"| client
+    
+    %% Styling
+    classDef primary fill:#3498db,stroke:#333,color:white,stroke-width:1px
+    classDef secondary fill:#2ecc71,stroke:#333,color:white,stroke-width:1px
+    classDef client fill:#e74c3c,stroke:#333,color:white,stroke-width:1px
+    classDef models fill:#1abc9c,stroke:#333,color:white,stroke-width:1px
+    
+    class frontend primary
+    class backend secondary
+    class client client
+    class models models

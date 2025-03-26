@@ -1,0 +1,35 @@
+flowchart TB
+    %% Main Components
+    client([User/Browser]) -->|"Interacts"| ui
+    
+    subgraph frontend["Frontend Application"]
+        ui["UI Components"] --> logic
+        logic["Business Logic"] --> api
+        api["API Service"] -->|"Backend Requests"| server([Backend API])
+        
+        logic -->|"Data"| ui
+        server -->|"Results"| api
+    end
+    
+    subgraph charts["Charts"]
+        chartData["Data Processing"]
+        chartConfig["Configuration"]
+    end
+    
+    logic --> chartData
+    chartData --> ui
+    chartConfig --> chartData
+    
+    %% Styling
+    classDef primary fill:#3498db,stroke:#333,color:white,stroke-width:1px
+    classDef secondary fill:#2ecc71,stroke:#333,color:white,stroke-width:1px
+    classDef tertiary fill:#9b59b6,stroke:#333,color:white,stroke-width:1px
+    classDef client fill:#e74c3c,stroke:#333,color:white,stroke-width:1px
+    classDef models fill:#1abc9c,stroke:#333,color:white,stroke-width:1px
+    
+    class frontend primary
+    class ui secondary
+    class logic tertiary
+    class api tertiary
+    class client client
+    class charts,chartData,chartConfig models
