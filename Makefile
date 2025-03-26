@@ -60,6 +60,26 @@ lint-format-backend: lint-backend format-backend
 .PHONY: lint-format-all
 lint-format-all: lint-all format-all
 
+# Documentation commands
+DOCS_DIR := docs
+MERMAID_CHARTS_DIR := $(DOCS_DIR)/mermaid-charts
+IMAGES_DIR := $(DOCS_DIR)/images
+
+.PHONY: install-deps
+install-deps:
+	npm install -g @mermaid-js/mermaid-cli
+	npm install -g mkdirp
+
+.PHONY: create-dirs
+create-dirs:
+	mkdirp "$(IMAGES_DIR)"
+
+.PHONY: generate-diagrams
+generate-diagrams:
+	mmdc -i "$(MERMAID_CHARTS_DIR)/backend.mmd" -o "$(IMAGES_DIR)/backend-flow.svg"
+	mmdc -i "$(MERMAID_CHARTS_DIR)/frontend.mmd" -o "$(IMAGES_DIR)/frontend-flow.svg"
+	mmdc -i "$(MERMAID_CHARTS_DIR)/overview.mmd" -o "$(IMAGES_DIR)/overview-flow.svg"
+
 # Default target
 .PHONY: all
 all: lint-format-all test-all
@@ -82,5 +102,8 @@ help:
 	@echo "  docker-up         - Start services with docker-compose in detached mode"
 	@echo "  docker-clean      - Stop and remove containers defined in docker-compose"
 	@echo "  docker-clean-all  - Clean everything: volumes, images, and orphaned containers"
+	@echo "  install-deps      - Install dependencies for generating diagrams"
+	@echo "  create-dirs       - Create directories for diagrams"
+	@echo "  generate-diagrams  - Generate PNG diagrams from Mermaid files"
 	@echo "  all               - Run all tests, lint and format"
 	@echo "  help              - Show this help message"
