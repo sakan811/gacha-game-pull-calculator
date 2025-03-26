@@ -28,6 +28,19 @@ lint-backend:
 format-backend:
 	cd $(BACKEND_DIR) && go fmt ./...
 
+# Docker commands
+.PHONY: docker-up
+docker-up:
+	docker-compose up -d
+
+.PHONY: docker-clean
+docker-clean:
+	docker-compose down
+
+.PHONY: docker-clean-all
+docker-clean-all:
+	docker-compose down -v --rmi all --remove-orphans
+
 # Combined commands
 .PHONY: test-all
 test-all: test-backend test-frontend
@@ -66,5 +79,8 @@ help:
 	@echo "  lint-format-frontend - Lint and format frontend"
 	@echo "  lint-format-backend  - Lint and format backend"
 	@echo "  lint-format-all    - Lint and format everything"
+	@echo "  docker-up         - Start services with docker-compose in detached mode"
+	@echo "  docker-clean      - Stop and remove containers defined in docker-compose"
+	@echo "  docker-clean-all  - Clean everything: volumes, images, and orphaned containers"
 	@echo "  all               - Run all tests, lint and format"
 	@echo "  help              - Show this help message"
