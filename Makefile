@@ -3,6 +3,11 @@ FRONTEND_DIR := frontend
 BACKEND_DIR := backend
 
 # Frontend commands
+
+.PHONY: dev-frontend
+dev-frontend:
+	cd $(FRONTEND_DIR) && npm run dev
+
 .PHONY: test-frontend
 test-frontend:
 	cd $(FRONTEND_DIR) && npm test
@@ -16,6 +21,11 @@ format-frontend:
 	cd $(FRONTEND_DIR) && npm run format
 
 # Backend commands
+
+.PHONY: dev-backend
+dev-backend:
+	cd $(BACKEND_DIR) && go run cmd/main.go
+
 .PHONY: test-backend
 test-backend:
 	cd $(BACKEND_DIR) && go test -v ./...
@@ -87,6 +97,8 @@ all: lint-format-all test-all
 .PHONY: help
 help:
 	@echo "Available targets:"
+	@echo "  dev-frontend      - Run frontend dev server"
+	@echo "  dev-backend       - Run backend dev server"
 	@echo "  test-frontend      - Run frontend tests"
 	@echo "  test-backend       - Run backend tests" 
 	@echo "  test-all          - Run all tests"
