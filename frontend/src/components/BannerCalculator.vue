@@ -5,16 +5,32 @@
         <div class="space-y-4">
           <div class="space-y-4">
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700" for="game-type">Game</label>
-              <select v-model="gameType" class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" id="game-type">
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="game-type"
+                >Game</label
+              >
+              <select
+                v-model="gameType"
+                class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                id="game-type"
+              >
                 <option value="star_rail">Honkai: Star Rail</option>
                 <option value="genshin">Genshin Impact</option>
                 <option value="zenless">Zenless Zone Zero</option>
               </select>
             </div>
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700" for="banner-type">Banner Type</label>
-              <select v-model="bannerType" class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" id="banner-type">
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="banner-type"
+                >Banner Type</label
+              >
+              <select
+                v-model="bannerType"
+                class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                id="banner-type"
+              >
                 <option value="standard">Standard Banner</option>
                 <option value="limited">Limited Character Banner</option>
                 <option v-if="gameType === 'star_rail'" value="light_cone">
@@ -32,7 +48,9 @@
               </select>
             </div>
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700" for="pulls">Pulls</label>
+              <label class="block text-sm font-medium text-gray-700" for="pulls"
+                >Pulls</label
+              >
               <input
                 type="number"
                 v-model.number="totalPulls"
@@ -41,7 +59,9 @@
                 class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 id="pulls"
               />
-              <small class="text-xs text-gray-500">Max pulls: {{ maxPityForBannerType }}</small>
+              <small class="text-xs text-gray-500"
+                >Max pulls: {{ maxPityForBannerType }}</small
+              >
             </div>
           </div>
         </div>

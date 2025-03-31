@@ -1,22 +1,31 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-5 h-full flex flex-col" data-testid="probability-results">
+  <div
+    class="bg-white rounded-lg shadow p-5 h-full flex flex-col"
+    data-testid="probability-results"
+  >
     <h3 class="text-xl font-bold text-gray-800 mb-5">Probability Results</h3>
     <dl class="space-y-4 flex-grow flex flex-col justify-evenly">
       <div class="flex flex-col">
-        <dt class="text-base font-medium text-gray-700 mb-1">Total 5★ Probability</dt>
+        <dt class="text-base font-medium text-gray-700 mb-1">
+          Total 5★ Probability
+        </dt>
         <dd class="text-3xl font-bold text-blue-600">
           {{ formatProbability(result.total_5_star_probability) }}
         </dd>
       </div>
       <template v-if="bannerType === 'standard'">
         <div class="flex flex-col">
-          <dt class="text-base font-medium text-gray-700 mb-1">Character Probability</dt>
+          <dt class="text-base font-medium text-gray-700 mb-1">
+            Character Probability
+          </dt>
           <dd class="text-2xl font-semibold text-green-600">
             {{ formatProbability(result.character_probability) }}
           </dd>
         </div>
         <div class="flex flex-col">
-          <dt class="text-base font-medium text-gray-700 mb-1">{{ getEquipmentLabel }} Probability</dt>
+          <dt class="text-base font-medium text-gray-700 mb-1">
+            {{ getEquipmentLabel }} Probability
+          </dt>
           <dd class="text-2xl font-semibold text-amber-600">
             {{ formatProbability(result.light_cone_probability) }}
           </dd>
@@ -24,7 +33,9 @@
       </template>
       <template v-else>
         <div class="flex flex-col">
-          <dt class="text-base font-medium text-gray-700 mb-1">Rate-Up Probability</dt>
+          <dt class="text-base font-medium text-gray-700 mb-1">
+            Rate-Up Probability
+          </dt>
           <dd class="text-2xl font-semibold text-purple-600">
             {{ formatProbability(result.rate_up_probability) }}
           </dd>
@@ -54,12 +65,12 @@ const props = defineProps<Props>();
 
 const getEquipmentLabel = computed(() => {
   switch (props.gameType) {
-  case "genshin":
-    return "Weapon";
-  case "zenless":
-    return "W-Engine";
-  default:
-    return "Light Cone";
+    case "genshin":
+      return "Weapon";
+    case "zenless":
+      return "W-Engine";
+    default:
+      return "Light Cone";
   }
 });
 
