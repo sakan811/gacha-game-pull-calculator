@@ -203,7 +203,9 @@ describe("ProbabilityPlot Component", () => {
       await triggerChartUpdate(container);
 
       await vi.waitFor(() => {
-        expect(container.querySelector('[data-testid="probability-plots"]')).toBeTruthy();
+        expect(
+          container.querySelector('[data-testid="probability-plots"]'),
+        ).toBeTruthy();
       });
     });
 
@@ -223,7 +225,9 @@ describe("ProbabilityPlot Component", () => {
       await triggerChartUpdate(container);
 
       await vi.waitFor(() => {
-        expect(container.querySelector('[data-testid="probability-plots"]')).toBeTruthy();
+        expect(
+          container.querySelector('[data-testid="probability-plots"]'),
+        ).toBeTruthy();
       });
     });
   });

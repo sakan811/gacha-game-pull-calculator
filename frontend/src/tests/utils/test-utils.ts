@@ -20,8 +20,8 @@ const createApiHandler = (endpoint: string) =>
   });
 
 const isValidRequest = (body: unknown): body is CalculateRequest =>
-  body !== null && 
-  typeof body === 'object' &&
+  body !== null &&
+  typeof body === "object" &&
   typeof (body as CalculateRequest).current_pity === "number" &&
   typeof (body as CalculateRequest).planned_pulls === "number";
 
@@ -38,8 +38,8 @@ const defaultHandlers = [
   ...["star_rail", "genshin", "zenless"].flatMap((game) =>
     ["standard", "limited", "light_cone", "weapon", "w_engine", "bangboo"].map(
       (banner) => createApiHandler(`/api/${game}/${banner}`),
-    )
-  )
+    ),
+  ),
 ];
 
 export function createMockServer(handlers: HttpHandler[] = []) {
