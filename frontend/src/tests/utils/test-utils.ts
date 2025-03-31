@@ -20,15 +20,27 @@ const createApiHandler = (endpoint: string) =>
   });
 
 const isValidRequest = (body: unknown): body is CalculateRequest =>
-  body &&
+  body !== null &&
+  typeof body === "object" &&
   typeof (body as CalculateRequest).current_pity === "number" &&
   typeof (body as CalculateRequest).planned_pulls === "number";
 
-const defaultHandlers = ["star_rail", "genshin", "zenless"].flatMap((game) =>
-  ["standard", "limited", "light_cone", "weapon", "w_engine", "bangboo"].map(
-    (banner) => createApiHandler(`/api/${game}/${banner}`),
+const defaultHandlers = [
+  // Add visualization endpoint handler
+  http.post("/api/visualization", async ({ request }) => {
+    const body = (await request.json()) as CalculateRequest;
+    if (!isValidRequest(body)) {
+      return HttpResponse.error();
+    }
+    return HttpResponse.json(mockVisualizationData);
+  }),
+  // Existing handlers for game/banner combinations
+  ...["star_rail", "genshin", "zenless"].flatMap((game) =>
+    ["standard", "limited", "light_cone", "weapon", "w_engine", "bangboo"].map(
+      (banner) => createApiHandler(`/api/${game}/${banner}`),
+    ),
   ),
-);
+];
 
 export function createMockServer(handlers: HttpHandler[] = []) {
   return setupServer(...defaultHandlers, ...handlers);

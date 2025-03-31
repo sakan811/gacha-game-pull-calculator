@@ -1,9 +1,16 @@
 <template>
-  <div class="plots-wrapper" data-testid="probability-plots">
+  <div
+    class="w-full grid grid-cols-1 lg:grid-cols-2 gap-8"
+    data-testid="probability-plots"
+  >
     <!-- Distribution Chart -->
-    <div class="chart-container">
-      <h3 class="chart-title">Successful Pull Distribution</h3>
-      <div class="chart-canvas-container">
+    <div
+      class="bg-white rounded-lg shadow p-5 mx-auto w-full max-w-3xl lg:max-w-full"
+    >
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+        Successful Pull Distribution
+      </h3>
+      <div class="w-full h-80 md:h-96">
         <Line
           v-if="chartData"
           :key="chartData?.labels?.length ?? 0"
@@ -14,9 +21,13 @@
     </div>
 
     <!-- Cumulative Chart -->
-    <div class="chart-container">
-      <h3 class="chart-title">Cumulative Probability</h3>
-      <div class="chart-canvas-container">
+    <div
+      class="bg-white rounded-lg shadow p-5 mx-auto w-full max-w-3xl lg:max-w-full"
+    >
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+        Cumulative Probability
+      </h3>
+      <div class="w-full h-80 md:h-96">
         <Line
           v-if="chartData"
           :key="chartData?.labels?.length ?? 0"
