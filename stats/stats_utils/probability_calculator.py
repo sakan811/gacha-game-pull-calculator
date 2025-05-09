@@ -19,7 +19,6 @@ class ProbabilityCalculator(ABC):
     - Cumulative probability of obtaining a 5-star
     """
 
-
     def __init__(self):
         """Initialize ProbabilityCalculator with default attributes.
 
@@ -44,7 +43,9 @@ class ProbabilityCalculator(ABC):
             list: Probability of getting a 5-star for each roll number
         """
         if self.config is None:
-            raise ValueError("config must be set to a BannerConfig before calling _calculate_probabilities")
+            raise ValueError(
+                "config must be set to a BannerConfig before calling _calculate_probabilities"
+            )
         probabilities = []
         for roll in self.rolls:
             if roll < self.config.soft_pity_start_after:

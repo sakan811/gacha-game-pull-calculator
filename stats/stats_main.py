@@ -1,4 +1,3 @@
-
 """Main script for generating banner statistics CSVs.
 
 This script generates statistics CSVs for different banner types across multiple games (Star Rail, Genshin Impact, and Zenless Zone Zero).

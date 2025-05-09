@@ -90,15 +90,25 @@ class BannerStats(ProbabilityCalculator):
         file_paths = {}
 
         roll_numbers_path = os.path.join(game_output_dir, f"{prefix}_roll_numbers.csv")
-        data[["Game", "Banner Type", "Roll Number"]].to_csv(roll_numbers_path, index=False)
+        data[["Game", "Banner Type", "Roll Number"]].to_csv(
+            roll_numbers_path, index=False
+        )
         file_paths["roll_numbers"] = roll_numbers_path
 
-        prob_per_roll_path = os.path.join(game_output_dir, f"{prefix}_probability_per_roll.csv")
-        data[["Game", "Banner Type", "Roll Number", "Probability per Roll"]].to_csv(prob_per_roll_path, index=False)
+        prob_per_roll_path = os.path.join(
+            game_output_dir, f"{prefix}_probability_per_roll.csv"
+        )
+        data[["Game", "Banner Type", "Roll Number", "Probability per Roll"]].to_csv(
+            prob_per_roll_path, index=False
+        )
         file_paths["probability_per_roll"] = prob_per_roll_path
 
-        cumulative_prob_path = os.path.join(game_output_dir, f"{prefix}_cumulative_probability.csv")
-        data[["Game", "Banner Type", "Roll Number", "Cumulative Probability"]].to_csv(cumulative_prob_path, index=False)
+        cumulative_prob_path = os.path.join(
+            game_output_dir, f"{prefix}_cumulative_probability.csv"
+        )
+        data[["Game", "Banner Type", "Roll Number", "Cumulative Probability"]].to_csv(
+            cumulative_prob_path, index=False
+        )
         file_paths["cumulative_probability"] = cumulative_prob_path
 
         return file_paths
