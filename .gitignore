@@ -25,3 +25,4 @@ backend/internal/web/embedded/dist
 /post-template.txt
 /.github/prompts
 /stats/csv_output
+/stats/plan.txt
