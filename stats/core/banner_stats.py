@@ -6,10 +6,9 @@ This module provides functionality to analyze gacha banner statistics for variou
 import os
 import numpy as np
 import pandas as pd
-
-from stats_utils.banner_config import BANNER_CONFIGS
-from stats_utils.probability_calculator import ProbabilityCalculator
-
+from core.banner_config import BANNER_CONFIGS
+from core.banner import BannerConfig
+from core.calculator import ProbabilityCalculator
 
 class BannerStats(ProbabilityCalculator):
     """Class for calculating gacha banner statistics.
@@ -33,12 +32,41 @@ class BannerStats(ProbabilityCalculator):
         Raises:
             ValueError: If game_type or banner_type is not supported
         """
-        self.game_type = game_type.lower().replace(" ", "_")
-        self.banner_type = banner_type.lower().replace(" ", "_")
-        self.config_key = f"{self.game_type}_{self.banner_type}"
+        # For config lookup, use the original normalized game_type
+        config_game_type = game_type.lower().replace(" ", "_")
+        normalized_banner_type = banner_type.lower().replace(" ", "_")
+
+        # Fix: Remove redundant game prefix from banner_type if present
+        # e.g., banner_type='rail_light_cone' or 'star_rail_light_cone' -> 'light_cone'
+        if config_game_type in ["star_rail", "star"]:
+            allowed = ["standard", "limited", "light_cone"]
+            for prefix in ["star_rail_", "rail_", "star_"]:
+                if normalized_banner_type.startswith(prefix):
+                    normalized_banner_type = normalized_banner_type[len(prefix):]
+        elif config_game_type == "genshin":
+            allowed = ["standard", "limited", "weapon"]
+            if normalized_banner_type.startswith("genshin_"):
+                normalized_banner_type = normalized_banner_type[len("genshin_") :]
+        elif config_game_type == "zenless":
+            allowed = ["standard", "limited", "w_engine", "bangboo"]
+            if normalized_banner_type.startswith("zenless_"):
+                normalized_banner_type = normalized_banner_type[len("zenless_") :]
+        else:
+            allowed = []
+
+        if normalized_banner_type not in allowed:
+            raise ValueError(f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed: {allowed}")
+
+        self.banner_type = normalized_banner_type
+        self.config_key = f"{config_game_type}_{self.banner_type}"
         self.config = self._load_config()
         self.rolls = np.arange(1, self.config.hard_pity + 1).tolist()
         self._calculate_all_probabilities()
+        # For output, always use 'star_rail' for both 'star' and 'star_rail'
+        if config_game_type == "star":
+            self.game_type = "star_rail"
+        else:
+            self.game_type = config_game_type
 
     def _load_config(self):
         """Load banner configuration for the specified game and banner type.

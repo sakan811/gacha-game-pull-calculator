@@ -47,7 +47,7 @@ mypy:
 	cd $(STATS_DIR) && mypy . --strict --ignore-missing-imports
 
 run-stats:
-	cd $(STATS_DIR) && python stats_main.py
+	cd $(STATS_DIR) && python runner.py
 
 # Docker commands
 .PHONY: docker-up
