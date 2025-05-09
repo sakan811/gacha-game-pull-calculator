@@ -9,6 +9,7 @@ import pandas as pd
 from core.banner_config import BANNER_CONFIGS
 from core.calculator import ProbabilityCalculator
 
+
 class BannerStats(ProbabilityCalculator):
     """Class for calculating gacha banner statistics.
 
@@ -41,7 +42,7 @@ class BannerStats(ProbabilityCalculator):
             allowed = ["standard", "limited", "light_cone"]
             for prefix in ["star_rail_", "rail_", "star_"]:
                 if normalized_banner_type.startswith(prefix):
-                    normalized_banner_type = normalized_banner_type[len(prefix):]
+                    normalized_banner_type = normalized_banner_type[len(prefix) :]
         elif config_game_type == "genshin":
             allowed = ["standard", "limited", "weapon"]
             if normalized_banner_type.startswith("genshin_"):
@@ -54,7 +55,9 @@ class BannerStats(ProbabilityCalculator):
             allowed = []
 
         if normalized_banner_type not in allowed:
-            raise ValueError(f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed: {allowed}")
+            raise ValueError(
+                f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed: {allowed}"
+            )
 
         self.banner_type = normalized_banner_type
         # Always use 'star_rail' as config key prefix for both 'star' and 'star_rail'

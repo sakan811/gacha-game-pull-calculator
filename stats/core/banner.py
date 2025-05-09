@@ -1,10 +1,11 @@
-
 from dataclasses import dataclass
 from typing import Optional
+
 
 @dataclass
 class BannerConfig:
     """Banner configuration parameters."""
+
     base_rate: float
     four_star_rate: float
     soft_pity_start_after: int
@@ -16,6 +17,7 @@ class BannerConfig:
 
 class BaseBanner:
     """Base class for banner logic."""
+
     def __init__(self, config: BannerConfig):
         self.config = config
 

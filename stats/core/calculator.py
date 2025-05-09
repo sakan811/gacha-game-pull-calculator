@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Optional
 from core.banner import BannerConfig
 
+
 class ProbabilityCalculator(ABC):
     """Base class for calculating banner probabilities."""
 
