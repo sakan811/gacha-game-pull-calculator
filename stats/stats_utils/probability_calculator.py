@@ -5,6 +5,8 @@ including base rates, soft pity, and hard pity mechanics.
 """
 
 from abc import ABC
+from typing import Optional
+from stats_utils.banner_config import BannerConfig
 
 
 class ProbabilityCalculator(ABC):
@@ -17,6 +19,19 @@ class ProbabilityCalculator(ABC):
     - Cumulative probability of obtaining a 5-star
     """
 
+
+    def __init__(self):
+        """Initialize ProbabilityCalculator with default attributes.
+
+        Attributes:
+            probabilities (list): Probability of 5★ for each roll (to be set by subclass).
+            rolls (list or None): List of roll numbers (to be set by subclass).
+            config (Any or None): Banner configuration object (to be set by subclass).
+        """
+        self.probabilities: list[float] = []
+        self.rolls: list[int] = []
+        self.config: Optional[BannerConfig] = None
+
     def _calculate_probabilities(self):
         """Calculate base probabilities for each roll.
 
@@ -28,6 +43,8 @@ class ProbabilityCalculator(ABC):
         Returns:
             list: Probability of getting a 5-star for each roll number
         """
+        if self.config is None:
+            raise ValueError("config must be set to a BannerConfig before calling _calculate_probabilities")
         probabilities = []
         for roll in self.rolls:
             if roll < self.config.soft_pity_start_after:
