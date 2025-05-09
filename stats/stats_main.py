@@ -1,8 +1,7 @@
-"""Main script for generating banner statistics visualizations.
 
-This script generates probability distribution and cumulative probability plots
-for different banner types across multiple games (Star Rail, Genshin Impact,
-and Zenless Zone Zero). The plots are saved in the graph/ directory.
+"""Main script for generating banner statistics CSVs.
+
+This script generates statistics CSVs for different banner types across multiple games (Star Rail, Genshin Impact, and Zenless Zone Zero).
 """
 
 from stats_utils.banner_stats import BannerStats
@@ -13,24 +12,23 @@ class StatsRunner:
 
     def __init__(self):
         self.banner_jobs = [
-            # (game_type, banner_type, output_path)
-            ("star_rail", "limited", "graph/hsr_limited_banner_stats"),
-            ("star_rail", "standard", "graph/hsr_standard_banner_stats"),
-            ("star_rail", "light_cone", "graph/hsr_light_cone_banner_stats"),
-            ("genshin", "limited", "graph/genshin_limited_banner_stats"),
-            ("genshin", "standard", "graph/genshin_standard_banner_stats"),
-            ("genshin", "weapon", "graph/genshin_weapon_banner_stats"),
-            ("zenless", "limited", "graph/zenless_limited_banner_stats"),
-            ("zenless", "standard", "graph/zenless_standard_banner_stats"),
-            ("zenless", "w_engine", "graph/zenless_w_engine_banner_stats"),
-            ("zenless", "bangboo", "graph/zenless_bangboo_banner_stats"),
+            # (game_type, banner_type)
+            ("star_rail", "limited"),
+            ("star_rail", "standard"),
+            ("star_rail", "light_cone"),
+            ("genshin", "limited"),
+            ("genshin", "standard"),
+            ("genshin", "weapon"),
+            ("zenless", "limited"),
+            ("zenless", "standard"),
+            ("zenless", "w_engine"),
+            ("zenless", "bangboo"),
         ]
 
     def run(self):
-        for game_type, banner_type, output_path in self.banner_jobs:
+        for game_type, banner_type in self.banner_jobs:
             stats = BannerStats(game_type, banner_type)
-            csv_path = f"{output_path}.csv"
-            stats.save_statistics_csv(csv_path)
+            stats.save_statistics_csv()
 
 
 if __name__ == "__main__":
