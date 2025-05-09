@@ -76,23 +76,20 @@ class BannerStats(ProbabilityCalculator):
         self.p_first_5_star = self._calculate_first_5star_prob()
         self.cumulative_prob = self._calculate_cumulative_prob()
 
-    def plot_statistics(self, save_path=None):
-        """Create and save probability distribution plots.
+    def save_statistics_csv(self, save_path):
+        """Save calculated probability statistics to a CSV file.
 
-        Generates two types of plots:
-        1. Distribution plot showing probability per roll
-        2. Cumulative plot showing probability of getting 5★ by roll number
+        This method exports the prepared probability statistics DataFrame to a CSV file.
 
         Args:
-            save_path (str, optional): Base path for saving the plots.
-                If provided, adds '_distribution.jpg' and '_cumulative.jpg' suffixes.
-                If None, plots are not saved to disk.
+            save_path (str): Path to save the CSV file. Should end with '.csv'.
 
         Returns:
-            tuple: (distribution_plot, cumulative_plot) containing the generated figures
+            str: The path to the saved CSV file.
         """
         data = self._prepare_plot_data()
-        self.visualizer.create_plots(data, self.game_type, self.banner_type, save_path)
+        data.to_csv(save_path, index=False)
+        return save_path
 
     def _prepare_plot_data(self):
         """Prepare data frame for visualization.

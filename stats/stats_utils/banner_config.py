@@ -1,6 +1,7 @@
 """Configuration for different banner types."""
 
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -13,7 +14,7 @@ class BannerConfig:
     hard_pity: int
     rate_increase: float
     guaranteed_rate_up: bool
-    rate_up_chance: float = None
+    rate_up_chance: Optional[float] = None
 
 
 # Banner configurations for all games and banner types

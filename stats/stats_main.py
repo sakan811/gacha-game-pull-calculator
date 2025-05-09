@@ -28,7 +28,8 @@ class StatsRunner:
     def run(self):
         for game_type, banner_type, output_path in self.banner_jobs:
             stats = BannerStats(game_type, banner_type)
-            stats.plot_statistics(output_path)
+            csv_path = f"{output_path}.csv"
+            stats.save_statistics_csv(csv_path)
 
 
 if __name__ == "__main__":
