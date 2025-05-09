@@ -7,7 +7,6 @@ import os
 import numpy as np
 import pandas as pd
 from core.banner_config import BANNER_CONFIGS
-from core.banner import BannerConfig
 from core.calculator import ProbabilityCalculator
 
 class BannerStats(ProbabilityCalculator):
@@ -58,15 +57,16 @@ class BannerStats(ProbabilityCalculator):
             raise ValueError(f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed: {allowed}")
 
         self.banner_type = normalized_banner_type
-        self.config_key = f"{config_game_type}_{self.banner_type}"
+        # Always use 'star_rail' as config key prefix for both 'star' and 'star_rail'
+        if config_game_type in ["star_rail", "star"]:
+            self.config_key = f"star_rail_{self.banner_type}"
+            self.game_type = "star_rail"
+        else:
+            self.config_key = f"{config_game_type}_{self.banner_type}"
+            self.game_type = config_game_type
         self.config = self._load_config()
         self.rolls = np.arange(1, self.config.hard_pity + 1).tolist()
         self._calculate_all_probabilities()
-        # For output, always use 'star_rail' for both 'star' and 'star_rail'
-        if config_game_type == "star":
-            self.game_type = "star_rail"
-        else:
-            self.game_type = config_game_type
 
     def _load_config(self):
         """Load banner configuration for the specified game and banner type.
@@ -110,20 +110,25 @@ class BannerStats(ProbabilityCalculator):
         """
         data = self._prepare_plot_data()
         base_output_dir = os.path.join(os.path.dirname(__file__), "..", "csv_output")
-        game_output_dir = os.path.join(base_output_dir, self.game_type)
-        os.makedirs(game_output_dir, exist_ok=True)
+        # Always use 'star_rail' as output dir and prefix for both 'star' and 'star_rail'
+        if self.game_type in ["star_rail", "star"]:
+            output_dir = os.path.join(base_output_dir, "star_rail")
+            prefix = f"star_rail_{self.banner_type}"
+        else:
+            output_dir = os.path.join(base_output_dir, self.game_type)
+            prefix = f"{self.game_type}_{self.banner_type}"
+        os.makedirs(output_dir, exist_ok=True)
 
-        prefix = f"{self.game_type}_{self.banner_type}"
         file_paths = {}
 
-        roll_numbers_path = os.path.join(game_output_dir, f"{prefix}_roll_numbers.csv")
+        roll_numbers_path = os.path.join(output_dir, f"{prefix}_roll_numbers.csv")
         data[["Game", "Banner Type", "Roll Number"]].to_csv(
             roll_numbers_path, index=False
         )
         file_paths["roll_numbers"] = roll_numbers_path
 
         prob_per_roll_path = os.path.join(
-            game_output_dir, f"{prefix}_probability_per_roll.csv"
+            output_dir, f"{prefix}_probability_per_roll.csv"
         )
         data[["Game", "Banner Type", "Roll Number", "Probability per Roll"]].to_csv(
             prob_per_roll_path, index=False
@@ -131,7 +136,7 @@ class BannerStats(ProbabilityCalculator):
         file_paths["probability_per_roll"] = prob_per_roll_path
 
         cumulative_prob_path = os.path.join(
-            game_output_dir, f"{prefix}_cumulative_probability.csv"
+            output_dir, f"{prefix}_cumulative_probability.csv"
         )
         data[["Game", "Banner Type", "Roll Number", "Cumulative Probability"]].to_csv(
             cumulative_prob_path, index=False
