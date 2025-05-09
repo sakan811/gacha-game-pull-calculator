@@ -5,6 +5,7 @@ for various games (Star Rail, Genshin Impact, Zenless Zone Zero). It handles pro
 calculations and creates visualization plots for different banner types.
 """
 
+import os
 import numpy as np
 import pandas as pd
 
@@ -15,7 +16,7 @@ from stats_utils.visualization import BannerVisualizer
 
 class BannerStats(ProbabilityCalculator):
     """Class for calculating and visualizing gacha banner statistics.
-    
+
     This class extends ProbabilityCalculator to provide game-specific banner analysis
     and visualization capabilities. It handles configuration loading, probability
     calculations, and plot generation for different banner types across games.
@@ -76,20 +77,34 @@ class BannerStats(ProbabilityCalculator):
         self.p_first_5_star = self._calculate_first_5star_prob()
         self.cumulative_prob = self._calculate_cumulative_prob()
 
-    def save_statistics_csv(self, save_path):
-        """Save calculated probability statistics to a CSV file.
+    def save_statistics_csv(self):
+        """Save each calculated metric to its own CSV file in stats/csv_output/.
 
-        This method exports the prepared probability statistics DataFrame to a CSV file.
-
-        Args:
-            save_path (str): Path to save the CSV file. Should end with '.csv'.
+        This method exports each metric (roll numbers, probability per roll, cumulative probability)
+        to a separate CSV file inside the 'stats/csv_output' directory.
 
         Returns:
-            str: The path to the saved CSV file.
+            dict: Mapping of metric name to saved CSV file path.
         """
         data = self._prepare_plot_data()
-        data.to_csv(save_path, index=False)
-        return save_path
+        output_dir = os.path.join(os.path.dirname(__file__), "..", "csv_output")
+        os.makedirs(output_dir, exist_ok=True)
+
+        file_paths = {}
+        # Save each metric as its own CSV
+        roll_numbers_path = os.path.join(output_dir, "roll_numbers.csv")
+        data[["Roll Number"]].to_csv(roll_numbers_path, index=False)
+        file_paths["roll_numbers"] = roll_numbers_path
+
+        prob_per_roll_path = os.path.join(output_dir, "probability_per_roll.csv")
+        data[["Probability per Roll"]].to_csv(prob_per_roll_path, index=False)
+        file_paths["probability_per_roll"] = prob_per_roll_path
+
+        cumulative_prob_path = os.path.join(output_dir, "cumulative_probability.csv")
+        data[["Cumulative Probability"]].to_csv(cumulative_prob_path, index=False)
+        file_paths["cumulative_probability"] = cumulative_prob_path
+
+        return file_paths
 
     def _prepare_plot_data(self):
         """Prepare data frame for visualization.

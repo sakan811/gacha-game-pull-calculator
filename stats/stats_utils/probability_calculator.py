@@ -9,7 +9,7 @@ from abc import ABC
 
 class ProbabilityCalculator(ABC):
     """Base class for calculating banner probabilities.
-    
+
     This class provides methods to calculate various probability distributions
     for gacha banner systems, including:
     - Base probability calculations with soft and hard pity
@@ -70,7 +70,7 @@ class ProbabilityCalculator(ABC):
     def _calculate_cumulative_prob(self):
         """Calculate cumulative probability of getting at least one 5★.
 
-        This method calculates the probability of having obtained at least one 
+        This method calculates the probability of having obtained at least one
         5-star by a certain roll number. It uses the complement of the probability
         of getting no 5-stars in all rolls up to that point:
         P(at least one 5★ by roll n) = 1 - P(no 5★ in rolls 1 to n)

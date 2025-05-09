@@ -5,11 +5,12 @@ for different banner types across multiple games (Star Rail, Genshin Impact,
 and Zenless Zone Zero). The plots are saved in the graph/ directory.
 """
 
-
 from stats_utils.banner_stats import BannerStats
+
 
 class StatsRunner:
     """Class to run all banner statistics generation in a modular way."""
+
     def __init__(self):
         self.banner_jobs = [
             # (game_type, banner_type, output_path)

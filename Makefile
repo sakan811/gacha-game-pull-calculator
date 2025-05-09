@@ -1,6 +1,7 @@
 # Variables
 FRONTEND_DIR := frontend
 BACKEND_DIR := backend
+STATS_DIR := stats
 
 # Frontend commands
 
@@ -37,6 +38,13 @@ lint-backend:
 .PHONY: format-backend
 format-backend:
 	cd $(BACKEND_DIR) && go fmt ./...
+
+# Stats commands
+ruff:
+	cd $(STATS_DIR) && ruff check . --fix --unsafe-fixes && ruff format .
+
+mypy:
+	cd $(STATS_DIR) && mypy . --strict --ignore-missing-imports
 
 # Docker commands
 .PHONY: docker-up
@@ -93,29 +101,3 @@ generate-diagrams:
 # Default target
 .PHONY: all
 all: lint-format-all test-all
-
-.PHONY: help
-help:
-	@echo "Available targets:"
-	@echo "  dev-frontend      - Run frontend dev server"
-	@echo "  dev-backend       - Run backend dev server"
-	@echo "  test-frontend      - Run frontend tests"
-	@echo "  test-backend       - Run backend tests" 
-	@echo "  test-all          - Run all tests"
-	@echo "  lint-frontend      - Run frontend linting"
-	@echo "  lint-backend       - Run backend linting"
-	@echo "  lint-all          - Run all linting"
-	@echo "  format-frontend    - Format frontend code"
-	@echo "  format-backend     - Format backend code"
-	@echo "  format-all        - Format all code"
-	@echo "  lint-format-frontend - Lint and format frontend"
-	@echo "  lint-format-backend  - Lint and format backend"
-	@echo "  lint-format-all    - Lint and format everything"
-	@echo "  docker-up         - Start services with docker-compose in detached mode"
-	@echo "  docker-clean      - Stop and remove containers defined in docker-compose"
-	@echo "  docker-clean-all  - Clean everything: volumes, images, and orphaned containers"
-	@echo "  install-deps      - Install dependencies for generating diagrams"
-	@echo "  create-dirs       - Create directories for diagrams"
-	@echo "  generate-diagrams  - Generate PNG diagrams from Mermaid files"
-	@echo "  all               - Run all tests, lint and format"
-	@echo "  help              - Show this help message"
