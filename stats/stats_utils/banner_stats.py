@@ -1,8 +1,6 @@
-"""Module for calculating and visualizing gacha banner statistics across multiple games.
+"""Module for calculating gacha banner statistics across multiple games.
 
-This module provides functionality to analyze and visualize gacha banner statistics
-for various games (Star Rail, Genshin Impact, Zenless Zone Zero). It handles probability
-calculations and creates visualization plots for different banner types.
+This module provides functionality to analyze gacha banner statistics for various games (Star Rail, Genshin Impact, Zenless Zone Zero). It handles probability calculations for different banner types.
 """
 
 import os
@@ -11,15 +9,12 @@ import pandas as pd
 
 from stats_utils.banner_config import BANNER_CONFIGS
 from stats_utils.probability_calculator import ProbabilityCalculator
-from stats_utils.visualization import BannerVisualizer
 
 
 class BannerStats(ProbabilityCalculator):
-    """Class for calculating and visualizing gacha banner statistics.
+    """Class for calculating gacha banner statistics.
 
-    This class extends ProbabilityCalculator to provide game-specific banner analysis
-    and visualization capabilities. It handles configuration loading, probability
-    calculations, and plot generation for different banner types across games.
+    This class extends ProbabilityCalculator to provide game-specific banner analysis. It handles configuration loading and probability calculations for different banner types across games.
     """
 
     def __init__(self, game_type="star_rail", banner_type="standard"):
@@ -44,7 +39,7 @@ class BannerStats(ProbabilityCalculator):
         self.config = self._load_config()
         self.rolls = np.arange(1, self.config.hard_pity + 1)
         self._calculate_all_probabilities()
-        self.visualizer = BannerVisualizer()
+        # Visualization logic removed
 
     def _load_config(self):
         """Load banner configuration for the specified game and banner type.
@@ -107,7 +102,7 @@ class BannerStats(ProbabilityCalculator):
         return file_paths
 
     def _prepare_plot_data(self):
-        """Prepare data frame for visualization.
+        """Prepare data frame for statistics export.
 
         Creates a pandas DataFrame containing:
         - Roll numbers (1 to hard pity)
