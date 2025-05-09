@@ -37,9 +37,8 @@ class BannerStats(ProbabilityCalculator):
         self.banner_type = banner_type.lower().replace(" ", "_")
         self.config_key = f"{self.game_type}_{self.banner_type}"
         self.config = self._load_config()
-        self.rolls = np.arange(1, self.config.hard_pity + 1)
+        self.rolls = np.arange(1, self.config.hard_pity + 1).tolist()
         self._calculate_all_probabilities()
-        # Visualization logic removed
 
     def _load_config(self):
         """Load banner configuration for the specified game and banner type.
