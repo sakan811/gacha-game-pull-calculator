@@ -73,10 +73,10 @@ class BannerStats(ProbabilityCalculator):
         self.cumulative_prob = self._calculate_cumulative_prob()
 
     def save_statistics_csv(self):
-        """Save each calculated metric to its own CSV file in stats/csv_output/.
+        """Save each calculated metric to its own CSV file in stats/csv_output/ with game and banner in filename.
 
         This method exports each metric (roll numbers, probability per roll, cumulative probability)
-        to a separate CSV file inside the 'stats/csv_output' directory.
+        to a separate CSV file inside the 'stats/csv_output' directory, with filenames including game and banner type.
 
         Returns:
             dict: Mapping of metric name to saved CSV file path.
@@ -85,17 +85,18 @@ class BannerStats(ProbabilityCalculator):
         output_dir = os.path.join(os.path.dirname(__file__), "..", "csv_output")
         os.makedirs(output_dir, exist_ok=True)
 
+        prefix = f"{self.game_type}_{self.banner_type}"
         file_paths = {}
-        # Save each metric as its own CSV
-        roll_numbers_path = os.path.join(output_dir, "roll_numbers.csv")
+
+        roll_numbers_path = os.path.join(output_dir, f"{prefix}_roll_numbers.csv")
         data[["Roll Number"]].to_csv(roll_numbers_path, index=False)
         file_paths["roll_numbers"] = roll_numbers_path
 
-        prob_per_roll_path = os.path.join(output_dir, "probability_per_roll.csv")
+        prob_per_roll_path = os.path.join(output_dir, f"{prefix}_probability_per_roll.csv")
         data[["Probability per Roll"]].to_csv(prob_per_roll_path, index=False)
         file_paths["probability_per_roll"] = prob_per_roll_path
 
-        cumulative_prob_path = os.path.join(output_dir, "cumulative_probability.csv")
+        cumulative_prob_path = os.path.join(output_dir, f"{prefix}_cumulative_probability.csv")
         data[["Cumulative Probability"]].to_csv(cumulative_prob_path, index=False)
         file_paths["cumulative_probability"] = cumulative_prob_path
 
