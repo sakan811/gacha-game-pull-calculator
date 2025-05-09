@@ -89,35 +89,35 @@ class BannerStats(ProbabilityCalculator):
         file_paths = {}
 
         roll_numbers_path = os.path.join(output_dir, f"{prefix}_roll_numbers.csv")
-        data[["Roll Number"]].to_csv(roll_numbers_path, index=False)
+        data[["Game", "Banner Type", "Roll Number"]].to_csv(roll_numbers_path, index=False)
         file_paths["roll_numbers"] = roll_numbers_path
 
         prob_per_roll_path = os.path.join(output_dir, f"{prefix}_probability_per_roll.csv")
-        data[["Probability per Roll"]].to_csv(prob_per_roll_path, index=False)
+        data[["Game", "Banner Type", "Roll Number", "Probability per Roll"]].to_csv(prob_per_roll_path, index=False)
         file_paths["probability_per_roll"] = prob_per_roll_path
 
         cumulative_prob_path = os.path.join(output_dir, f"{prefix}_cumulative_probability.csv")
-        data[["Cumulative Probability"]].to_csv(cumulative_prob_path, index=False)
+        data[["Game", "Banner Type", "Roll Number", "Cumulative Probability"]].to_csv(cumulative_prob_path, index=False)
         file_paths["cumulative_probability"] = cumulative_prob_path
 
         return file_paths
 
     def _prepare_plot_data(self):
-        """Prepare data frame for statistics export.
-
-        Creates a pandas DataFrame containing:
-        - Roll numbers (1 to hard pity)
-        - Probability of getting first 5★ on each roll
-        - Cumulative probability of getting 5★ by each roll
+        """Prepare data frame for statistics export, including game and banner type columns.
 
         Returns:
             pd.DataFrame: Data frame with columns:
+                - 'Game': Game type (e.g., 'star_rail')
+                - 'Banner Type': Banner type (e.g., 'limited')
                 - 'Roll Number': Roll count (1 to hard pity)
                 - 'Probability per Roll': First 5★ probability per roll
                 - 'Cumulative Probability': Chance of 5★ by that roll
         """
+        n = len(self.rolls)
         return pd.DataFrame(
             {
+                "Game": [self.game_type] * n,
+                "Banner Type": [self.banner_type] * n,
                 "Roll Number": self.rolls,
                 "Probability per Roll": self.p_first_5_star,
                 "Cumulative Probability": self.cumulative_prob,
