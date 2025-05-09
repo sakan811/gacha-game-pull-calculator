@@ -46,6 +46,9 @@ ruff:
 mypy:
 	cd $(STATS_DIR) && mypy . --strict --ignore-missing-imports
 
+run-stats:
+	cd $(STATS_DIR) && python stats_main.py
+
 # Docker commands
 .PHONY: docker-up
 docker-up:
