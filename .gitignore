@@ -24,3 +24,4 @@ backend/internal/web/embedded/dist
 /.cursor
 /post-template.txt
 /.github/prompts
+/stats/csv_output
