@@ -21,7 +21,6 @@ def probability_calculator(sample_banner_config_for_calc):
     """Return a ProbabilityCalculator instance with sample config and rolls."""
     calc = ProbabilityCalculator()
     calc.config = sample_banner_config_for_calc
-    # Rolls up to hard pity to test all conditions
     calc.rolls = list(range(1, sample_banner_config_for_calc.hard_pity + 1))
     return calc
 
@@ -36,13 +35,13 @@ def test_calculate_probabilities_before_config_raises_error():
     calc = ProbabilityCalculator()
     calc.rolls = [1, 2, 3]
     with pytest.raises(ValueError, match="config must be set"):
-        calc._calculate_probabilities()
+        calc._calculate_raw_probabilities() # Corrected method name
 
 def test_calculate_probabilities_logic(probability_calculator, sample_banner_config_for_calc):
-    """Test the _calculate_probabilities method logic."""
+    """Test the _calculate_raw_probabilities method logic."""
     # Manually call to populate self.probabilities for this test,
     # as other methods depend on it.
-    probability_calculator.probabilities = probability_calculator._calculate_probabilities()
+    probability_calculator.probabilities = probability_calculator._calculate_raw_probabilities() # Corrected method name
     
     assert len(probability_calculator.probabilities) == len(probability_calculator.rolls)
 
@@ -68,27 +67,25 @@ def test_calculate_probabilities_logic(probability_calculator, sample_banner_con
         assert 0.0 <= prob <= 1.0
 
 def test_calculate_first_5star_prob(probability_calculator):
-    """Test the _calculate_first_5star_prob method."""
+    """Test the _calculate_first_5star_prob_from_raw method."""
     # Ensure probabilities are calculated first
-    probability_calculator.probabilities = probability_calculator._calculate_probabilities()
+    probability_calculator.probabilities = probability_calculator._calculate_raw_probabilities() # Corrected method name
     
-    first_5star_probs = probability_calculator._calculate_first_5star_prob()
+    first_5star_probs = probability_calculator._calculate_first_5star_prob_from_raw(probability_calculator.probabilities) # Corrected method name
     assert len(first_5star_probs) == len(probability_calculator.rolls)
     
     # Probabilities should be non-negative
     for prob in first_5star_probs:
         assert prob >= 0.0
         
-    # The sum of probabilities of getting the first 5-star at each roll 
-    # should be close to 1 (if rolls go up to/beyond hard pity)
     assert pytest.approx(sum(first_5star_probs), abs=1e-5) == 1.0 
 
 def test_calculate_cumulative_prob(probability_calculator):
-    """Test the _calculate_cumulative_prob method."""
+    """Test the _calculate_cumulative_prob_from_raw method."""
     # Ensure probabilities are calculated first
-    probability_calculator.probabilities = probability_calculator._calculate_probabilities()
+    probability_calculator.probabilities = probability_calculator._calculate_raw_probabilities() # Corrected method name
     
-    cumulative_probs = probability_calculator._calculate_cumulative_prob()
+    cumulative_probs = probability_calculator._calculate_cumulative_prob_from_raw(probability_calculator.probabilities) # Corrected method name
     assert len(cumulative_probs) == len(probability_calculator.rolls)
 
     # Cumulative probabilities should be non-decreasing

@@ -6,12 +6,11 @@ from unittest.mock import patch, MagicMock
 # Add the stats directory to sys.path for relative imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from runner import StatsRunner, main
-from core.banner_config import BANNER_CONFIGS
 
 TEST_BANNER_CONFIGS = {
     "star_rail_standard": {},
     "genshin_limited": {},
-    "invalidkey": {}  # For testing error handling
+    "invalidkey": {} 
 }
 
 @pytest.fixture
@@ -60,7 +59,6 @@ def test_process_all_banners_invalid_key_format(stats_runner, mock_banner_stats,
 
 def test_process_all_banners_processing_error(stats_runner, mock_banner_stats, caplog):
     """Test process_all_banners handles exceptions during BannerStats processing."""
-    # Ensure the first banner succeeds and the second fails
     mock_success_instance = MagicMock()
     mock_success_instance.save_statistics_csv.return_value = {"metric": "path.csv"}
     mock_banner_stats.side_effect = [mock_success_instance, Exception("Test processing error")]
@@ -69,7 +67,6 @@ def test_process_all_banners_processing_error(stats_runner, mock_banner_stats, c
     stats_runner.process_all_banners()
     
     assert mock_banner_stats.call_count == 2
-    # Check that save_statistics_csv was called for the first (successful) banner
     assert mock_success_instance.save_statistics_csv.call_count == 1
 
 def test_process_all_banners_empty_configs(stats_runner, mock_banner_stats, caplog):
@@ -78,7 +75,6 @@ def test_process_all_banners_empty_configs(stats_runner, mock_banner_stats, capl
     stats_runner.process_all_banners()
 
     mock_banner_stats.assert_not_called()
-    # This test primarily ensures no exceptions are raised.
 
 def test_process_all_banners_first_banner_fails(stats_runner, mock_banner_stats, caplog):
     """Test process_all_banners when the first banner encounters an error."""
@@ -95,7 +91,6 @@ def test_process_all_banners_first_banner_fails(stats_runner, mock_banner_stats,
     mock_banner_stats.assert_any_call(game_type="star", banner_type="rail_standard")
     mock_banner_stats.assert_any_call(game_type="genshin", banner_type="limited")
     
-    # Ensure save_statistics_csv was called only for the second (successful) banner
     assert mock_success_instance.save_statistics_csv.call_count == 1
 
 def test_process_all_banners_save_csv_returns_empty(stats_runner, mock_banner_stats, caplog):

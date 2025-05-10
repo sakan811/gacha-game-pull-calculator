@@ -18,59 +18,58 @@ class BannerStats(ProbabilityCalculator):
     """
 
     def __init__(self, game_type="star_rail", banner_type="standard"):
-        """Initialize banner statistics calculator with game and banner settings.
+        parsed_game_type, parsed_banner_type = self._parse_and_validate_game_banner(
+            game_type, banner_type
+        )
 
-        Args:
-            game_type (str): Type of game to analyze. Options:
-                - 'star_rail': Honkai: Star Rail
-                - 'genshin': Genshin Impact
-                - 'zenless': Zenless Zone Zero
-            banner_type (str): Type of banner to analyze. Options vary by game:
-                - Star Rail: 'standard', 'limited', 'light_cone'
-                - Genshin: 'standard', 'limited', 'weapon'
-                - Zenless: 'standard', 'limited', 'w_engine', 'bangboo'
+        self.banner_type = parsed_banner_type
+        self.game_type = parsed_game_type 
 
-        Raises:
-            ValueError: If game_type or banner_type is not supported
-        """
-        # For config lookup, use the original normalized game_type
-        config_game_type = game_type.lower().replace(" ", "_")
-        normalized_banner_type = banner_type.lower().replace(" ", "_")
-
-        # Fix: Remove redundant game prefix from banner_type if present
-        # e.g., banner_type='rail_light_cone' or 'star_rail_light_cone' -> 'light_cone'
-        if config_game_type in ["star_rail", "star"]:
-            allowed = ["standard", "limited", "light_cone"]
-            for prefix in ["star_rail_", "rail_", "star_"]:
-                if normalized_banner_type.startswith(prefix):
-                    normalized_banner_type = normalized_banner_type[len(prefix) :]
-        elif config_game_type == "genshin":
-            allowed = ["standard", "limited", "weapon"]
-            if normalized_banner_type.startswith("genshin_"):
-                normalized_banner_type = normalized_banner_type[len("genshin_") :]
-        elif config_game_type == "zenless":
-            allowed = ["standard", "limited", "w_engine", "bangboo"]
-            if normalized_banner_type.startswith("zenless_"):
-                normalized_banner_type = normalized_banner_type[len("zenless_") :]
+        if self.game_type == "star_rail":
+            self.config_key = f"star_rail_{self.banner_type}"
         else:
-            allowed = []
+            self.config_key = f"{self.game_type}_{self.banner_type}"
+            
+        config = self._load_config()
+        
+        super().__init__(config)
 
-        if normalized_banner_type not in allowed:
+    def _parse_and_validate_game_banner(self, game_type: str, banner_type: str) -> tuple[str, str]:
+        """
+        Normalizes and validates game_type and banner_type.
+        Returns the processed and standardized game_type and banner_type.
+        """
+        processed_game_type = game_type.lower().replace(" ", "_")
+        processed_banner_type = banner_type.lower().replace(" ", "_")
+
+        game_specific_banner_types = {
+            "star_rail": {"allowed": ["standard", "limited", "light_cone"], "prefixes": ["star_rail_", "rail_", "star_"], "output_name": "star_rail"},
+            "star": {"allowed": ["standard", "limited", "light_cone"], "prefixes": ["star_rail_", "rail_", "star_"], "output_name": "star_rail"}, 
+            "genshin": {"allowed": ["standard", "limited", "weapon"], "prefixes": ["genshin_"], "output_name": "genshin"},
+            "zenless": {"allowed": ["standard", "limited", "w_engine", "bangboo"], "prefixes": ["zenless_"], "output_name": "zenless"},
+        }
+
+        if processed_game_type not in game_specific_banner_types:
             raise ValueError(
-                f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed: {allowed}"
+                f"Unsupported game_type: '{game_type}'. Supported: {list(game_specific_banner_types.keys())}"
             )
 
-        self.banner_type = normalized_banner_type
-        # Always use 'star_rail' as config key prefix for both 'star' and 'star_rail'
-        if config_game_type in ["star_rail", "star"]:
-            self.config_key = f"star_rail_{self.banner_type}"
-            self.game_type = "star_rail"
-        else:
-            self.config_key = f"{config_game_type}_{self.banner_type}"
-            self.game_type = config_game_type
-        self.config = self._load_config()
-        self.rolls = np.arange(1, self.config.hard_pity + 1).tolist()
-        self._calculate_all_probabilities()
+        details = game_specific_banner_types[processed_game_type]
+        allowed_banners = details["allowed"]
+        standardized_game_name = details["output_name"]
+        
+        # Strip prefixes from banner_type
+        for prefix in details["prefixes"]:
+            if processed_banner_type.startswith(prefix):
+                processed_banner_type = processed_banner_type[len(prefix):]
+                break 
+
+        if processed_banner_type not in allowed_banners:
+            raise ValueError(
+                f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed for {standardized_game_name}: {allowed_banners}"
+            )
+            
+        return standardized_game_name, processed_banner_type
 
     def _load_config(self):
         """Load banner configuration for the specified game and banner type.
@@ -91,18 +90,6 @@ class BannerStats(ProbabilityCalculator):
             )
         return BANNER_CONFIGS[self.config_key]
 
-    def _calculate_all_probabilities(self):
-        """Calculate all probability distributions for the banner.
-
-        Computes three probability distributions:
-        1. Base probabilities for each roll
-        2. Probability of getting first 5★ on each roll
-        3. Cumulative probability of getting at least one 5★
-        """
-        self.probabilities = self._calculate_probabilities()
-        self.p_first_5_star = self._calculate_first_5star_prob()
-        self.cumulative_prob = self._calculate_cumulative_prob()
-
     def save_statistics_csv(self):
         """Save each calculated metric to its own CSV file in stats/csv_output/<game_type>/ with game and banner in filename.
 
@@ -114,11 +101,11 @@ class BannerStats(ProbabilityCalculator):
         """
         data_df = (
             self._prepare_plot_data()
-        )  # Renamed for clarity to avoid conflict with 'data' list
+        )
         csv_handler = CSVOutputHandler()
         base_output_dir = os.path.join(os.path.dirname(__file__), "..", "csv_output")
-        # Always use 'star_rail' as output dir and prefix for both 'star' and 'star_rail'
-        if self.game_type in ["star_rail", "star"]:
+        
+        if self.game_type == "star_rail":
             output_dir = os.path.join(base_output_dir, "star_rail")
             prefix = f"star_rail_{self.banner_type}"
         else:
@@ -128,14 +115,12 @@ class BannerStats(ProbabilityCalculator):
 
         file_paths = {}
 
-        # Save roll numbers
         roll_numbers_path = os.path.join(output_dir, f"{prefix}_roll_numbers.csv")
         roll_numbers_header = ["Game", "Banner Type", "Roll Number"]
         roll_numbers_data = data_df[roll_numbers_header].values.tolist()
         csv_handler.write(roll_numbers_path, roll_numbers_header, roll_numbers_data)
         file_paths["roll_numbers"] = roll_numbers_path
 
-        # Save probability per roll
         prob_per_roll_path = os.path.join(
             output_dir, f"{prefix}_probability_per_roll.csv"
         )
@@ -149,7 +134,6 @@ class BannerStats(ProbabilityCalculator):
         csv_handler.write(prob_per_roll_path, prob_per_roll_header, prob_per_roll_data)
         file_paths["probability_per_roll"] = prob_per_roll_path
 
-        # Save cumulative probability
         cumulative_prob_path = os.path.join(
             output_dir, f"{prefix}_cumulative_probability.csv"
         )

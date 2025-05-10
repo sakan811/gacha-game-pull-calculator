@@ -35,7 +35,6 @@ def test_csv_output_handler_write(csv_handler, sample_csv_data, tmp_path):
         assert read_header == header
 
         read_rows = [row for row in reader]
-        # Convert read rows' numeric strings to int for comparison if necessary
         expected_rows_str = [[str(cell) for cell in row] for row in rows]
         assert read_rows == expected_rows_str
 
@@ -52,7 +51,6 @@ def test_csv_output_handler_write_empty_rows(csv_handler, tmp_path):
         reader = csv.reader(file)
         read_header = next(reader)
         assert read_header == header
-        # Check if there are no more rows
         with pytest.raises(StopIteration):
             next(reader)
 

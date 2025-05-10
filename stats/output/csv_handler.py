@@ -1,4 +1,3 @@
-# CSV output handler stub
 import csv
 from typing import List, Any
 

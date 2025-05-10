@@ -2,9 +2,7 @@
 
 from core.banner import BannerConfig
 
-# Banner configurations for all games and banner types
 BANNER_CONFIGS = {
-    # Star Rail banners
     "star_rail_standard": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
@@ -32,7 +30,6 @@ BANNER_CONFIGS = {
         guaranteed_rate_up=True,
         rate_up_chance=0.75,
     ),
-    # Genshin banners
     "genshin_standard": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
@@ -60,7 +57,6 @@ BANNER_CONFIGS = {
         guaranteed_rate_up=True,
         rate_up_chance=0.75,
     ),
-    # Zenless Zone Zero banners
     "zenless_standard": BannerConfig(
         base_rate=0.006,
         four_star_rate=0.051,
