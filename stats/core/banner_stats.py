@@ -71,17 +71,15 @@ class BannerStats:
             f"Finished calculating probabilities for {self.game_name} - {self.banner_type}."
         )
 
-    def _prepare_output_data(
-        self, metric_name: str, probability_data: list[float]
-    ) -> Tuple[list[str], list[list[Any]]]:
-        """Prepares data for CSV output with only the required columns."""
+    def get_banner_rows(self) -> Tuple[list[str], list[list[Any]]]:
+        """Returns header and rows for this banner's statistics, for per-game CSV aggregation."""
         header = [
             "Game",
             "Banner Type",
-            "Cumulative Probability",
-            "Probability per Roll",
-            "First 5 Star Probability",
             "Roll Number",
+            "Probability per Roll",
+            "Cumulative Probability",
+            "First 5 Star Probability",
         ]
         cumulative_probs = self.results.get("cumulative_probabilities", [])
         first_5_star_probs = self.results.get("first_5_star_probabilities", [])
@@ -96,66 +94,18 @@ class BannerStats:
                 return None
         rows = []
         for idx, roll in enumerate(rolls):
-            cum_prob = safe_get(cumulative_probs, idx)
-            prob_per_roll = safe_get(raw_probs, idx)
-            first_5_star = safe_get(first_5_star_probs, idx)
             row = [
                 game,
                 banner_type,
-                cum_prob,
-                prob_per_roll,
-                first_5_star,
                 roll,
+                safe_get(raw_probs, idx),
+                safe_get(cumulative_probs, idx),
+                safe_get(first_5_star_probs, idx),
             ]
             rows.append(row)
         return header, rows
 
-    def save_results_to_csv(self) -> Dict[str, str]:
-        """Saves the calculated probability distributions to CSV files.
-
-        Returns:
-            Dict[str, str]: A dictionary mapping metric names to their output file paths.
-        """
-        if not self.results:
-            logger.warning(
-                f"No results to save for {self.game_name} - {self.banner_type}. Run calculate_probabilities() first."
-            )
-            return {}
-
-        output_paths: Dict[str, str] = {}
-
-        metrics_to_save = {
-            "probability_per_roll": "raw_probabilities",
-            "first_5_star_probability": "first_5_star_probabilities",
-            "cumulative_probability": "cumulative_probabilities",
-        }
-
-        for metric_key, data_key in metrics_to_save.items():
-            if data_key in self.results:
-                filename = f"csv_output/{self.game_name.lower().replace(' ', '_')}/{self.game_name.lower().replace(' ', '_')}_{self.banner_type.lower().replace(' ', '_')}_{metric_key}.csv"
-
-                # Ensure directory exists (CSVOutputHandler doesn't create dirs)
-                # This might be better handled by CSVOutputHandler or a utility function
-                import os
-
-                os.makedirs(os.path.dirname(filename), exist_ok=True)
-
-                header, rows = self._prepare_output_data(
-                    metric_key, self.results[data_key]
-                )
-                try:
-                    # Write header and data rows only (no metadata row)
-                    self.output_handler.write(filename, header, rows)
-                    output_paths[metric_key] = filename
-                    logger.info(f"Saved {metric_key} to {filename}")
-                except Exception as e:
-                    logger.error(
-                        f"Failed to write {metric_key} to {filename}: {e}",
-                        exc_info=True,
-                    )
-            else:
-                logger.warning(
-                    f"Data for metric '{data_key}' not found in results for {self.game_name} - {self.banner_type}."
-                )
-
-        return output_paths
+    def save_results_to_csv(self):
+        """Deprecated: No longer used. CSV writing is now handled per-game in StatsRunner."""
+        logger.warning("save_results_to_csv is deprecated. Use get_banner_rows and aggregate in StatsRunner.")
+        return {}
