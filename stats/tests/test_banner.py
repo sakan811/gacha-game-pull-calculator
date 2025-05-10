@@ -6,6 +6,8 @@ from core.banner import BannerConfig
 def test_banner_config_creation():
     """Test creation of BannerConfig objects."""
     config = BannerConfig(
+        game_name="Test Game",  # Added
+        banner_type="Test Banner",  # Added
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -14,6 +16,8 @@ def test_banner_config_creation():
         guaranteed_rate_up=True,
         rate_up_chance=0.5,
     )
+    assert config.game_name == "Test Game"  # Added
+    assert config.banner_type == "Test Banner"  # Added
     assert config.base_rate == 0.006
     assert config.four_star_rate == 0.051
     assert config.soft_pity_start_after == 73
@@ -26,6 +30,8 @@ def test_banner_config_creation():
 def test_banner_config_optional_rate_up_chance():
     """Test BannerConfig with optional rate_up_chance."""
     config = BannerConfig(
+        game_name="Test Game 2",  # Added
+        banner_type="Another Banner",  # Added
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,

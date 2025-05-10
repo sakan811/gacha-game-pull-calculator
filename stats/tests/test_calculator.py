@@ -8,6 +8,8 @@ from core.banner import BannerConfig
 def sample_banner_config_for_calc():
     """Return a sample BannerConfig for calculator testing."""
     return BannerConfig(
+        game_name="TestGame",  # Added
+        banner_type="TestBanner",  # Added
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
