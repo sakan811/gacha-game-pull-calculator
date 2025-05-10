@@ -12,7 +12,7 @@ BANNER_CONFIGS = {
         hard_pity=90,
         rate_increase=0.07,
         guaranteed_rate_up=False,
-        rate_up_chance=0.0,
+        rate_up_chance=0.5,
     ),
     "star_rail_limited": BannerConfig(
         base_rate=0.006,
@@ -40,7 +40,7 @@ BANNER_CONFIGS = {
         hard_pity=90,
         rate_increase=0.07,
         guaranteed_rate_up=False,
-        rate_up_chance=0.0,
+        rate_up_chance=0.5,
     ),
     "genshin_limited": BannerConfig(
         base_rate=0.006,
@@ -68,7 +68,7 @@ BANNER_CONFIGS = {
         hard_pity=90,
         rate_increase=0.07,
         guaranteed_rate_up=False,
-        rate_up_chance=0.0,
+        rate_up_chance=0.5,
     ),
     "zenless_limited": BannerConfig(
         base_rate=0.006,
