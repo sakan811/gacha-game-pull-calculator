@@ -58,7 +58,9 @@ def mock_banner_stats():  # This mocks the BannerStats CLASS
 
         mock_instance.calculate_probabilities = MagicMock()
         # save_results_to_csv is not used in runner, so do not mock it
-        mock_instance.get_banner_rows = MagicMock(return_value=(['header1'], [['row1']]))
+        mock_instance.get_banner_rows = MagicMock(
+            return_value=(["header1"], [["row1"]])
+        )
         yield mock_class  # yield the mock for the class itself
 
 
@@ -106,8 +108,6 @@ def test_process_all_banners_success(
     # save_results_to_csv is not called by runner, so do not assert on it
 
 
-
-
 def test_process_all_banners_invalid_config_value_type(
     stats_runner_with_mocks, mock_banner_stats, caplog
 ):
@@ -139,7 +139,9 @@ def test_process_all_banners_processing_error(
     successful_bs_mock.game_name = first_config_obj.game_name
     successful_bs_mock.banner_type = first_config_obj.banner_type
     successful_bs_mock.calculate_probabilities = MagicMock()
-    successful_bs_mock.get_banner_rows = MagicMock(return_value=(['header1'], [['row1']]))
+    successful_bs_mock.get_banner_rows = MagicMock(
+        return_value=(["header1"], [["row1"]])
+    )
 
     failing_bs_mock = MagicMock(spec=BannerStats)
     failing_bs_mock.config = second_config_obj
@@ -149,7 +151,7 @@ def test_process_all_banners_processing_error(
     failing_bs_mock.calculate_probabilities.side_effect = Exception(
         "Test processing error"
     )
-    failing_bs_mock.get_banner_rows = MagicMock(return_value=(['header1'], [['row1']]))
+    failing_bs_mock.get_banner_rows = MagicMock(return_value=(["header1"], [["row1"]]))
 
     mock_banner_stats.side_effect = [successful_bs_mock, failing_bs_mock]
 
@@ -159,8 +161,6 @@ def test_process_all_banners_processing_error(
 
     successful_bs_mock.calculate_probabilities.assert_called_once()
     failing_bs_mock.calculate_probabilities.assert_called_once()
-
-
 
 
 def test_process_all_banners_empty_configs(
@@ -192,14 +192,16 @@ def test_process_all_banners_first_banner_fails(
     failing_bs_mock.calculate_probabilities.side_effect = Exception(
         "First banner processing error"
     )
-    failing_bs_mock.get_banner_rows = MagicMock(return_value=(['header1'], [['row1']]))
+    failing_bs_mock.get_banner_rows = MagicMock(return_value=(["header1"], [["row1"]]))
 
     successful_bs_mock = MagicMock(spec=BannerStats)
     successful_bs_mock.config = second_config_obj
     successful_bs_mock.game_name = second_config_obj.game_name
     successful_bs_mock.banner_type = second_config_obj.banner_type
     successful_bs_mock.calculate_probabilities = MagicMock()
-    successful_bs_mock.get_banner_rows = MagicMock(return_value=(['header1'], [['row1']]))
+    successful_bs_mock.get_banner_rows = MagicMock(
+        return_value=(["header1"], [["row1"]])
+    )
 
     mock_banner_stats.side_effect = [failing_bs_mock, successful_bs_mock]
 
@@ -209,8 +211,6 @@ def test_process_all_banners_first_banner_fails(
 
     failing_bs_mock.calculate_probabilities.assert_called_once()
     successful_bs_mock.calculate_probabilities.assert_called_once()
-
-
 
 
 def test_process_all_banners_save_csv_returns_empty(
@@ -230,7 +230,6 @@ def test_process_all_banners_save_csv_returns_empty(
 
     assert mock_banner_stats.call_count == 1
     mock_banner_stats.return_value.calculate_probabilities.assert_called_once()
-
 
 
 @patch("runner.StatsRunner", autospec=True)
