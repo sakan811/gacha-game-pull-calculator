@@ -58,7 +58,7 @@ class StatsRunner:
                         f"Successfully saved stats for {banner_analyzer.game_type} {banner_analyzer.banner_type}:"
                     )
                     for metric, path in file_paths.items():
-                        self.logger.info(f"  {metric}: {path}")
+                        self.logger.info(f"{metric}: {path}")
                 else:
                     self.logger.info(
                         f"Stats processed for {banner_analyzer.game_type} {banner_analyzer.banner_type}, but no CSV files were reported as generated."
