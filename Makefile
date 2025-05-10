@@ -49,6 +49,9 @@ mypy:
 run-stats:
 	cd $(STATS_DIR) && python runner.py
 
+test-stats:
+	cd $(STATS_DIR) && python -m pytest
+
 # Docker commands
 .PHONY: docker-up
 docker-up:
@@ -61,25 +64,6 @@ docker-clean:
 .PHONY: docker-clean-all
 docker-clean-all:
 	docker-compose down -v --rmi all --remove-orphans
-
-# Combined commands
-.PHONY: test-all
-test-all: test-backend test-frontend
-
-.PHONY: lint-all
-lint-all: lint-backend lint-frontend
-
-.PHONY: format-all
-format-all: format-frontend format-backend
-
-.PHONY: lint-format-frontend
-lint-format-frontend: lint-frontend format-frontend
-
-.PHONY: lint-format-backend
-lint-format-backend: lint-backend format-backend
-
-.PHONY: lint-format-all
-lint-format-all: lint-all format-all
 
 # Documentation commands
 DOCS_DIR := docs
