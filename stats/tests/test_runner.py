@@ -60,12 +60,56 @@ def test_process_all_banners_invalid_key_format(stats_runner, mock_banner_stats,
 
 def test_process_all_banners_processing_error(stats_runner, mock_banner_stats, caplog):
     """Test process_all_banners handles exceptions during BannerStats processing."""
-    mock_banner_stats.side_effect = [MagicMock(save_statistics_csv=MagicMock(return_value={"metric": "path.csv"})), Exception("Test processing error")]
+    # Ensure the first banner succeeds and the second fails
+    mock_success_instance = MagicMock()
+    mock_success_instance.save_statistics_csv.return_value = {"metric": "path.csv"}
+    mock_banner_stats.side_effect = [mock_success_instance, Exception("Test processing error")]
     
     stats_runner.banner_configs = {"star_rail_standard": {}, "genshin_limited": {}}
     stats_runner.process_all_banners()
     
     assert mock_banner_stats.call_count == 2
+    # Check that save_statistics_csv was called for the first (successful) banner
+    assert mock_success_instance.save_statistics_csv.call_count == 1
+
+def test_process_all_banners_empty_configs(stats_runner, mock_banner_stats, caplog):
+    """Test process_all_banners with an empty banner_configs dictionary."""
+    stats_runner.banner_configs = {}
+    stats_runner.process_all_banners()
+
+    mock_banner_stats.assert_not_called()
+    # This test primarily ensures no exceptions are raised.
+
+def test_process_all_banners_first_banner_fails(stats_runner, mock_banner_stats, caplog):
+    """Test process_all_banners when the first banner encounters an error."""
+    mock_failure_exception = Exception("First banner processing error")
+    mock_success_instance = MagicMock()
+    mock_success_instance.save_statistics_csv.return_value = {"metric2": "path2.csv"}
+
+    mock_banner_stats.side_effect = [mock_failure_exception, mock_success_instance]
+    
+    stats_runner.banner_configs = {"star_rail_standard": {}, "genshin_limited": {}}
+    stats_runner.process_all_banners()
+    
+    assert mock_banner_stats.call_count == 2 # Both should be attempted
+    mock_banner_stats.assert_any_call(game_type="star", banner_type="rail_standard")
+    mock_banner_stats.assert_any_call(game_type="genshin", banner_type="limited")
+    
+    # Ensure save_statistics_csv was called only for the second (successful) banner
+    assert mock_success_instance.save_statistics_csv.call_count == 1
+
+def test_process_all_banners_save_csv_returns_empty(stats_runner, mock_banner_stats, caplog):
+    """Test process_all_banners when save_statistics_csv returns an empty dict."""
+    mock_instance = mock_banner_stats.return_value
+    mock_instance.save_statistics_csv.return_value = {} # Simulate empty file paths
+
+    stats_runner.banner_configs = {"star_rail_standard": {}}
+    stats_runner.process_all_banners()
+
+    assert mock_banner_stats.call_count == 1
+    mock_banner_stats.assert_called_once_with(game_type="star", banner_type="rail_standard")
+    mock_instance.save_statistics_csv.assert_called_once()
+    # Ensure no error due to empty dict iteration
 
 @patch("runner.StatsRunner", autospec=True)
 @patch("runner.BANNER_CONFIGS", TEST_BANNER_CONFIGS)
