@@ -75,9 +75,10 @@ class BannerStats:
         self, metric_name: str, probability_data: list[float]
     ) -> Tuple[list[str], list[list[Any]]]:
         """Prepares data for CSV output."""
-        header = ["Roll", "Probability"]
+        header = ["Game", "Banner Type", "Roll", "Probability"]  # Added Game and Banner Type
         rows = [
-            [roll, prob] for roll, prob in zip(self.results["rolls"], probability_data)
+            [self.game_name, self.banner_type, roll, prob]  # Added game_name and banner_type
+            for roll, prob in zip(self.results["rolls"], probability_data)
         ]
         return header, rows
 
