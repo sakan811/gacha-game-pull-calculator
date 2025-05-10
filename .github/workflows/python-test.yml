@@ -1,0 +1,42 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Python Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./stats
+
+    strategy:
+      matrix:
+        python-version: [ "3.13" ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install UV and set Python version
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Install dependencies
+      run: |
+        uv sync --locked
+
+    - name: Run tests
+      run: |
+        uv run python -m pytest
+
+permissions:
+  contents: read
+  actions: write
