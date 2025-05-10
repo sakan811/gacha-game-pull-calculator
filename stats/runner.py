@@ -31,7 +31,9 @@ class StatsRunner:
         for config_key, banner_config_data in self.banner_configs.items():
             # Safely get game_name and banner_type for logging, even if banner_config_data is not a proper object
             game_name_for_log = getattr(banner_config_data, "game_name", "UnknownGame")
-            banner_type_for_log = getattr(banner_config_data, "banner_type", "UnknownBanner")
+            banner_type_for_log = getattr(
+                banner_config_data, "banner_type", "UnknownBanner"
+            )
             try:
                 logger.info(
                     f"Processing banner: {config_key} ({game_name_for_log} - {banner_type_for_log})"
@@ -45,9 +47,7 @@ class StatsRunner:
 
                 # If we've passed the isinstance check, banner_config_data is a BannerConfig object,
                 # so direct access is safe from here on within this try block.
-                calculator = (
-                    ProbabilityCalculator()
-                )
+                calculator = ProbabilityCalculator()
 
                 banner_analyzer = BannerStats(
                     config=banner_config_data,
@@ -73,7 +73,9 @@ class StatsRunner:
                 logger.error(
                     f"Configuration or validation error for {config_key} ({game_name_for_log} - {banner_type_for_log}): {ve}"
                 )
-            except TypeError as te:  # Catches the TypeError from isinstance check or other type issues
+            except (
+                TypeError
+            ) as te:  # Catches the TypeError from isinstance check or other type issues
                 logger.error(
                     f"Type error or invalid config structure for {config_key} ({game_name_for_log} - {banner_type_for_log}): {te}",
                     exc_info=True,
