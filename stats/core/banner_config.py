@@ -15,8 +15,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.5,
     ),
     "star_rail_limited": BannerConfig(
-        game_name="Star Rail",  # Added
-        banner_type="Limited Character",  # Added
+        game_name="Star Rail",
+        banner_type="Limited",  # Updated
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -48,8 +48,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.5,
     ),
     "genshin_limited": BannerConfig(
-        game_name="Genshin Impact",  # Added
-        banner_type="Limited Character",  # Added
+        game_name="Genshin Impact",
+        banner_type="Limited",  # Updated
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -81,8 +81,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.5,
     ),
     "zenless_limited": BannerConfig(
-        game_name="Zenless Zone Zero",  # Added
-        banner_type="Limited Character",  # Added
+        game_name="Zenless Zone Zero",
+        banner_type="Limited",  # Updated
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
