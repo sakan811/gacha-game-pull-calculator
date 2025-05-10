@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from core.banner_config import BANNER_CONFIGS
 from core.calculator import ProbabilityCalculator
+from output.csv_handler import CSVOutputHandler
 
 
 class BannerStats(ProbabilityCalculator):
@@ -111,7 +112,10 @@ class BannerStats(ProbabilityCalculator):
         Returns:
             dict: Mapping of metric name to saved CSV file path.
         """
-        data = self._prepare_plot_data()
+        data_df = (
+            self._prepare_plot_data()
+        )  # Renamed for clarity to avoid conflict with 'data' list
+        csv_handler = CSVOutputHandler()
         base_output_dir = os.path.join(os.path.dirname(__file__), "..", "csv_output")
         # Always use 'star_rail' as output dir and prefix for both 'star' and 'star_rail'
         if self.game_type in ["star_rail", "star"]:
@@ -124,25 +128,40 @@ class BannerStats(ProbabilityCalculator):
 
         file_paths = {}
 
+        # Save roll numbers
         roll_numbers_path = os.path.join(output_dir, f"{prefix}_roll_numbers.csv")
-        data[["Game", "Banner Type", "Roll Number"]].to_csv(
-            roll_numbers_path, index=False
-        )
+        roll_numbers_header = ["Game", "Banner Type", "Roll Number"]
+        roll_numbers_data = data_df[roll_numbers_header].values.tolist()
+        csv_handler.write(roll_numbers_path, roll_numbers_header, roll_numbers_data)
         file_paths["roll_numbers"] = roll_numbers_path
 
+        # Save probability per roll
         prob_per_roll_path = os.path.join(
             output_dir, f"{prefix}_probability_per_roll.csv"
         )
-        data[["Game", "Banner Type", "Roll Number", "Probability per Roll"]].to_csv(
-            prob_per_roll_path, index=False
-        )
+        prob_per_roll_header = [
+            "Game",
+            "Banner Type",
+            "Roll Number",
+            "Probability per Roll",
+        ]
+        prob_per_roll_data = data_df[prob_per_roll_header].values.tolist()
+        csv_handler.write(prob_per_roll_path, prob_per_roll_header, prob_per_roll_data)
         file_paths["probability_per_roll"] = prob_per_roll_path
 
+        # Save cumulative probability
         cumulative_prob_path = os.path.join(
             output_dir, f"{prefix}_cumulative_probability.csv"
         )
-        data[["Game", "Banner Type", "Roll Number", "Cumulative Probability"]].to_csv(
-            cumulative_prob_path, index=False
+        cumulative_prob_header = [
+            "Game",
+            "Banner Type",
+            "Roll Number",
+            "Cumulative Probability",
+        ]
+        cumulative_prob_data = data_df[cumulative_prob_header].values.tolist()
+        csv_handler.write(
+            cumulative_prob_path, cumulative_prob_header, cumulative_prob_data
         )
         file_paths["cumulative_probability"] = cumulative_prob_path
 
