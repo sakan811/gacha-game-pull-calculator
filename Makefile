@@ -100,7 +100,3 @@ generate-diagrams:
 	mmdc -i "$(MERMAID_CHARTS_DIR)/backend.mmd" -o "$(IMAGES_DIR)/backend-flow.svg"
 	mmdc -i "$(MERMAID_CHARTS_DIR)/frontend.mmd" -o "$(IMAGES_DIR)/frontend-flow.svg"
 	mmdc -i "$(MERMAID_CHARTS_DIR)/overview.mmd" -o "$(IMAGES_DIR)/overview-flow.svg"
-
-# Default target
-.PHONY: all
-all: lint-format-all test-all
