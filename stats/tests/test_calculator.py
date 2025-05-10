@@ -34,7 +34,7 @@ def test_calculate_probabilities_before_config_raises_error():
     """Test that _calculate_probabilities raises ValueError if config is not set."""
     calc = ProbabilityCalculator()
     calc.rolls = [1, 2, 3]
-    with pytest.raises(ValueError, match="config must be set"):
+    with pytest.raises(ValueError, match="Config must be set to calculate raw probabilities."):
         calc._calculate_raw_probabilities() # Corrected method name
 
 def test_calculate_probabilities_logic(probability_calculator, sample_banner_config_for_calc):

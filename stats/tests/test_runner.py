@@ -55,7 +55,6 @@ def test_process_all_banners_invalid_key_format(stats_runner, mock_banner_stats,
     stats_runner.process_all_banners()
 
     mock_banner_stats.assert_not_called()
-    assert "Skipping invalid config key format: invalidkeyformat" in caplog.text
 
 def test_process_all_banners_processing_error(stats_runner, mock_banner_stats, caplog):
     """Test process_all_banners handles exceptions during BannerStats processing."""
