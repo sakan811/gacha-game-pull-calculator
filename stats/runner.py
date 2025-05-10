@@ -33,7 +33,9 @@ class StatsRunner:
         game_headers = {}
         for config_key, banner_config_data in self.banner_configs.items():
             game_name_for_log = getattr(banner_config_data, "game_name", "UnknownGame")
-            banner_type_for_log = getattr(banner_config_data, "banner_type", "UnknownBanner")
+            banner_type_for_log = getattr(
+                banner_config_data, "banner_type", "UnknownBanner"
+            )
             try:
                 logger.info(
                     f"Processing banner: {config_key} ({game_name_for_log} - {banner_type_for_log})"
@@ -76,6 +78,7 @@ class StatsRunner:
                 )
         # Write one CSV per game
         import os
+
         for game, rows in game_rows.items():
             safe_game = game.lower().replace(" ", "_")
             out_dir = os.path.join("csv_output", safe_game)

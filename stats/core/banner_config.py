@@ -1,11 +1,9 @@
-"""Configuration for different banner types."""
-
 from core.banner import BannerConfig
 
 BANNER_CONFIGS = {
     "star_rail_standard": BannerConfig(
-        game_name="Star Rail",  # Added
-        banner_type="Standard",  # Added
+        game_name="Star Rail",
+        banner_type="Standard",
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -16,7 +14,7 @@ BANNER_CONFIGS = {
     ),
     "star_rail_limited": BannerConfig(
         game_name="Star Rail",
-        banner_type="Limited",  # Updated
+        banner_type="Limited",
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -26,8 +24,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.5,
     ),
     "star_rail_light_cone": BannerConfig(
-        game_name="Star Rail",  # Added
-        banner_type="Light Cone",  # Added
+        game_name="Star Rail",
+        banner_type="Light Cone",
         base_rate=0.008,
         four_star_rate=0.066,
         soft_pity_start_after=65,
@@ -37,8 +35,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.75,
     ),
     "genshin_standard": BannerConfig(
-        game_name="Genshin Impact",  # Added
-        banner_type="Standard",  # Added
+        game_name="Genshin Impact",
+        banner_type="Standard",
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -49,7 +47,7 @@ BANNER_CONFIGS = {
     ),
     "genshin_limited": BannerConfig(
         game_name="Genshin Impact",
-        banner_type="Limited",  # Updated
+        banner_type="Limited",
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -59,8 +57,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.5,
     ),
     "genshin_weapon": BannerConfig(
-        game_name="Genshin Impact",  # Added
-        banner_type="Weapon",  # Added
+        game_name="Genshin Impact",
+        banner_type="Weapon",
         base_rate=0.007,
         four_star_rate=0.066,
         soft_pity_start_after=62,
@@ -70,8 +68,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.75,
     ),
     "zenless_standard": BannerConfig(
-        game_name="Zenless Zone Zero",  # Added
-        banner_type="Standard",  # Added
+        game_name="Zenless Zone Zero",
+        banner_type="Standard",
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -82,7 +80,7 @@ BANNER_CONFIGS = {
     ),
     "zenless_limited": BannerConfig(
         game_name="Zenless Zone Zero",
-        banner_type="Limited",  # Updated
+        banner_type="Limited",
         base_rate=0.006,
         four_star_rate=0.051,
         soft_pity_start_after=73,
@@ -92,8 +90,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.5,
     ),
     "zenless_w_engine": BannerConfig(
-        game_name="Zenless Zone Zero",  # Added
-        banner_type="W-Engine",  # Added
+        game_name="Zenless Zone Zero",
+        banner_type="W-Engine",
         base_rate=0.01,
         four_star_rate=0.08,
         soft_pity_start_after=64,
@@ -103,8 +101,8 @@ BANNER_CONFIGS = {
         rate_up_chance=0.75,
     ),
     "zenless_bangboo": BannerConfig(
-        game_name="Zenless Zone Zero",  # Added
-        banner_type="Bangboo",  # Added
+        game_name="Zenless Zone Zero",
+        banner_type="Bangboo",
         base_rate=0.01,
         four_star_rate=0.051,
         soft_pity_start_after=64,
