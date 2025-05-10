@@ -111,19 +111,20 @@ def test_process_all_banners_success(
     # This is because the banner_analyzer in runner.py is the mock_banner_stats.return_value.
     expected_log_game_name = mock_banner_stats.return_value.config.game_name
     expected_log_banner_type = mock_banner_stats.return_value.config.banner_type
-    expected_log_success = f"Successfully saved stats for {expected_log_game_name} {expected_log_banner_type}:"
+    expected_log_success_prefix = f"Successfully saved stats for {expected_log_game_name} {expected_log_banner_type}:"  # Renamed to clarify it's a prefix
 
     # Check if this log message appears for each banner processed
     # The current caplog.messages will contain all logs. We need to ensure this message appears
     # at least once for each banner if the names were dynamic, but since they are fixed from the mock config,
     # we check if the message (with the mocked names) appears `expected_call_count` times.
-    # However, the log message itself is generic if multiple banners use the same mocked names.
     # A simpler check is that the log message appears at all, and that the processing loop ran for all items.
-    assert any(expected_log_success in message for message in caplog.messages)
+    assert any(
+        message.startswith(expected_log_success_prefix) for message in caplog.messages
+    )
     # To be more precise, count occurrences if necessary, but `any` is a good start.
     # Count how many times the success log appears
     success_log_count = sum(
-        1 for message in caplog.messages if expected_log_success in message
+        1 for message in caplog.messages if expected_log_success_prefix in message
     )
     assert success_log_count == expected_call_count
 
@@ -180,8 +181,10 @@ def test_process_all_banners_processing_error(
 
     expected_error_log = f"Unexpected error processing {second_config_key} ({second_config_obj.game_name} - {second_config_obj.banner_type}): Test processing error"
     assert any(expected_error_log in message for message in caplog.messages)
-    expected_success_log = f"Successfully saved stats for {first_config_obj.game_name} {first_config_obj.banner_type}:"
-    assert any(expected_success_log in message for message in caplog.messages)
+    expected_success_log_prefix = f"Successfully saved stats for {first_config_obj.game_name} {first_config_obj.banner_type}:"  # Renamed to clarify it's a prefix
+    assert any(
+        message.startswith(expected_success_log_prefix) for message in caplog.messages
+    )
 
 
 def test_process_all_banners_empty_configs(
@@ -231,8 +234,10 @@ def test_process_all_banners_first_banner_fails(
 
     expected_error_log = f"Unexpected error processing {first_config_key} ({first_config_obj.game_name} - {first_config_obj.banner_type}): First banner processing error"
     assert any(expected_error_log in message for message in caplog.messages)
-    expected_success_log = f"Successfully saved stats for {second_config_obj.game_name} {second_config_obj.banner_type}:"
-    assert any(expected_success_log in message for message in caplog.messages)
+    expected_success_log_prefix = f"Successfully saved stats for {second_config_obj.game_name} {second_config_obj.banner_type}:"  # Renamed to clarify it's a prefix
+    assert any(
+        message.startswith(expected_success_log_prefix) for message in caplog.messages
+    )
 
 
 def test_process_all_banners_save_csv_returns_empty(

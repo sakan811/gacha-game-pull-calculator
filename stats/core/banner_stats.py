@@ -74,22 +74,40 @@ class BannerStats:
     def _prepare_output_data(
         self, metric_name: str, probability_data: list[float]
     ) -> Tuple[list[str], list[list[Any]]]:
-        """Prepares data for CSV output."""
+        """Prepares data for CSV output with only the required columns."""
         header = [
             "Game",
             "Banner Type",
-            "Roll",
-            "Probability",
-        ]  # Added Game and Banner Type
-        rows = [
-            [
-                self.game_name,
-                self.banner_type,
-                roll,
-                prob,
-            ]  # Added game_name and banner_type
-            for roll, prob in zip(self.results["rolls"], probability_data)
+            "Cumulative Probability",
+            "Probability per Roll",
+            "First 5 Star Probability",
+            "Roll Number",
         ]
+        cumulative_probs = self.results.get("cumulative_probabilities", [])
+        first_5_star_probs = self.results.get("first_5_star_probabilities", [])
+        raw_probs = self.results.get("raw_probabilities", [])
+        rolls = self.results.get("rolls", [])
+        game = self.game_name
+        banner_type = self.banner_type
+        def safe_get(lst, idx):
+            try:
+                return lst[idx]
+            except IndexError:
+                return None
+        rows = []
+        for idx, roll in enumerate(rolls):
+            cum_prob = safe_get(cumulative_probs, idx)
+            prob_per_roll = safe_get(raw_probs, idx)
+            first_5_star = safe_get(first_5_star_probs, idx)
+            row = [
+                game,
+                banner_type,
+                cum_prob,
+                prob_per_roll,
+                first_5_star,
+                roll,
+            ]
+            rows.append(row)
         return header, rows
 
     def save_results_to_csv(self) -> Dict[str, str]:
@@ -114,7 +132,7 @@ class BannerStats:
 
         for metric_key, data_key in metrics_to_save.items():
             if data_key in self.results:
-                filename = f"csv_output/{self.game_name.lower().replace(' ', '_')}/{self.banner_type.lower().replace(' ', '_')}_{metric_key}.csv"
+                filename = f"csv_output/{self.game_name.lower().replace(' ', '_')}/{self.game_name.lower().replace(' ', '_')}_{self.banner_type.lower().replace(' ', '_')}_{metric_key}.csv"
 
                 # Ensure directory exists (CSVOutputHandler doesn't create dirs)
                 # This might be better handled by CSVOutputHandler or a utility function
@@ -126,6 +144,7 @@ class BannerStats:
                     metric_key, self.results[data_key]
                 )
                 try:
+                    # Write header and data rows only (no metadata row)
                     self.output_handler.write(filename, header, rows)
                     output_paths[metric_key] = filename
                     logger.info(f"Saved {metric_key} to {filename}")

@@ -1,12 +1,13 @@
 import csv
-from typing import List, Any
 
 
 class CSVOutputHandler:
     """Handles writing results to a CSV file."""
 
-    def write(self, filename: str, header: List[str], rows: List[List[Any]]):
+    def write(self, filename: str, header: list, rows: list, metadata_row=None):
         with open(filename, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
+            if metadata_row is not None:
+                writer.writerow(metadata_row)
             writer.writerow(header)
             writer.writerows(rows)
