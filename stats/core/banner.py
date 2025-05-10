@@ -6,6 +6,8 @@ from typing import Optional
 class BannerConfig:
     """Banner configuration parameters."""
 
+    game_name: str  # Added for clarity
+    banner_type: str  # Added for clarity
     base_rate: float
     four_star_rate: float
     soft_pity_start_after: int
