@@ -21,12 +21,6 @@ class BannerStats:
         calculator: ProbabilityCalculator,
         output_handler: CSVOutputHandler,
     ):
-        if not isinstance(config, BannerConfig):
-            raise TypeError("config must be an instance of BannerConfig")
-        if not isinstance(calculator, ProbabilityCalculator):
-            raise TypeError("calculator must be an instance of ProbabilityCalculator")
-        if not isinstance(output_handler, CSVOutputHandler):
-            raise TypeError("output_handler must be an instance of CSVOutputHandler")
         self.config = config
         self.calculator = calculator
         self.output_handler = output_handler
@@ -70,24 +64,15 @@ class BannerStats:
         first_5_star_probs = self.results.get("first_5_star_probabilities", [])
         raw_probs = self.results.get("raw_probabilities", [])
         rolls = self.results.get("rolls", [])
-        game = self.game_name
-        banner_type = self.banner_type
-
-        def _safe_get(lst, idx):
-            try:
-                return lst[idx]
-            except IndexError:
-                return None
-
-        rows = []
-        for idx, roll in enumerate(rolls):
-            row = [
-                game,
-                banner_type,
+        rows = [
+            [
+                self.game_name,
+                self.banner_type,
                 roll,
-                _safe_get(raw_probs, idx),
-                _safe_get(cumulative_probs, idx),
-                _safe_get(first_5_star_probs, idx),
+                raw_probs[idx] if idx < len(raw_probs) else None,
+                cumulative_probs[idx] if idx < len(cumulative_probs) else None,
+                first_5_star_probs[idx] if idx < len(first_5_star_probs) else None,
             ]
-            rows.append(row)
+            for idx, roll in enumerate(rolls)
+        ]
         return header, rows
