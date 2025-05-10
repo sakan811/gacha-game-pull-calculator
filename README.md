@@ -69,6 +69,7 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
 1. Navigate to stats directory:
 
    ```bash
+   git clone https://github.com/sakan811/gacha-game-pull-calculator.git
    cd stats
    ```
 
@@ -85,11 +86,11 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
 3. Install dependencies:
 
    ```bash
-   uv pip install -r requirements.txt
+   uv sync
    ```
 
 4. Run the script:
 
    ```bash
-   python stats_main.py
+   python runner.py
    ```

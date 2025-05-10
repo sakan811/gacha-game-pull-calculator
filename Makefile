@@ -86,8 +86,8 @@ DOCS_DIR := docs
 MERMAID_CHARTS_DIR := $(DOCS_DIR)/mermaid-charts
 IMAGES_DIR := $(DOCS_DIR)/images
 
-.PHONY: install-deps
-install-deps:
+.PHONY: install-mmd
+install-mmd:
 	npm install -g @mermaid-js/mermaid-cli
 	npm install -g mkdirp
 
