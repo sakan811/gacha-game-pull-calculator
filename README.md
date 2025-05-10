@@ -60,9 +60,8 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
 
 ## Running Statistics Script
 
-### Python Requirements
+### Prerequisites
 
-- [Python](https://www.python.org/downloads/)
 - [UV Package Manager](https://docs.astral.sh/uv/getting-started/installation/)
 
 ### Setup and Execution

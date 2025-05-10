@@ -9,38 +9,13 @@ updates:
     directory: "/backend"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
 
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
-    groups:
-      dev-dependencies:
-        patterns:
-          - "@types/*"
-          - "@testing-library/*"
-          - "eslint*"
-          - "typescript*"
-          - "vitest*"
-      vue:
-        patterns:
-          - "vue*"
-          - "@vue/*"
-          - "@vitejs/*"
-      tailwind:
-        patterns:
-          - "tailwindcss*"
-          - "@tailwindcss/*"
 
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directory: "/stats"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
-    groups:
-      data-science:
-        patterns:
-          - "seaborn"
-          - "ruff"
