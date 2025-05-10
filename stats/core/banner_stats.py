@@ -148,7 +148,7 @@ class BannerStats:
     ) -> Dict[str, str]:
         """Saves calculated banner statistics to CSV files.
 
-        Each key metric (roll numbers, probability per roll, cumulative probability)
+        Each key metric (probability per roll, cumulative probability)
         is saved to its own CSV file within a game-specific subdirectory.
 
         Args:
@@ -173,7 +173,6 @@ class BannerStats:
         file_paths: Dict[str, str] = {}
 
         metrics_to_save = {
-            "roll_numbers": ["Game", "Banner Type", "Roll Number"],
             "probability_per_roll": [
                 "Game",
                 "Banner Type",
