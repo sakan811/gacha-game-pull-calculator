@@ -4,10 +4,10 @@ This module provides functionality to analyze gacha banner statistics for variou
 """
 
 import os
-import pandas as pd # numpy is used by calculator, not directly here
-from typing import Dict, Tuple, List, Any, Optional # Added Optional
+import pandas as pd  # numpy is used by calculator, not directly here
+from typing import Dict, Tuple, Any, Optional  # Added Optional
 
-from core.banner import BannerConfig # Corrected import
+from core.banner import BannerConfig  # Corrected import
 from core.banner_config import BANNER_CONFIGS
 from core.calculator import ProbabilityCalculator
 from output.csv_handler import CSVOutputHandler
@@ -19,7 +19,7 @@ GAME_BANNER_MAPPING: Dict[str, Dict[str, Any]] = {
         "prefixes_to_strip": ["star_rail_", "rail_", "star_"],
         "output_name": "star_rail",
     },
-    "star": { # Alias for star_rail for flexibility in input
+    "star": {  # Alias for star_rail for flexibility in input
         "allowed_banners": ["standard", "limited", "light_cone"],
         "prefixes_to_strip": ["star_rail_", "rail_", "star_"],
         "output_name": "star_rail",
@@ -35,6 +35,7 @@ GAME_BANNER_MAPPING: Dict[str, Dict[str, Any]] = {
         "output_name": "zenless",
     },
 }
+
 
 class BannerStats:
     """Orchestrates gacha banner statistics calculation and output for a specific game and banner type.
@@ -126,10 +127,10 @@ class BannerStats:
             pd.DataFrame: DataFrame containing columns for Game, Banner Type, Roll Number,
                           Probability per Roll, and Cumulative Probability.
         """
-        if not self.calculator.rolls: # Ensure calculator has run
+        if not self.calculator.rolls:  # Ensure calculator has run
             # This should ideally not be needed if calculator initializes on creation
             # but as a safeguard:
-            self.calculator._initialize_calculations() 
+            self.calculator._initialize_calculations()
 
         num_rolls = len(self.calculator.rolls)
         return pd.DataFrame(
@@ -142,7 +143,9 @@ class BannerStats:
             }
         )
 
-    def save_statistics_csv(self, base_output_dir: Optional[str] = None) -> Dict[str, str]:
+    def save_statistics_csv(
+        self, base_output_dir: Optional[str] = None
+    ) -> Dict[str, str]:
         """Saves calculated banner statistics to CSV files.
 
         Each key metric (roll numbers, probability per roll, cumulative probability)
@@ -187,8 +190,12 @@ class BannerStats:
 
         for metric_name, columns in metrics_to_save.items():
             file_path = os.path.join(output_dir, f"{file_prefix}_{metric_name}.csv")
-            data_to_write = stats_df[[col for col in columns if col in stats_df.columns]]
-            csv_handler.write(file_path, list(data_to_write.columns), data_to_write.values.tolist())
+            data_to_write = stats_df[
+                [col for col in columns if col in stats_df.columns]
+            ]
+            csv_handler.write(
+                file_path, list(data_to_write.columns), data_to_write.values.tolist()
+            )
             file_paths[metric_name] = file_path
 
         return file_paths

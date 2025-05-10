@@ -1,6 +1,6 @@
 # Tests for core/banner.py
-import pytest
 from core.banner import BannerConfig
+
 
 # Test BannerConfig
 def test_banner_config_creation():
@@ -12,7 +12,7 @@ def test_banner_config_creation():
         hard_pity=90,
         rate_increase=0.06,
         guaranteed_rate_up=True,
-        rate_up_chance=0.5
+        rate_up_chance=0.5,
     )
     assert config.base_rate == 0.006
     assert config.four_star_rate == 0.051
@@ -22,6 +22,7 @@ def test_banner_config_creation():
     assert config.guaranteed_rate_up is True
     assert config.rate_up_chance == 0.5
 
+
 def test_banner_config_optional_rate_up_chance():
     """Test BannerConfig with optional rate_up_chance."""
     config = BannerConfig(
@@ -30,6 +31,6 @@ def test_banner_config_optional_rate_up_chance():
         soft_pity_start_after=73,
         hard_pity=90,
         rate_increase=0.06,
-        guaranteed_rate_up=False
+        guaranteed_rate_up=False,
     )
     assert config.rate_up_chance is None
