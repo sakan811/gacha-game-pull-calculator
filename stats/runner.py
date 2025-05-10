@@ -32,7 +32,9 @@ class StatsRunner:
                 f"Processing banner: {config_key} ({banner_config_data.game_name} - {banner_config_data.banner_type})"
             )
             try:
-                calculator = ProbabilityCalculator()  # Or a more specific one based on banner_config_data
+                calculator = (
+                    ProbabilityCalculator()
+                )  # Or a more specific one based on banner_config_data
 
                 banner_analyzer = BannerStats(
                     config=banner_config_data,
