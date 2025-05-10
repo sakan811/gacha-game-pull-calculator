@@ -26,3 +26,4 @@ backend/internal/web/embedded/dist
 /.github/prompts
 /stats/csv_output
 /stats/plan.txt
+/Gacha Pull Analysis.twb

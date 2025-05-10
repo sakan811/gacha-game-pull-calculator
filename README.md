@@ -8,6 +8,15 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 - Genshin Impact
 - Zenless Zone Zero
 
+## Technical Notes
+
+- Rate-increase assumption: 7% for all banners across supported games
+- Data sources:
+  - [HoYoLAB Article](https://www.hoyolab.com/article/497840)
+  - [Star Rail Station](https://starrailstation.com/en/warp#global)
+  - [Paimon.moe](https://paimon.moe/wish/tally?id=300077)
+  - [ZZZ RNG](https://zzz.rng.moe/en/tracker/global#3001)
+
 ## Build Status
 
 [![Go Backend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml)
@@ -43,7 +52,7 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 
 ## Statistics Visualization
 
-View detailed probability statistics and visualizations [here](/docs/VISUAL.md).
+View detailed probability statistics and visualizations [here](https://public.tableau.com/views/GachaPullAnalysis/HoyoverseGames-GachaPullAnalysis?:language=th-TH&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link).
 
 ## Application Flow Documentation
 
@@ -85,12 +94,3 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
    ```bash
    python stats_main.py
    ```
-
-## Technical Notes
-
-- Rate-increase assumption: 7% for all banners across supported games
-- Data sources:
-  - [HoYoLAB Article](https://www.hoyolab.com/article/497840)
-  - [Star Rail Station](https://starrailstation.com/en/warp#global)
-  - [Paimon.moe](https://paimon.moe/wish/tally?id=300077)
-  - [ZZZ RNG](https://zzz.rng.moe/en/tracker/global#3001)
