@@ -4,84 +4,113 @@ This module provides functionality to analyze gacha banner statistics for variou
 """
 
 import os
-import numpy as np
-import pandas as pd
+import pandas as pd # numpy is used by calculator, not directly here
+from typing import Dict, Tuple, List, Any, Optional # Added Optional
+
+from core.banner import BannerConfig # Corrected import
 from core.banner_config import BANNER_CONFIGS
 from core.calculator import ProbabilityCalculator
 from output.csv_handler import CSVOutputHandler
 
+# Define a more structured way to handle game and banner type validation
+GAME_BANNER_MAPPING: Dict[str, Dict[str, Any]] = {
+    "star_rail": {
+        "allowed_banners": ["standard", "limited", "light_cone"],
+        "prefixes_to_strip": ["star_rail_", "rail_", "star_"],
+        "output_name": "star_rail",
+    },
+    "star": { # Alias for star_rail for flexibility in input
+        "allowed_banners": ["standard", "limited", "light_cone"],
+        "prefixes_to_strip": ["star_rail_", "rail_", "star_"],
+        "output_name": "star_rail",
+    },
+    "genshin": {
+        "allowed_banners": ["standard", "limited", "weapon"],
+        "prefixes_to_strip": ["genshin_"],
+        "output_name": "genshin",
+    },
+    "zenless": {
+        "allowed_banners": ["standard", "limited", "w_engine", "bangboo"],
+        "prefixes_to_strip": ["zenless_"],
+        "output_name": "zenless",
+    },
+}
 
-class BannerStats(ProbabilityCalculator):
-    """Class for calculating gacha banner statistics.
+class BannerStats:
+    """Orchestrates gacha banner statistics calculation and output for a specific game and banner type.
 
-    This class extends ProbabilityCalculator to provide game-specific banner analysis. It handles configuration loading and probability calculations for different banner types across games.
+    This class loads the appropriate configuration, utilizes ProbabilityCalculator
+    for core calculations, and manages the output of the results.
     """
 
-    def __init__(self, game_type="star_rail", banner_type="standard"):
-        parsed_game_type, parsed_banner_type = self._parse_and_validate_game_banner(
+    def __init__(self, game_type: str = "star_rail", banner_type: str = "standard"):
+        """
+        Initializes BannerStats with a specific game and banner type.
+
+        Args:
+            game_type: The name of the game (e.g., 'star_rail', 'genshin').
+            banner_type: The type of banner (e.g., 'standard', 'limited').
+
+        Raises:
+            ValueError: If the game_type or banner_type is unsupported or invalid.
+        """
+        self.game_type, self.banner_type = self._parse_and_validate_game_banner(
             game_type, banner_type
         )
+        self.config_key: str = f"{self.game_type}_{self.banner_type}"
+        self.config: BannerConfig = self._load_config()
+        self.calculator: ProbabilityCalculator = ProbabilityCalculator(self.config)
 
-        self.banner_type = parsed_banner_type
-        self.game_type = parsed_game_type 
-
-        if self.game_type == "star_rail":
-            self.config_key = f"star_rail_{self.banner_type}"
-        else:
-            self.config_key = f"{self.game_type}_{self.banner_type}"
-            
-        config = self._load_config()
-        
-        super().__init__(config)
-
-    def _parse_and_validate_game_banner(self, game_type: str, banner_type: str) -> tuple[str, str]:
+    def _parse_and_validate_game_banner(
+        self, game_type_input: str, banner_type_input: str
+    ) -> Tuple[str, str]:
         """
-        Normalizes and validates game_type and banner_type.
-        Returns the processed and standardized game_type and banner_type.
+        Normalizes, validates, and standardizes game_type and banner_type inputs.
+
+        Args:
+            game_type_input: The raw game type string.
+            banner_type_input: The raw banner type string.
+
+        Returns:
+            A tuple containing the standardized game_type and banner_type.
+
+        Raises:
+            ValueError: If inputs are invalid or unsupported.
         """
-        processed_game_type = game_type.lower().replace(" ", "_")
-        processed_banner_type = banner_type.lower().replace(" ", "_")
+        processed_game_type = game_type_input.lower().replace(" ", "_")
+        processed_banner_type = banner_type_input.lower().replace(" ", "_")
 
-        game_specific_banner_types = {
-            "star_rail": {"allowed": ["standard", "limited", "light_cone"], "prefixes": ["star_rail_", "rail_", "star_"], "output_name": "star_rail"},
-            "star": {"allowed": ["standard", "limited", "light_cone"], "prefixes": ["star_rail_", "rail_", "star_"], "output_name": "star_rail"}, 
-            "genshin": {"allowed": ["standard", "limited", "weapon"], "prefixes": ["genshin_"], "output_name": "genshin"},
-            "zenless": {"allowed": ["standard", "limited", "w_engine", "bangboo"], "prefixes": ["zenless_"], "output_name": "zenless"},
-        }
-
-        if processed_game_type not in game_specific_banner_types:
+        if processed_game_type not in GAME_BANNER_MAPPING:
             raise ValueError(
-                f"Unsupported game_type: '{game_type}'. Supported: {list(game_specific_banner_types.keys())}"
+                f"Unsupported game_type: '{game_type_input}'. Supported: {list(GAME_BANNER_MAPPING.keys())}"
             )
 
-        details = game_specific_banner_types[processed_game_type]
-        allowed_banners = details["allowed"]
-        standardized_game_name = details["output_name"]
-        
-        # Strip prefixes from banner_type
-        for prefix in details["prefixes"]:
+        game_details = GAME_BANNER_MAPPING[processed_game_type]
+        standardized_game_name = game_details["output_name"]
+        allowed_banners = game_details["allowed_banners"]
+
+        # Strip common prefixes from banner_type to get the core type
+        for prefix in game_details["prefixes_to_strip"]:
             if processed_banner_type.startswith(prefix):
-                processed_banner_type = processed_banner_type[len(prefix):]
-                break 
+                processed_banner_type = processed_banner_type[len(prefix) :]
+                break
 
         if processed_banner_type not in allowed_banners:
             raise ValueError(
-                f"Invalid banner_type '{banner_type}' for game '{game_type}'. Allowed for {standardized_game_name}: {allowed_banners}"
+                f"Invalid banner_type '{banner_type_input}' for game '{standardized_game_name}'. "
+                f"Allowed for {standardized_game_name}: {allowed_banners}"
             )
-            
+
         return standardized_game_name, processed_banner_type
 
-    def _load_config(self):
-        """Load banner configuration for the specified game and banner type.
-
-        This method retrieves the appropriate configuration settings including
-        base rates, soft pity, and hard pity values for the selected banner.
+    def _load_config(self) -> BannerConfig:
+        """Loads the banner configuration for the initialized game and banner type.
 
         Returns:
-            BannerConfig: Configuration settings for the selected banner type
+            BannerConfig: The configuration object for the banner.
 
         Raises:
-            ValueError: If the combination of game_type and banner_type is invalid
+            ValueError: If no configuration is found for the config_key.
         """
         if self.config_key not in BANNER_CONFIGS:
             valid_configs = list(BANNER_CONFIGS.keys())
@@ -90,85 +119,76 @@ class BannerStats(ProbabilityCalculator):
             )
         return BANNER_CONFIGS[self.config_key]
 
-    def save_statistics_csv(self):
-        """Save each calculated metric to its own CSV file in stats/csv_output/<game_type>/ with game and banner in filename.
-
-        This method exports each metric (roll numbers, probability per roll, cumulative probability)
-        to a separate CSV file inside the 'stats/csv_output/<game_type>' directory, with filenames including game and banner type.
+    def get_statistics_dataframe(self) -> pd.DataFrame:
+        """Prepares a DataFrame with all relevant statistics for the banner.
 
         Returns:
-            dict: Mapping of metric name to saved CSV file path.
+            pd.DataFrame: DataFrame containing columns for Game, Banner Type, Roll Number,
+                          Probability per Roll, and Cumulative Probability.
         """
-        data_df = (
-            self._prepare_plot_data()
-        )
-        csv_handler = CSVOutputHandler()
-        base_output_dir = os.path.join(os.path.dirname(__file__), "..", "csv_output")
-        
-        if self.game_type == "star_rail":
-            output_dir = os.path.join(base_output_dir, "star_rail")
-            prefix = f"star_rail_{self.banner_type}"
-        else:
-            output_dir = os.path.join(base_output_dir, self.game_type)
-            prefix = f"{self.game_type}_{self.banner_type}"
-        os.makedirs(output_dir, exist_ok=True)
+        if not self.calculator.rolls: # Ensure calculator has run
+            # This should ideally not be needed if calculator initializes on creation
+            # but as a safeguard:
+            self.calculator._initialize_calculations() 
 
-        file_paths = {}
-
-        roll_numbers_path = os.path.join(output_dir, f"{prefix}_roll_numbers.csv")
-        roll_numbers_header = ["Game", "Banner Type", "Roll Number"]
-        roll_numbers_data = data_df[roll_numbers_header].values.tolist()
-        csv_handler.write(roll_numbers_path, roll_numbers_header, roll_numbers_data)
-        file_paths["roll_numbers"] = roll_numbers_path
-
-        prob_per_roll_path = os.path.join(
-            output_dir, f"{prefix}_probability_per_roll.csv"
-        )
-        prob_per_roll_header = [
-            "Game",
-            "Banner Type",
-            "Roll Number",
-            "Probability per Roll",
-        ]
-        prob_per_roll_data = data_df[prob_per_roll_header].values.tolist()
-        csv_handler.write(prob_per_roll_path, prob_per_roll_header, prob_per_roll_data)
-        file_paths["probability_per_roll"] = prob_per_roll_path
-
-        cumulative_prob_path = os.path.join(
-            output_dir, f"{prefix}_cumulative_probability.csv"
-        )
-        cumulative_prob_header = [
-            "Game",
-            "Banner Type",
-            "Roll Number",
-            "Cumulative Probability",
-        ]
-        cumulative_prob_data = data_df[cumulative_prob_header].values.tolist()
-        csv_handler.write(
-            cumulative_prob_path, cumulative_prob_header, cumulative_prob_data
-        )
-        file_paths["cumulative_probability"] = cumulative_prob_path
-
-        return file_paths
-
-    def _prepare_plot_data(self):
-        """Prepare data frame for statistics export, including game and banner type columns.
-
-        Returns:
-            pd.DataFrame: Data frame with columns:
-                - 'Game': Game type (e.g., 'star_rail')
-                - 'Banner Type': Banner type (e.g., 'limited')
-                - 'Roll Number': Roll count (1 to hard pity)
-                - 'Probability per Roll': First 5★ probability per roll
-                - 'Cumulative Probability': Chance of 5★ by that roll
-        """
-        n = len(self.rolls)
+        num_rolls = len(self.calculator.rolls)
         return pd.DataFrame(
             {
-                "Game": [self.game_type] * n,
-                "Banner Type": [self.banner_type] * n,
-                "Roll Number": self.rolls,
-                "Probability per Roll": self.p_first_5_star,
-                "Cumulative Probability": self.cumulative_prob,
+                "Game": [self.game_type] * num_rolls,
+                "Banner Type": [self.banner_type] * num_rolls,
+                "Roll Number": self.calculator.rolls,
+                "Probability per Roll": self.calculator.p_first_5_star,
+                "Cumulative Probability": self.calculator.cumulative_prob,
             }
         )
+
+    def save_statistics_csv(self, base_output_dir: Optional[str] = None) -> Dict[str, str]:
+        """Saves calculated banner statistics to CSV files.
+
+        Each key metric (roll numbers, probability per roll, cumulative probability)
+        is saved to its own CSV file within a game-specific subdirectory.
+
+        Args:
+            base_output_dir: Optional base directory for CSV output.
+                             Defaults to 'stats/csv_output/'.
+
+        Returns:
+            Dict[str, str]: A dictionary mapping metric names to their saved CSV file paths.
+        """
+        stats_df = self.get_statistics_dataframe()
+        csv_handler = CSVOutputHandler()
+
+        if base_output_dir is None:
+            base_output_dir = os.path.join(
+                os.path.dirname(os.path.dirname(__file__)), "csv_output"
+            )
+
+        output_dir = os.path.join(base_output_dir, self.game_type)
+        os.makedirs(output_dir, exist_ok=True)
+
+        file_prefix = f"{self.game_type}_{self.banner_type}"
+        file_paths: Dict[str, str] = {}
+
+        metrics_to_save = {
+            "roll_numbers": ["Game", "Banner Type", "Roll Number"],
+            "probability_per_roll": [
+                "Game",
+                "Banner Type",
+                "Roll Number",
+                "Probability per Roll",
+            ],
+            "cumulative_probability": [
+                "Game",
+                "Banner Type",
+                "Roll Number",
+                "Cumulative Probability",
+            ],
+        }
+
+        for metric_name, columns in metrics_to_save.items():
+            file_path = os.path.join(output_dir, f"{file_prefix}_{metric_name}.csv")
+            data_to_write = stats_df[[col for col in columns if col in stats_df.columns]]
+            csv_handler.write(file_path, list(data_to_write.columns), data_to_write.values.tolist())
+            file_paths[metric_name] = file_path
+
+        return file_paths
