@@ -1,8 +1,6 @@
 """Simplified probability calculator for banners."""
 
-from typing import Tuple
 from dataclasses import dataclass
-from math import prod
 from core.common.logging import get_logger
 
 @dataclass
