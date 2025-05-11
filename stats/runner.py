@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from core.common.logging import get_logger
 from core.calculator import ProbabilityCalculator, CalculationResult
 from output.csv_handler import CSVOutputHandler
+from output.row_formatter import format_results, get_headers
 from core.config.banner_config import BANNER_CONFIGS
 from core.common.errors import BannerError, ConfigurationError, ValidationError, CalculationError
 from core.config.banner import BannerConfig
@@ -20,7 +21,7 @@ class StatsRunner:
         self.output_handler = CSVOutputHandler()
         
     def run(self) -> None:
-        """Run banner statistics calculations with simplified error handling."""
+        """Run banner statistics calculations."""
         try:
             self._process_banners()
         except (ConfigurationError, ValidationError) as e:
@@ -43,7 +44,7 @@ class StatsRunner:
                 try:
                     calculator = ProbabilityCalculator(config)
                     results = calculator.calculate()
-                    formatted_data = self._format_results(config, results)
+                    formatted_data = format_results(config, results)
                     all_results.extend(formatted_data)
                 except BannerError as e:
                     logger.warning(f"Skipping {game_type} {banner_type} banner: {e}")
@@ -52,35 +53,9 @@ class StatsRunner:
             if all_results:
                 self.output_handler.write(
                     str(output_path),
-                    ["Game", "Banner Type", "Roll", "Probability", "Cumulative", "First 5★"],
+                    get_headers(),
                     all_results
                 )
-
-    def _format_results(self, config: BannerConfig, results: CalculationResult) -> List[List[str]]:
-        """Format calculation results for CSV output.
-        
-        Args:
-            config: Banner configuration
-            results: Calculation results
-            
-        Returns:
-            List of formatted data rows
-        """
-        formatted_rows = []
-        for i, (prob, cum, first) in enumerate(zip(
-            results.raw_probabilities,
-            results.cumulative_prob,
-            results.first_5star_prob
-        )):
-            formatted_rows.append([
-                config.game_name,
-                config.banner_type,
-                str(i + 1),
-                f"{prob:.6f}",
-                f"{cum:.6f}",
-                f"{first:.6f}"
-            ])
-        return formatted_rows
 
 
 def main() -> None:
