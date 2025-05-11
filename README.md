@@ -22,6 +22,7 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 [![Go Backend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml)
 [![Frontend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml)
 [![Docker Build](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml)
+[![Python Tests](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/python-test.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/python-test.yml)
 
 ## Quick Start Guide
 
