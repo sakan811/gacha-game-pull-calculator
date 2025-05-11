@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, Final, Optional
-from stats.core.common.errors import ValidationError
+from core.common.errors import ValidationError
 
 GAME_TYPES: Final[set[str]] = {"Star Rail", "Genshin Impact", "Zenless Zone Zero"}
 BANNER_TYPES_BY_GAME: Final[Dict[str, set[str]]] = {
