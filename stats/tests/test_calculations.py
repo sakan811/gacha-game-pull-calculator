@@ -3,7 +3,7 @@
 import pytest
 import numpy as np
 from numpy.typing import NDArray
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 
 from core.calculator import ProbabilityCalculator
 from core.strategy import (
@@ -23,6 +23,7 @@ def valid_arrays() -> Dict[str, NDArray[np.float64]]:
         "first_5star_prob": np.array([0.1, 0.2, 0.3], dtype=np.float64),
         "cumulative_prob": np.array([0.1, 0.3, 0.5], dtype=np.float64),
     }
+
 
 # Test Calculator Implementation
 class TestProbabilityCalculator(ProbabilityCalculator):
@@ -46,6 +47,7 @@ class TestProbabilityCalculator(ProbabilityCalculator):
         self.probabilities = np.full(90, 0.006, dtype=np.float64)
         self.p_first_5_star = np.zeros(90, dtype=np.float64)
         self.cumulative_prob = np.zeros(90, dtype=np.float64)
+
 
 # Calculator Tests
 class TestCalculator:
@@ -82,7 +84,9 @@ class TestCalculator:
 class TestCalculationStrategy:
     """Tests for CalculationStrategy class."""
 
-    def test_validate_probability_arrays_with_valid_data(self, valid_arrays: Dict[str, NDArray[np.float64]]) -> None:
+    def test_validate_probability_arrays_with_valid_data(
+        self, valid_arrays: Dict[str, NDArray[np.float64]]
+    ) -> None:
         """Test array validation with valid data."""
         result = CalculationResult(**valid_arrays)
         CalculationStrategy.validate_probability_arrays(
@@ -91,7 +95,9 @@ class TestCalculationStrategy:
             cumulative_prob=result.cumulative_prob,
         )
 
-    def test_validate_probability_arrays_invalid_probabilities(self, valid_arrays: Dict[str, NDArray[np.float64]]) -> None:
+    def test_validate_probability_arrays_invalid_probabilities(
+        self, valid_arrays: Dict[str, NDArray[np.float64]]
+    ) -> None:
         """Test array validation with invalid probabilities."""
         invalid_prob = np.array([-0.1, 1.2, 0.3], dtype=np.float64)
         with pytest.raises(ValidationError):
@@ -101,7 +107,9 @@ class TestCalculationStrategy:
                 cumulative_prob=valid_arrays["cumulative_prob"],
             )
 
-    def test_validate_probability_arrays_mismatched_shapes(self, valid_arrays: Dict[str, NDArray[np.float64]]) -> None:
+    def test_validate_probability_arrays_mismatched_shapes(
+        self, valid_arrays: Dict[str, NDArray[np.float64]]
+    ) -> None:
         """Test array validation with mismatched shapes."""
         mismatched_array = np.array([0.1, 0.2], dtype=np.float64)
         with pytest.raises(ValidationError):

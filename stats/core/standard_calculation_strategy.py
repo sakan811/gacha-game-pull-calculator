@@ -34,7 +34,9 @@ class StandardCalculationStrategy(CalculationStrategy):
             # Calculate probabilities
             pity_range = range(1, hard_pity + 1)
             raw_probs = [
-                min(1.0, base_rate * (1 + max(0, (i - soft_pity_start) * rate_increase)))
+                min(
+                    1.0, base_rate * (1 + max(0, (i - soft_pity_start) * rate_increase))
+                )
                 for i in pity_range
             ]
 
@@ -43,7 +45,7 @@ class StandardCalculationStrategy(CalculationStrategy):
             first_5star_probs = []
             for p in raw_probs:
                 first_5star_probs.append(not_yet_pulled * p)
-                not_yet_pulled *= (1 - p)
+                not_yet_pulled *= 1 - p
 
             # Calculate cumulative probabilities
             cumulative_probs = np.cumsum(first_5star_probs)

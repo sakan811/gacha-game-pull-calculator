@@ -1,15 +1,18 @@
 """Banner statistics calculation runner module."""
 
 from pathlib import Path
-from typing import List, Dict, Any
 
 from core.common.logging import get_logger
-from core.calculator import ProbabilityCalculator, CalculationResult
+from core.calculator import ProbabilityCalculator
 from output.csv_handler import CSVOutputHandler
 from output.row_formatter import format_results, get_headers
 from core.config.banner_config import BANNER_CONFIGS
-from core.common.errors import BannerError, ConfigurationError, ValidationError, CalculationError
-from core.config.banner import BannerConfig
+from core.common.errors import (
+    BannerError,
+    ConfigurationError,
+    ValidationError,
+    CalculationError,
+)
 
 logger = get_logger(__name__)
 
@@ -19,18 +22,18 @@ class StatsRunner:
 
     def __init__(self) -> None:
         self.output_handler = CSVOutputHandler()
-        
+
     def run(self) -> None:
         """Run banner statistics calculations."""
         try:
             self._process_banners()
-        except (ConfigurationError, ValidationError) as e:
+        except (ConfigurationError, ValidationError):
             logger.error("Configuration or validation error", exc_info=True)
             raise
-        except CalculationError as e:
+        except CalculationError:
             logger.error("Calculation error", exc_info=True)
             raise
-        except Exception as e:
+        except Exception:
             logger.error("Unexpected error occurred", exc_info=True)
             raise
 
@@ -39,7 +42,7 @@ class StatsRunner:
         for game_type, banners in BANNER_CONFIGS.items():
             output_path = Path("csv_output") / f"{game_type.lower()}_all_banners.csv"
             all_results = []
-            
+
             for banner_type, config in banners.items():
                 try:
                     calculator = ProbabilityCalculator(config)
@@ -49,13 +52,9 @@ class StatsRunner:
                 except BannerError as e:
                     logger.warning(f"Skipping {game_type} {banner_type} banner: {e}")
                     continue
-            
+
             if all_results:
-                self.output_handler.write(
-                    str(output_path),
-                    get_headers(),
-                    all_results
-                )
+                self.output_handler.write(str(output_path), get_headers(), all_results)
 
 
 def main() -> None:

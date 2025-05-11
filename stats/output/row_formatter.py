@@ -9,7 +9,6 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from core.config.banner import BannerConfig
 from core.calculator import CalculationResult
-from core.common.errors import ValidationError
 from core.common.logging import get_logger
 
 logger = get_logger(__name__)
@@ -44,9 +43,7 @@ def format_number(value: float, decimal_places: int = DECIMAL_PLACES) -> str:
     )
 
 
-def format_results(
-    config: BannerConfig, results: CalculationResult
-) -> List[List[str]]:
+def format_results(config: BannerConfig, results: CalculationResult) -> List[List[str]]:
     """Format calculation results for output.
 
     Args:
@@ -59,7 +56,9 @@ def format_results(
     formatted_rows = []
 
     for i, (prob, cum, first) in enumerate(
-        zip(results.raw_probabilities, results.cumulative_prob, results.first_5star_prob),
+        zip(
+            results.raw_probabilities, results.cumulative_prob, results.first_5star_prob
+        ),
         1,
     ):
         formatted_rows.append(

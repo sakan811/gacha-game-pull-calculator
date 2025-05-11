@@ -4,8 +4,7 @@ This module provides helper functions for analyzing banner statistics.
 Main functionality has been moved to core.calculator.
 """
 
-from typing import Dict, Any, List
-from pathlib import Path
+from typing import Dict, List
 
 from core.config.banner import BannerConfig
 from core.calculator import ProbabilityCalculator, CalculationResult
@@ -45,6 +44,8 @@ def get_banner_stats(configs: List[BannerConfig]) -> Dict[str, CalculationResult
         try:
             results[f"{config.game_name}_{config.banner_type}"] = analyze_banner(config)
         except CalculationError as e:
-            logger.warning(f"Failed to analyze {config.game_name} {config.banner_type}: {e}")
+            logger.warning(
+                f"Failed to analyze {config.game_name} {config.banner_type}: {e}"
+            )
             continue
     return results
