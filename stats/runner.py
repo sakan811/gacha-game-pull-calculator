@@ -1,100 +1,86 @@
 """Banner statistics calculation runner module."""
 
-from typing import Mapping, cast
 from pathlib import Path
-
 from core.common.logging import get_logger
-from core.config import BannerConfig
-from core.stats.analyzer import BannerStats
-from output.csv_handler import CSVOutputHandler
 from core.standard_calculation_strategy import StandardCalculationStrategy
+from output.csv_handler import CSVOutputHandler
 from core.config.banner_config import BANNER_CONFIGS
 
 logger = get_logger(__name__)
 
 
 class StatsRunner:
-    """Orchestrates banner statistics calculations with error handling and progress tracking."""
+    """Runs banner statistics calculations."""
 
-    def __init__(
-        self, banner_configs: Mapping[str, Mapping[str, BannerConfig]]
-    ) -> None:
-        self.banner_configs = banner_configs
+    def __init__(self) -> None:
         self.calculator = StandardCalculationStrategy()
         self.output_handler = CSVOutputHandler()
-        self.processed_configs = 0
 
-    def process_banner(self, config: BannerConfig) -> None:
-        """Process a single banner configuration.
+    def run(self) -> None:
+        """Process all banner configurations and save results."""
+        logger.info("Starting banner calculations")
 
-        Args:
-            config: Banner configuration to process.
+        # Create or clear output directory
+        output_dir = Path("csv_output")
+        output_dir.mkdir(exist_ok=True)
+        for file in output_dir.glob("*.csv"):
+            file.unlink()
 
-        Raises:
-            CalculationError: If processing fails.
-        """
-        stats = BannerStats(config, self.calculator, self.output_handler)
-
-        # Prepare calculation parameters from config
-        params = {
-            "base_rate": config.base_rate,
-            "four_star_rate": config.four_star_rate,
-            "soft_pity_start": config.soft_pity_start_after,
-            "hard_pity": config.hard_pity,
-            "rate_increase": config.rate_increase,
-            "guaranteed_rate_up": config.guaranteed_rate_up,
-            "rate_up_chance": config.rate_up_chance,
-        }
-
-        # Calculate probabilities
-        stats.calculate(params)
-
-        # Save results to CSV
-        stats.write_results(Path("csv_output"))
-
-        self.processed_configs += 1
-        logger.info(f"Processed {config.game_name} - {config.banner_type} banner")
-
-    def process_all_banners(self) -> None:
-        """Process all banner configurations with progress tracking."""
-        total_configs = sum(
-            len(game_banners) for game_banners in self.banner_configs.values()
-        )
-        logger.info(f"Starting processing of {total_configs} banner configurations")
-
-        for game_name, game_banners in self.banner_configs.items():
-            logger.info(f"Processing {game_name} banners")
+        # Process each game's banners
+        for game_name, game_banners in BANNER_CONFIGS.items():
             for banner_type, config in game_banners.items():
                 try:
-                    self.process_banner(config)
-                except Exception as e:
-                    logger.error(
-                        f"Error processing {game_name} {banner_type} banner: {str(e)}"
+                    # Calculate stats
+                    params = {
+                        "base_rate": config.base_rate,
+                        "four_star_rate": config.four_star_rate,
+                        "soft_pity_start": config.soft_pity_start_after,
+                        "hard_pity": config.hard_pity,
+                        "rate_increase": config.rate_increase,
+                        "guaranteed_rate_up": config.guaranteed_rate_up,
+                        "rate_up_chance": config.rate_up_chance,
+                    }
+                    results = self.calculator.calculate(params)
+
+                    # Save results
+                    filename = f"{game_name.lower().replace(' ', '_')}_all_banners.csv"
+                    self.output_handler.write(
+                        str(output_dir / filename),
+                        ["Game", "Banner Type", "Roll", "Probability", "Cumulative"],
+                        self._format_results(config, results),
                     )
+                    logger.info(f"Processed {game_name} {banner_type} banner")
+                except Exception as e:
+                    logger.error(f"Error processing {game_name} {banner_type}: {e}")
                     raise
 
-        if self.processed_configs == total_configs:
-            logger.info("All banner configurations processed successfully")
+        logger.info("All banner configurations processed successfully")
+
+    def _format_results(self, config, results):
+        """Format results for CSV output."""
+        rows = []
+        for i, (prob, cum_prob) in enumerate(
+            zip(results.raw_probabilities, results.cumulative_prob), 1
+        ):
+            rows.append(
+                [
+                    config.game_name,
+                    config.banner_type,
+                    str(i),
+                    f"{prob:.6f}",
+                    f"{cum_prob:.6f}",
+                ]
+            )
+        return rows
 
 
 def main() -> None:
     """Main entry point for banner statistics calculation."""
     try:
-        # Ensure output directory exists and is empty
-        output_dir = Path("csv_output")
-        if output_dir.exists():
-            for file in output_dir.glob("*.csv"):
-                file.unlink()
-        else:
-            output_dir.mkdir()
-
-        # Run calculations
-        runner = StatsRunner(
-            cast(Mapping[str, Mapping[str, BannerConfig]], BANNER_CONFIGS)
-        )
-        runner.process_all_banners()
+        runner = StatsRunner()
+        runner.run()
     except Exception as e:
-        logger.critical(f"Failed to initialize or run StatsRunner: {e}")
+        logger.critical(f"Failed to run banner calculations: {e}")
         raise
 
 
