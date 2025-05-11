@@ -1,4 +1,5 @@
 """Probability calculator for gacha banners."""
+
 from typing import List, Tuple
 
 
@@ -43,7 +44,7 @@ class ProbabilityCalculator:
         no_5star_prob = 1.0
         for i, prob in enumerate(per_roll):
             first_5star.append(no_5star_prob * prob)
-            no_5star_prob *= (1.0 - prob)
+            no_5star_prob *= 1.0 - prob
 
         # Calculate cumulative probability (chance to get at least one 5* by this roll)
         cumulative = []

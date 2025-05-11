@@ -1,4 +1,5 @@
 """Banner statistics calculation runner."""
+
 from pathlib import Path
 
 
@@ -16,7 +17,10 @@ def run_banner_stats():
     logger.info("Starting banner statistics calculation.")
     output_handler = CSVOutputHandler()
     for game_type, banners in BANNER_CONFIGS.items():
-        output_path = Path("csv_output") / f"{game_type.lower().replace(' ', '_')}_all_banners.csv"
+        output_path = (
+            Path("csv_output")
+            / f"{game_type.lower().replace(' ', '_')}_all_banners.csv"
+        )
         all_results = []
         logger.info(f"Processing game type: {game_type}")
         for banner_type, config in banners.items():
@@ -28,7 +32,10 @@ def run_banner_stats():
                 all_results.extend(formatted_data)
                 logger.info(f"Finished calculations for banner: {banner_type}")
             except Exception as e:
-                logger.error(f"Error calculating probabilities for {banner_type}: {e}", exc_info=True)
+                logger.error(
+                    f"Error calculating probabilities for {banner_type}: {e}",
+                    exc_info=True,
+                )
         try:
             output_handler.write(str(output_path), get_headers(), all_results)
             logger.info(f"Results written to {output_path}")
