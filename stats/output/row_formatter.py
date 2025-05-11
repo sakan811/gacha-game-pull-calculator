@@ -7,9 +7,8 @@ standardized format suitable for CSV output.
 from typing import List, Final
 from decimal import Decimal, ROUND_HALF_UP
 
-from core.config.banner import BannerConfig
-from core.calculator import CalculationResult
-from core.common.logging import get_logger
+from ..core.config.banner_config import BannerConfig
+from ..core.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -43,36 +42,26 @@ def format_number(value: float, decimal_places: int = DECIMAL_PLACES) -> str:
     )
 
 
-def format_results(config: BannerConfig, results: CalculationResult) -> List[List[str]]:
-    """Format calculation results for output.
-
-    Args:
-        config: Banner configuration
-        results: Calculation results
-
-    Returns:
-        List of formatted rows
-    """
-    formatted_rows = []
-
-    for i, (prob, cum, first) in enumerate(
-        zip(
-            results.raw_probabilities, results.cumulative_prob, results.first_5star_prob
-        ),
-        1,
-    ):
-        formatted_rows.append(
-            [
-                config.game_name,
-                config.banner_type,
-                str(i),
-                format_number(prob),
-                format_number(cum),
-                format_number(first),
-            ]
+def format_results(
+    config: BannerConfig,
+    per_roll: list[float],
+    cumulative: list[float],
+    first_5star: list[float],
+) -> List[List[str]]:
+    """Format probability lists into CSV rows."""
+    return [
+        [
+            config.game_name,
+            config.banner_type,
+            str(i),
+            format_number(prob),
+            format_number(cum),
+            format_number(first),
+        ]
+        for i, (prob, cum, first) in enumerate(
+            zip(per_roll, cumulative, first_5star), 1
         )
-
-    return formatted_rows
+    ]
 
 
 def get_headers() -> List[str]:
