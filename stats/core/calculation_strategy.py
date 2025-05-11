@@ -2,7 +2,8 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, Any, NamedTuple
-from numpy import ndarray
+import numpy as np
+from numpy.typing import NDArray
 
 
 class CalculationError(Exception):
@@ -26,9 +27,9 @@ class ConfigurationError(CalculationError):
 class CalculationResult(NamedTuple):
     """Container for calculation results with built-in validation."""
 
-    raw_probabilities: ndarray
-    first_5star_prob: ndarray
-    cumulative_prob: ndarray
+    raw_probabilities: NDArray[np.float64]
+    first_5star_prob: NDArray[np.float64]
+    cumulative_prob: NDArray[np.float64]
     metadata: Dict[str, Any]
 
     def validate(self) -> bool:

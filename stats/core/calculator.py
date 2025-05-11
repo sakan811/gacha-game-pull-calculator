@@ -5,7 +5,7 @@ It handles the core probability calculations for gacha banners including pity sy
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Any
 import numpy as np
 from numpy.typing import NDArray
 
@@ -194,7 +194,7 @@ class ProbabilityCalculator(ABC):
             )
 
     @abstractmethod
-    def calculate(self, params: dict) -> dict:
+    def calculate(self, params: dict[str, Any]) -> dict[str, Any]:
         """Calculate complete probability statistics for the banner.
 
         This method must be implemented by concrete calculator classes

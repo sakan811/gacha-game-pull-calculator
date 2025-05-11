@@ -2,13 +2,17 @@
 
 from abc import ABC, abstractmethod
 from typing import Optional
-from numpy import ndarray
+import numpy as np
+from numpy.typing import NDArray
 
 from ..config.banner import BannerConfig
 from ..common.errors import ConfigurationError
 from ..common.logging import get_logger
 
 logger = get_logger(__name__)
+
+# Type aliases for improved readability
+ProbabilityArray = NDArray[np.float64]
 
 
 class ProbabilityCalculator(ABC):
@@ -27,7 +31,7 @@ class ProbabilityCalculator(ABC):
             raise ConfigurationError("Calculator configuration not set")
 
     @abstractmethod
-    def _calculate_raw_probabilities(self) -> ndarray:
+    def _calculate_raw_probabilities(self) -> ProbabilityArray:
         """Calculate raw probabilities for each pull.
 
         Returns:
@@ -40,8 +44,8 @@ class ProbabilityCalculator(ABC):
 
     @abstractmethod
     def _calculate_first_5star_prob_from_raw(
-        self, raw_probabilities: ndarray
-    ) -> ndarray:
+        self, raw_probabilities: ProbabilityArray
+    ) -> ProbabilityArray:
         """Calculate probability of first 5★ from raw probabilities.
 
         Args:
@@ -54,8 +58,8 @@ class ProbabilityCalculator(ABC):
 
     @abstractmethod
     def _calculate_cumulative_prob_from_raw(
-        self, raw_probabilities: ndarray
-    ) -> ndarray:
+        self, raw_probabilities: ProbabilityArray
+    ) -> ProbabilityArray:
         """Calculate cumulative probabilities from raw probabilities.
 
         Args:

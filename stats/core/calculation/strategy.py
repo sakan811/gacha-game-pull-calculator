@@ -1,8 +1,7 @@
-"""Calculation strategy interface and result types."""
-
 from abc import ABC, abstractmethod
 from typing import Dict, Any, NamedTuple
-from numpy import ndarray
+import numpy as np
+from numpy.typing import NDArray
 
 from ..common.errors import ValidationError
 from ..common.logging import get_logger
@@ -13,9 +12,9 @@ logger = get_logger(__name__)
 class CalculationResult(NamedTuple):
     """Container for calculation results with built-in validation."""
 
-    raw_probabilities: ndarray
-    first_5star_prob: ndarray
-    cumulative_prob: ndarray
+    raw_probabilities: NDArray[np.float64]
+    first_5star_prob: NDArray[np.float64]
+    cumulative_prob: NDArray[np.float64]
     metadata: Dict[str, Any]
 
     def validate(self) -> bool:
@@ -27,8 +26,9 @@ class CalculationResult(NamedTuple):
         Raises:
             ValidationError: If validation fails
         """
+        # Check array types
         if not all(
-            isinstance(arr, ndarray)
+            isinstance(arr, np.ndarray)
             for arr in [
                 self.raw_probabilities,
                 self.first_5star_prob,
@@ -37,6 +37,7 @@ class CalculationResult(NamedTuple):
         ):
             raise ValidationError("All probability arrays must be numpy arrays")
 
+        # Check array lengths
         if not all(
             len(arr) > 0
             for arr in [
@@ -47,6 +48,7 @@ class CalculationResult(NamedTuple):
         ):
             raise ValidationError("All probability arrays must be non-empty")
 
+        # Check probability bounds
         if not all(
             0 <= prob <= 1
             for arr in [
