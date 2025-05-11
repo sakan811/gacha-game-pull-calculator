@@ -4,6 +4,7 @@ from typing import List
 
 from core.calculation.strategy import CalculationResult
 from core.config.banner import BannerConfig
+from core.common.errors import ValidationError
 from core.common.logging import get_logger
 
 logger = get_logger(__name__)
@@ -16,17 +17,46 @@ class StatsFormatter:
         self.config = config
 
     def get_header(self) -> List[str]:
-        """Get header row for formatted output.
+        """Get CSV header columns.
 
         Returns:
-            List of column headers
+            List of column names
         """
         return [
-            "Pulls",
-            "Raw Probability",
-            "First 5★ Probability",
+            "Game",
+            "Banner Type",
+            "Roll Number",
+            "Probability per Roll",
             "Cumulative Probability",
+            "First 5 Star Probability",
         ]
+
+    def validate_results(self, result: CalculationResult) -> None:
+        """Validate calculation results before formatting.
+
+        Args:
+            result: Calculation results to validate
+
+        Raises:
+            ValidationError: If results are invalid
+        """
+        if (
+            len(result.raw_probabilities)
+            != len(result.cumulative_prob)
+            != len(result.first_5star_prob)
+        ):
+            raise ValidationError("Probability arrays must be the same length")
+
+    def format_number(self, value: float) -> str:
+        """Format a number for CSV output.
+
+        Args:
+            value: Number to format
+
+        Returns:
+            Formatted string representation
+        """
+        return f"{value:.6f}"
 
     def format_results(self, results: CalculationResult) -> List[List[str]]:
         """Format calculation results.
@@ -64,3 +94,37 @@ class StatsFormatter:
             f"Base Rate: {self.config.base_rate}",
             *[f"{k}: {v}" for k, v in results.metadata.items()],
         ]
+
+    def format_rows(self, result: CalculationResult) -> List[List[str]]:
+        """Format calculation results into rows.
+
+        Args:
+            result: Calculation results to format
+
+        Returns:
+            List of formatted data rows
+
+        Raises:
+            ValidationError: If results are invalid
+        """
+        try:
+            self.validate_results(result)
+            rows = []
+
+            for i in range(len(result.raw_probabilities)):
+                rows.append(
+                    [
+                        self.config.game_name,
+                        self.config.banner_type,
+                        str(i + 1),
+                        self.format_number(result.raw_probabilities[i]),
+                        self.format_number(result.cumulative_prob[i]),
+                        self.format_number(result.first_5star_prob[i]),
+                    ]
+                )
+
+            return rows
+
+        except Exception as e:
+            logger.error(f"Failed to format rows: {str(e)}")
+            raise ValidationError(f"Failed to format calculation results: {str(e)}")

@@ -14,118 +14,89 @@ logger = get_logger(__name__)
 
 
 class BannerStats:
-    """Analyzes and formats banner statistics.
-    
-    This class orchestrates the banner statistics calculation process by:
-    1. Coordinating between calculation strategy and configuration
-    2. Managing the formatting of results
-    3. Handling file output operations
-    """
-
-    def calculate_and_save(self) -> None:
-        """Calculate banner statistics and save the results.
-
-        Raises:
-            CalculationError: If calculation fails
-            ValidationError: If saving results fails
-        """
-        params = {
-            "base_rate": self.config.base_rate,
-            "hard_pity": self.config.hard_pity,
-            "soft_pity_start": self.config.soft_pity_start_after,
-            "rate_increase": self.config.rate_increase
-        }
-        
-        try:
-            self.calculate_stats(params)
-            output_path = Path("csv_output") / self.config.game_name.lower().replace(" ", "_")
-            output_path.mkdir(parents=True, exist_ok=True)
-            output_file = output_path / f"{self.config.game_name.lower().replace(' ', '_')}_all_banners.csv"
-            self.write_results(output_file)
-        except Exception as e:
-            logger.error(f"Failed to calculate and save banner stats: {str(e)}")
-            raise CalculationError(f"Failed to calculate and save banner stats: {str(e)}")
+    """Class for analyzing banner statistics."""
 
     def __init__(
         self,
         config: BannerConfig,
-        calculator: CalculationStrategy,
-        output_handler: CSVOutputHandler,
+        strategy: Optional[CalculationStrategy] = None,
+        output_handler: Optional[CSVOutputHandler] = None,
+        formatter: Optional[StatsFormatter] = None,
     ) -> None:
-        """Initialize BannerStats with configuration and dependencies.
+        """Initialize the banner stats analyzer.
 
         Args:
-            config: Banner configuration details
-            calculator: Strategy for probability calculations
-            output_handler: Handler for CSV file operations
+            config: Banner configuration
+            strategy: Optional calculation strategy
+            output_handler: Optional CSV output handler
+            formatter: Optional results formatter
         """
-        if not isinstance(config, BannerConfig):
-            raise ValidationError("Invalid banner configuration provided")
-        if not isinstance(calculator, CalculationStrategy):
-            raise ValidationError("Invalid calculation strategy provided")
-        if not isinstance(output_handler, CSVOutputHandler):
-            raise ValidationError("Invalid output handler provided")
-            
         self.config = config
-        self.calculator = calculator
-        self.output_handler = output_handler
-        self.formatter = StatsFormatter(config)
-        self._results: Optional[CalculationResult] = None
+        self.strategy = strategy
+        self.output_handler = output_handler or CSVOutputHandler()
+        self.formatter = formatter or StatsFormatter(config)
+        self.results: Optional[CalculationResult] = None
 
-    def calculate_stats(self, params: Dict[str, Any]) -> CalculationResult:
-        """Calculate banner statistics and store the results.
+    def calculate(self, params: Dict[str, Any]) -> None:
+        """Calculate banner statistics.
 
         Args:
             params: Calculation parameters
 
-        Returns:
-            Calculation results
-
         Raises:
-            CalculationError: If calculation fails
+            CalculationError: If no strategy is set or calculation fails
         """
+        if not self.strategy:
+            raise CalculationError("No calculation strategy set")
+
         try:
-            result = self.calculator.calculate(params)
-            result.validate()
-            self._results = result
-            return result
+            self.results = self.strategy.calculate(params)
         except Exception as e:
             logger.error(f"Failed to calculate stats: {str(e)}")
-            raise CalculationError(f"Stats calculation failed: {str(e)}")
+            raise CalculationError(f"Failed to calculate stats: {str(e)}")
 
     def format_results(self) -> List[List[str]]:
-        """Format the most recent calculation results for output.
+        """Format the calculation results.
 
         Returns:
-            Formatted results as list of string lists
+            Formatted results as a list of rows
 
         Raises:
             ValidationError: If no results are available
         """
-        if not self._results:
+        if not self.results:
             raise ValidationError("No results available to format")
-        return self.formatter.format_results(self._results)
-    
+
+        return self.formatter.format_rows(self.results)
+
     def write_results(self, output_path: Path) -> None:
-        """Write formatted results to a CSV file.
+        """Write formatted results to the game's CSV file.
 
         Args:
-            output_path: Path to the output CSV file
+            output_path: Base path for the output CSV file
 
         Raises:
             ValidationError: If no results are available
             CalculationError: If writing results fails
         """
+        if not self.results:
+            raise ValidationError("No results available to write")
+
         try:
-            header = ["Pulls", "Raw Probability", "First 5★ Probability", "Cumulative Probability"]
+            # Create game-specific output file name
+            game_name = self.config.game_name.lower().replace(" ", "_")
+            output_file = output_path / f"{game_name}_all_banners.csv"
+
+            # Get header and formatted results
+            header = self.formatter.get_header()
             formatted_results = self.format_results()
-            metadata = [
-                f"Game: {self.config.game_name}",
-                f"Banner: {self.config.banner_type}",
-                f"Base Rate: {self.config.base_rate}",
-                f"Hard Pity: {self.config.hard_pity}",
-            ]
-            self.output_handler.write(str(output_path), header, formatted_results, metadata)
+
+            # Write or append results based on file existence
+            self.output_handler.write(str(output_file), header, formatted_results)
+            logger.info(
+                f"Successfully wrote results for {self.config.banner_type} banner to {output_file}"
+            )
+
         except Exception as e:
             logger.error(f"Failed to write results: {str(e)}")
             raise CalculationError(f"Failed to write results: {str(e)}")

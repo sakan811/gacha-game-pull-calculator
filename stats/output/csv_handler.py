@@ -55,7 +55,6 @@ class CSVOutputHandler:
         filename: str,
         header: List[str],
         rows: List[List[str]],
-        metadata_row: Optional[List[str]] = None,
     ) -> None:
         """Write data to CSV file in chunks with validation.
 
@@ -63,7 +62,6 @@ class CSVOutputHandler:
             filename: Path to output file.
             header: List of column headers.
             rows: List of data rows.
-            metadata_row: Optional metadata row to write before header.
 
         Raises:
             CSVValidationError: If data validation fails.
@@ -79,11 +77,6 @@ class CSVOutputHandler:
         try:
             with open(filename, mode="w", newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
-
-                # Write metadata if provided
-                if metadata_row is not None:
-                    self.validate_row(metadata_row, header_length)
-                    writer.writerow(metadata_row)
 
                 # Write header
                 writer.writerow(header)
@@ -103,7 +96,6 @@ class CSVOutputHandler:
         filename: str,
         header: List[str],
         row_iterator: Iterator[List[str]],
-        metadata_row: Optional[List[str]] = None,
     ) -> None:
         """Write data to CSV file from an iterator for memory efficiency.
 
@@ -111,7 +103,6 @@ class CSVOutputHandler:
             filename: Path to output file.
             header: List of column headers.
             row_iterator: Iterator yielding data rows.
-            metadata_row: Optional metadata row to write before header.
 
         Raises:
             CSVValidationError: If data validation fails.
@@ -125,10 +116,6 @@ class CSVOutputHandler:
         try:
             with open(filename, mode="w", newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
-
-                if metadata_row is not None:
-                    self.validate_row(metadata_row, header_length)
-                    writer.writerow(metadata_row)
 
                 writer.writerow(header)
 
