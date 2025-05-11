@@ -4,7 +4,6 @@ from typing import Dict, Any, List
 import numpy as np
 
 from core.calculation.strategy import CalculationStrategy, CalculationResult
-from core.config.banner import BannerConfig
 from core.common.errors import CalculationError, ValidationError
 from core.common.logging import get_logger
 
@@ -54,8 +53,7 @@ class StandardCalculationStrategy(CalculationStrategy):
 
             raw_probs = [
                 min(
-                    1.0,
-                    base_rate * (1 + max(0, (i - soft_pity_start) * rate_increase))
+                    1.0, base_rate * (1 + max(0, (i - soft_pity_start) * rate_increase))
                 )
                 for i in rolls
             ]
@@ -67,14 +65,14 @@ class StandardCalculationStrategy(CalculationStrategy):
                 "hard_pity": hard_pity,
                 "soft_pity_start": soft_pity_start,
                 "rate_increase": rate_increase,
-                "total_rolls": len(rolls)
+                "total_rolls": len(rolls),
             }
 
             result = CalculationResult(
                 raw_probabilities=np.array(raw_probs),
                 first_5star_prob=np.array(first_5star_probs),
                 cumulative_prob=np.array(cumulative_probs),
-                metadata=metadata
+                metadata=metadata,
             )
 
             # Validate the result before returning

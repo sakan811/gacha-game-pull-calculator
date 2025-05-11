@@ -1,7 +1,7 @@
 """CSV output handler with chunked writing and validation support."""
 
 import csv
-from typing import List, Optional, Iterator
+from typing import List, Iterator
 import os
 
 
@@ -77,7 +77,7 @@ class CSVOutputHandler:
         try:
             file_exists = os.path.exists(filename)
             mode = "a" if file_exists else "w"
-            
+
             with open(filename, mode=mode, newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
 

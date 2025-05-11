@@ -91,11 +91,11 @@ class BannerConfig:
 
         Raises:
             ValidationError: If any parameter is invalid
-        """        
+        """
         # Validate game type
         if self.game_name not in GAME_TYPES:
             raise ValidationError(f"Invalid game name. Must be one of: {GAME_TYPES}")
-            
+
         # Validate banner type for specific game
         valid_banner_types = BANNER_TYPES_BY_GAME.get(self.game_name, set())
         if self.banner_type not in valid_banner_types:

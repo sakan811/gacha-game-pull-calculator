@@ -1,7 +1,7 @@
 """Banner configuration module with validation."""
 
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, ClassVar, Final
+from typing import Optional, Dict, ClassVar, Final
 
 from core.common.errors import ValidationError
 from core.common.logging import get_logger

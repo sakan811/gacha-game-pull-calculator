@@ -3,8 +3,7 @@
 from typing import Mapping, cast
 from pathlib import Path
 
-from core.common.errors import CalculationError
-from core.common.logging import get_logger 
+from core.common.logging import get_logger
 from core.config import BannerConfig
 from core.stats.analyzer import BannerStats
 from output.csv_handler import CSVOutputHandler
@@ -17,7 +16,9 @@ logger = get_logger(__name__)
 class StatsRunner:
     """Orchestrates banner statistics calculations with error handling and progress tracking."""
 
-    def __init__(self, banner_configs: Mapping[str, Mapping[str, BannerConfig]]) -> None:
+    def __init__(
+        self, banner_configs: Mapping[str, Mapping[str, BannerConfig]]
+    ) -> None:
         self.banner_configs = banner_configs
         self.calculator = StandardCalculationStrategy()
         self.output_handler = CSVOutputHandler()
@@ -42,21 +43,23 @@ class StatsRunner:
             "hard_pity": config.hard_pity,
             "rate_increase": config.rate_increase,
             "guaranteed_rate_up": config.guaranteed_rate_up,
-            "rate_up_chance": config.rate_up_chance
+            "rate_up_chance": config.rate_up_chance,
         }
 
         # Calculate probabilities
         stats.calculate(params)
-        
+
         # Save results to CSV
         stats.write_results(Path("csv_output"))
-        
+
         self.processed_configs += 1
         logger.info(f"Processed {config.game_name} - {config.banner_type} banner")
 
     def process_all_banners(self) -> None:
         """Process all banner configurations with progress tracking."""
-        total_configs = sum(len(game_banners) for game_banners in self.banner_configs.values())
+        total_configs = sum(
+            len(game_banners) for game_banners in self.banner_configs.values()
+        )
         logger.info(f"Starting processing of {total_configs} banner configurations")
 
         for game_name, game_banners in self.banner_configs.items():
@@ -65,7 +68,9 @@ class StatsRunner:
                 try:
                     self.process_banner(config)
                 except Exception as e:
-                    logger.error(f"Error processing {game_name} {banner_type} banner: {str(e)}")
+                    logger.error(
+                        f"Error processing {game_name} {banner_type} banner: {str(e)}"
+                    )
                     raise
 
         if self.processed_configs == total_configs:
@@ -84,7 +89,9 @@ def main() -> None:
             output_dir.mkdir()
 
         # Run calculations
-        runner = StatsRunner(cast(Mapping[str, Mapping[str, BannerConfig]], BANNER_CONFIGS))
+        runner = StatsRunner(
+            cast(Mapping[str, Mapping[str, BannerConfig]], BANNER_CONFIGS)
+        )
         runner.process_all_banners()
     except Exception as e:
         logger.critical(f"Failed to initialize or run StatsRunner: {e}")
