@@ -7,6 +7,7 @@ from numpy import ndarray
 
 class CalculationResult(NamedTuple):
     """Container for calculation results with built-in validation."""
+
     raw_probabilities: ndarray
     first_5star_prob: ndarray
     cumulative_prob: ndarray

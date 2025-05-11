@@ -1,12 +1,13 @@
 """CSV output handler with chunked writing and validation support."""
+
 import csv
 from typing import List, Optional, Iterator
 import os
-from pathlib import Path
 
 
 class CSVValidationError(Exception):
     """Raised when CSV validation fails."""
+
     pass
 
 
@@ -14,16 +15,16 @@ class CSVOutputHandler:
     """Handles writing results to a CSV file with validation and chunked writing."""
 
     CHUNK_SIZE = 1000  # Number of rows to write at once
-    
+
     def __init__(self, encoding: str = "utf-8") -> None:
         self.encoding = encoding
 
     def validate_header(self, header: List[str]) -> None:
         """Validate CSV header.
-        
+
         Args:
             header: List of column headers.
-            
+
         Raises:
             CSVValidationError: If header is invalid.
         """
@@ -36,11 +37,11 @@ class CSVOutputHandler:
 
     def validate_row(self, row: List[str], header_length: int) -> None:
         """Validate a CSV row.
-        
+
         Args:
             row: List of row values.
             header_length: Expected number of columns.
-            
+
         Raises:
             CSVValidationError: If row is invalid.
         """
@@ -57,13 +58,13 @@ class CSVOutputHandler:
         metadata_row: Optional[List[str]] = None,
     ) -> None:
         """Write data to CSV file in chunks with validation.
-        
+
         Args:
             filename: Path to output file.
             header: List of column headers.
             rows: List of data rows.
             metadata_row: Optional metadata row to write before header.
-            
+
         Raises:
             CSVValidationError: If data validation fails.
             IOError: If file operations fail.
@@ -71,32 +72,32 @@ class CSVOutputHandler:
         # Validate inputs
         self.validate_header(header)
         header_length = len(header)
-        
+
         # Ensure directory exists
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        
+
         try:
             with open(filename, mode="w", newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
-                
+
                 # Write metadata if provided
                 if metadata_row is not None:
                     self.validate_row(metadata_row, header_length)
                     writer.writerow(metadata_row)
-                
+
                 # Write header
                 writer.writerow(header)
-                
+
                 # Write rows in chunks
                 for i in range(0, len(rows), self.CHUNK_SIZE):
-                    chunk = rows[i:i + self.CHUNK_SIZE]
+                    chunk = rows[i : i + self.CHUNK_SIZE]
                     for row in chunk:
                         self.validate_row(row, header_length)
                         writer.writerow(row)
-                        
+
         except IOError as e:
             raise IOError(f"Failed to write to CSV file {filename}: {str(e)}")
-            
+
     def write_stream(
         self,
         filename: str,
@@ -105,35 +106,35 @@ class CSVOutputHandler:
         metadata_row: Optional[List[str]] = None,
     ) -> None:
         """Write data to CSV file from an iterator for memory efficiency.
-        
+
         Args:
             filename: Path to output file.
             header: List of column headers.
             row_iterator: Iterator yielding data rows.
             metadata_row: Optional metadata row to write before header.
-            
+
         Raises:
             CSVValidationError: If data validation fails.
             IOError: If file operations fail.
         """
         self.validate_header(header)
         header_length = len(header)
-        
+
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        
+
         try:
             with open(filename, mode="w", newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
-                
+
                 if metadata_row is not None:
                     self.validate_row(metadata_row, header_length)
                     writer.writerow(metadata_row)
-                    
+
                 writer.writerow(header)
-                
+
                 for row in row_iterator:
                     self.validate_row(row, header_length)
                     writer.writerow(row)
-                    
+
         except IOError as e:
             raise IOError(f"Failed to write to CSV file {filename}: {str(e)}")
