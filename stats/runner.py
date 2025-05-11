@@ -4,15 +4,15 @@ from pathlib import Path
 import time
 from functools import wraps
 
-from core.logging import Logger
-from core.banner_config import BANNER_CONFIGS
-from core.banner import BannerConfig
-from core.banner_stats import BannerStats
-from core.standard_calculation_strategy import StandardCalculationStrategy
-from core.calculation_strategy import CalculationError
+from core.common import get_logger
+from core.config import BannerConfig
+from core.stats import BannerStats
+from core.calculation import CalculationStrategy, CalculationError
 from output.csv_handler import CSVOutputHandler
+from core.calculation.standard_calculation_strategy import StandardCalculationStrategy
+from core.config.banner_config import BANNER_CONFIGS
 
-logger = Logger().get_logger()
+logger = get_logger(__name__)
 
 T = TypeVar('T')
 

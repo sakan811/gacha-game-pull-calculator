@@ -1,7 +1,7 @@
-# Tests for core/calculator.py
+# Tests for core/calculation/calculator.py
 import pytest
-from core.calculator import ProbabilityCalculator
-from core.banner import BannerConfig
+from core.calculation import ProbabilityCalculator
+from core.config import BannerConfig
 
 
 @pytest.fixture

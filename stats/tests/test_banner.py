@@ -1,5 +1,5 @@
-# Tests for core/banner.py
-from core.banner import BannerConfig
+# Tests for core/config/banner.py
+from core.config import BannerConfig
 
 
 # Test BannerConfig
