@@ -7,7 +7,7 @@ from core.common.logging import get_logger
 from core.config import BannerConfig
 from core.stats.analyzer import BannerStats
 from output.csv_handler import CSVOutputHandler
-from core.calculation.standard_calculation_strategy import StandardCalculationStrategy
+from core.standard_calculation_strategy import StandardCalculationStrategy
 from core.config.banner_config import BANNER_CONFIGS
 
 logger = get_logger(__name__)

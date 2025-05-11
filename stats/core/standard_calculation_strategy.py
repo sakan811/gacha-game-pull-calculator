@@ -3,7 +3,7 @@
 from typing import Dict, Any, List
 import numpy as np
 
-from core.calculation.strategy import CalculationStrategy, CalculationResult
+from core.strategy import CalculationStrategy, CalculationResult
 from core.common.errors import CalculationError, ValidationError
 from core.common.logging import get_logger
 

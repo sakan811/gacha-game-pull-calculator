@@ -2,7 +2,7 @@
 
 from typing import List
 
-from core.calculation.strategy import CalculationResult
+from core.strategy import CalculationResult
 from core.config.banner import BannerConfig
 from core.common.errors import ValidationError
 from core.common.logging import get_logger

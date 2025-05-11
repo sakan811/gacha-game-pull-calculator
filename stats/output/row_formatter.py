@@ -8,7 +8,7 @@ from typing import List, Generator, Optional, Final
 import numpy as np
 
 from core.banner import BannerConfig
-from core.calculation_strategy import CalculationResult
+from core.strategy import CalculationResult
 from core.common.errors import ValidationError
 from core.common.logging import get_logger
 
