@@ -21,13 +21,19 @@ def analyze_banner(config: BannerConfig) -> CalculationResult:
         config: Banner configuration to analyze
 
     Returns:
-        Calculation results
+        CalculationResult containing probability data
 
     Raises:
         CalculationError: If analysis fails
     """
-    calculator = ProbabilityCalculator(config)
-    return calculator.calculate()
+    try:
+        calculator = ProbabilityCalculator(config)
+        return calculator.calculate_probabilities()
+    except Exception as e:
+        logger.error(
+            f"Failed to analyze banner {config.banner_type}: {str(e)}", exc_info=True
+        )
+        raise CalculationError(f"Banner analysis failed: {str(e)}")
 
 
 def get_banner_stats(configs: List[BannerConfig]) -> Dict[str, CalculationResult]:
@@ -37,15 +43,20 @@ def get_banner_stats(configs: List[BannerConfig]) -> Dict[str, CalculationResult
         configs: List of banner configurations to analyze
 
     Returns:
-        Dictionary mapping banner names to calculation results
+        Dictionary mapping banner types to calculation results
+
+    Raises:
+        CalculationError: If any analysis fails
     """
-    results = {}
+    results: Dict[str, CalculationResult] = {}
+
     for config in configs:
         try:
-            results[f"{config.game_name}_{config.banner_type}"] = analyze_banner(config)
-        except CalculationError as e:
-            logger.warning(
-                f"Failed to analyze {config.game_name} {config.banner_type}: {e}"
+            results[config.banner_type] = analyze_banner(config)
+        except Exception as e:
+            logger.error(
+                f"Failed to get stats for {config.banner_type}: {str(e)}", exc_info=True
             )
-            continue
+            raise CalculationError(f"Failed to get banner stats: {str(e)}")
+
     return results

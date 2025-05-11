@@ -128,7 +128,9 @@ class ProbabilityCalculator:
 
         return probs
 
-    def _calculate_first_5star_prob(self, raw_probs: NDArray[np.float64]) -> NDArray[np.float64]:
+    def _calculate_first_5star_prob(
+        self, raw_probs: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """Calculate probability of first 5-star at each roll.
 
         Args:
@@ -143,11 +145,13 @@ class ProbabilityCalculator:
         not_pulled_yet = 1.0
         for i in range(n):
             first_5star[i] = raw_probs[i] * not_pulled_yet
-            not_pulled_yet *= (1 - raw_probs[i])
+            not_pulled_yet *= 1 - raw_probs[i]
 
         return first_5star
 
-    def _calculate_cumulative_prob(self, raw_probs: NDArray[np.float64]) -> NDArray[np.float64]:
+    def _calculate_cumulative_prob(
+        self, raw_probs: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """Calculate cumulative probability of pulling a 5-star.
 
         Args:
@@ -162,6 +166,6 @@ class ProbabilityCalculator:
         not_pulled = 1.0
         for i in range(n):
             cumulative[i] = 1.0 - not_pulled
-            not_pulled *= (1 - raw_probs[i])
+            not_pulled *= 1 - raw_probs[i]
 
         return cumulative
