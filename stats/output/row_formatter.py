@@ -1,7 +1,8 @@
 """Handles formatting of banner data into CSV rows."""
 
-from typing import Dict, List, Any, Tuple, Generator
+from typing import List, Tuple, Generator, Union
 from core.banner import BannerConfig
+from core.calculation_strategy import CalculationResult
 
 
 class BannerRowFormatter:
@@ -17,44 +18,27 @@ class BannerRowFormatter:
             List of column headers.
         """
         return [
-            "Game",
-            "Banner Type",
-            "Pity",
-            "Probability",
+            "Pulls",
+            "Raw Probability",
+            "First 5★ Probability",
             "Cumulative Probability",
-            "Expected Pulls",
         ]
 
     def format_rows(
-        self, stats_data: Dict[str, Any]
-    ) -> Generator[List[Any], None, None]:
-        """Format statistical data into CSV rows.
+        self, stats_data: CalculationResult
+    ) -> Generator[List[str], None, None]:
+        """Format calculation results into CSV rows.
 
         Args:
-            stats_data: Dictionary containing statistical calculations.
+            stats_data: Calculation results to format.
 
         Yields:
-            List containing formatted row data.
+            Formatted rows of data.
         """
-        for pity, data in stats_data.items():
+        for i in range(len(stats_data.raw_probabilities)):
             yield [
-                self.config.game_name,
-                self.config.banner_type,
-                pity,
-                data.get("probability", 0),
-                data.get("cumulative", 0),
-                data.get("expected_pulls", 0),
+                str(i + 1),  # Pull number
+                f"{stats_data.raw_probabilities[i]:.6f}",
+                f"{stats_data.first_5star_prob[i]:.6f}",
+                f"{stats_data.cumulative_prob[i]:.6f}",
             ]
-
-    def get_rows(
-        self, stats_data: Dict[str, Any]
-    ) -> Tuple[List[str], Generator[List[Any], None, None]]:
-        """Get both header and formatted rows.
-
-        Args:
-            stats_data: Dictionary containing statistical calculations.
-
-        Returns:
-            Tuple containing header list and generator of row data.
-        """
-        return self.get_header(), self.format_rows(stats_data)

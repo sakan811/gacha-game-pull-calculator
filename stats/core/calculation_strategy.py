@@ -5,6 +5,21 @@ from typing import Dict, Any, NamedTuple
 from numpy import ndarray
 
 
+class CalculationError(Exception):
+    """Base error for calculation failures."""
+    pass
+
+
+class ValidationError(CalculationError):
+    """Validation error in calculations."""
+    pass
+
+
+class ConfigurationError(CalculationError):
+    """Configuration error in banner setup."""
+    pass
+
+
 class CalculationResult(NamedTuple):
     """Container for calculation results with built-in validation."""
 
@@ -39,7 +54,7 @@ class CalculationStrategy(ABC):
             CalculationResult containing calculation results and metadata.
 
         Raises:
-            ValueError: If required parameters are missing or invalid.
+            ValidationError: If parameters are invalid.
             CalculationError: If calculation fails.
         """
         pass
