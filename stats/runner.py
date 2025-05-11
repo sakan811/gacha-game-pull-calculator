@@ -1,11 +1,10 @@
 """Banner statistics calculation runner module."""
 
-from typing import Dict, Any, Callable, TypeVar, Mapping, cast
-import time
-from functools import wraps
+from typing import Mapping, cast
+from pathlib import Path
 
 from core.common.errors import CalculationError
-from core.common.logging import get_logger
+from core.common.logging import get_logger 
 from core.config import BannerConfig
 from core.stats.analyzer import BannerStats
 from output.csv_handler import CSVOutputHandler
@@ -13,40 +12,6 @@ from core.calculation.standard_calculation_strategy import StandardCalculationSt
 from core.config.banner_config import BANNER_CONFIGS
 
 logger = get_logger(__name__)
-
-T = TypeVar("T")
-
-
-def retry_on_error(max_retries: int = 3, delay: float = 1.0):
-    """Decorator for retrying operations on failure.
-
-    Args:
-        max_retries: Maximum number of retry attempts.
-        delay: Delay between retries in seconds.
-
-    Returns:
-        Decorated function that implements retry logic.
-    """
-
-    def decorator(func: Callable[..., T]) -> Callable[..., T]:
-        @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> T:
-            last_error = None
-            for attempt in range(max_retries):
-                try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    last_error = e
-                    logger.warning(f"Attempt {attempt + 1} failed: {str(e)}")
-                    if attempt < max_retries - 1:
-                        time.sleep(delay)
-            if last_error is not None:
-                raise last_error
-            raise RuntimeError("Unexpected state in retry logic")
-
-        return wrapper
-
-    return decorator
 
 
 class StatsRunner:
@@ -58,34 +23,40 @@ class StatsRunner:
         self.output_handler = CSVOutputHandler()
         self.processed_configs = 0
 
-    @retry_on_error()
     def process_banner(self, config: BannerConfig) -> None:
-        """Process a single banner configuration with retry logic.
+        """Process a single banner configuration.
 
         Args:
             config: Banner configuration to process.
 
         Raises:
-            CalculationError: If processing fails after all retries.
+            CalculationError: If processing fails.
         """
-        try:
-            stats = BannerStats(config, self.calculator, self.output_handler)
-            stats.calculate_and_save()
-            self.processed_configs += 1
-            logger.info(
-                f"Processed {config.game_name} - {config.banner_type} banner"
-            )
-        except Exception as e:
-            logger.error(
-                f"Error processing {config.game_name} - {config.banner_type} banner: {str(e)}"
-            )
-            raise CalculationError(f"Failed to process banner: {str(e)}")
+        stats = BannerStats(config, self.calculator, self.output_handler)
+
+        # Prepare calculation parameters from config
+        params = {
+            "base_rate": config.base_rate,
+            "four_star_rate": config.four_star_rate,
+            "soft_pity_start": config.soft_pity_start_after,
+            "hard_pity": config.hard_pity,
+            "rate_increase": config.rate_increase,
+            "guaranteed_rate_up": config.guaranteed_rate_up,
+            "rate_up_chance": config.rate_up_chance
+        }
+
+        # Calculate probabilities
+        stats.calculate(params)
+        
+        # Save results to CSV
+        stats.write_results(Path("csv_output"))
+        
+        self.processed_configs += 1
+        logger.info(f"Processed {config.game_name} - {config.banner_type} banner")
 
     def process_all_banners(self) -> None:
         """Process all banner configurations with progress tracking."""
-        total_configs = sum(
-            len(game_banners) for game_banners in self.banner_configs.values()
-        )
+        total_configs = sum(len(game_banners) for game_banners in self.banner_configs.values())
         logger.info(f"Starting processing of {total_configs} banner configurations")
 
         for game_name, game_banners in self.banner_configs.items():
@@ -94,25 +65,30 @@ class StatsRunner:
                 try:
                     self.process_banner(config)
                 except Exception as e:
-                    logger.error(
-                        f"Error processing {game_name} {banner_type} banner: {str(e)}"
-                    )
+                    logger.error(f"Error processing {game_name} {banner_type} banner: {str(e)}")
+                    raise
 
         if self.processed_configs == total_configs:
             logger.info("All banner configurations processed successfully")
-        else:
-            logger.warning(
-                f"Processed {self.processed_configs}/{total_configs} banner configurations"
-            )
 
 
 def main() -> None:
     """Main entry point for banner statistics calculation."""
     try:
+        # Ensure output directory exists and is empty
+        output_dir = Path("csv_output")
+        if output_dir.exists():
+            for file in output_dir.glob("*.csv"):
+                file.unlink()
+        else:
+            output_dir.mkdir()
+
+        # Run calculations
         runner = StatsRunner(cast(Mapping[str, Mapping[str, BannerConfig]], BANNER_CONFIGS))
         runner.process_all_banners()
     except Exception as e:
         logger.critical(f"Failed to initialize or run StatsRunner: {e}")
+        raise
 
 
 if __name__ == "__main__":

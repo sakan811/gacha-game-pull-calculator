@@ -56,7 +56,7 @@ class CSVOutputHandler:
         header: List[str],
         rows: List[List[str]],
     ) -> None:
-        """Write data to CSV file in chunks with validation.
+        """Write data to CSV file in chunks with validation, appending if file exists.
 
         Args:
             filename: Path to output file.
@@ -75,11 +75,15 @@ class CSVOutputHandler:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         try:
-            with open(filename, mode="w", newline="", encoding=self.encoding) as file:
+            file_exists = os.path.exists(filename)
+            mode = "a" if file_exists else "w"
+            
+            with open(filename, mode=mode, newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
 
-                # Write header
-                writer.writerow(header)
+                # Write header only for new files
+                if not file_exists:
+                    writer.writerow(header)
 
                 # Write rows in chunks
                 for i in range(0, len(rows), self.CHUNK_SIZE):
