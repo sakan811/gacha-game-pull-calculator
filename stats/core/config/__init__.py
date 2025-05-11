@@ -1,5 +1,5 @@
 """Core configuration package."""
 
-from .banner import BannerConfig
+from .banner_config import BannerConfig
 
 __all__ = ["BannerConfig"]

@@ -7,7 +7,7 @@ standardized format suitable for CSV output.
 from typing import List, Final
 from decimal import Decimal, ROUND_HALF_UP
 
-from ..core.config.banner_config import BannerConfig
+from stats.core.config.banner_config import BannerConfig
 from ..core.common.logging import get_logger
 
 logger = get_logger(__name__)

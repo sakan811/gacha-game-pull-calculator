@@ -1,9 +1,7 @@
 """Core functionality package."""
 
-from .config.banner import BannerConfig
+from .config.banner_config import BannerConfig
 from .calculator import ProbabilityCalculator
-from .stats.analyzer import BannerStats
-from .stats.formatter import StatsFormatter
 from .common.errors import (
     BannerError,
     ValidationError,
@@ -16,8 +14,6 @@ from .common.logging import get_logger
 __all__ = [
     "BannerConfig",
     "ProbabilityCalculator",
-    "BannerStats",
-    "StatsFormatter",
     "BannerError",
     "ValidationError",
     "CalculationError",
