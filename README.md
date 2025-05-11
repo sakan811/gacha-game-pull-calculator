@@ -8,11 +8,21 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 - Genshin Impact
 - Zenless Zone Zero
 
+## Technical Notes
+
+- Rate-increase assumption: 7% for all banners across supported games
+- Data sources:
+  - [HoYoLAB Article](https://www.hoyolab.com/article/497840)
+  - [Star Rail Station](https://starrailstation.com/en/warp#global)
+  - [Paimon.moe](https://paimon.moe/wish/tally?id=300077)
+  - [ZZZ RNG](https://zzz.rng.moe/en/tracker/global#3001)
+
 ## Build Status
 
 [![Go Backend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/go-test.yml)
 [![Frontend Tests](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/sakan811/honkai-star-rail-warp-calculator/actions/workflows/frontend-test.yml)
 [![Docker Build](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml)
+[![Python Tests](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/python-test.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/python-test.yml)
 
 ## Quick Start Guide
 
@@ -43,7 +53,7 @@ A web-based calculator that helps you estimate the probability of obtaining 5-st
 
 ## Statistics Visualization
 
-View detailed probability statistics and visualizations [here](/docs/VISUAL.md).
+View detailed probability statistics and visualizations [here](https://public.tableau.com/views/GachaPullAnalysis/HoyoverseGames-GachaPullAnalysis?:language=th-TH&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link).
 
 ## Application Flow Documentation
 
@@ -51,9 +61,8 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
 
 ## Running Statistics Script
 
-### Python Requirements
+### Prerequisites
 
-- [Python](https://www.python.org/downloads/)
 - [UV Package Manager](https://docs.astral.sh/uv/getting-started/installation/)
 
 ### Setup and Execution
@@ -61,6 +70,7 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
 1. Navigate to stats directory:
 
    ```bash
+   git clone https://github.com/sakan811/gacha-game-pull-calculator.git
    cd stats
    ```
 
@@ -77,20 +87,11 @@ View the application architecture and flow diagrams [here](/docs/FLOW.md).
 3. Install dependencies:
 
    ```bash
-   uv pip install -r requirements.txt
+   uv sync
    ```
 
 4. Run the script:
 
    ```bash
-   python stats_main.py
+   python runner.py
    ```
-
-## Technical Notes
-
-- Rate-increase assumption: 7% for all banners across supported games
-- Data sources:
-  - [HoYoLAB Article](https://www.hoyolab.com/article/497840)
-  - [Star Rail Station](https://starrailstation.com/en/warp#global)
-  - [Paimon.moe](https://paimon.moe/wish/tally?id=300077)
-  - [ZZZ RNG](https://zzz.rng.moe/en/tracker/global#3001)
