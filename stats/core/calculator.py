@@ -5,26 +5,7 @@ It handles the core probability calculations for gacha banners including pity sy
 """
 
 import numpy as np
-
 from core.config.banner import BannerConfig
-from core.common.errors import ConfigurationError, CalculationError
-from core.common.logging import get_logger
-
-logger = get_logger(__name__)
-
-
-class CalculationResult:
-    """Container for calculation results."""
-
-    def __init__(
-        self,
-        raw_probabilities: np.ndarray,
-        first_5star_prob: np.ndarray,
-        cumulative_prob: np.ndarray,
-    ):
-        self.raw_probabilities = raw_probabilities
-        self.first_5star_prob = first_5star_prob
-        self.cumulative_prob = cumulative_prob
 
 
 class ProbabilityCalculator:
@@ -35,14 +16,14 @@ class ProbabilityCalculator:
             raise ConfigurationError("Banner configuration is required")
         self.config = config
 
-    def calculate_probabilities(self, max_rolls: int = 180) -> CalculationResult:
+    def calculate_probabilities(self, max_rolls: int = 180):
         """Calculate banner probabilities.
 
         Args:
             max_rolls: Maximum number of rolls to calculate for
 
         Returns:
-            CalculationResult with probability arrays
+            Tuple of probability arrays: raw probabilities, first 5-star probabilities, cumulative probabilities
 
         Raises:
             CalculationError: If calculation fails
@@ -72,11 +53,7 @@ class ProbabilityCalculator:
             # Cumulative probability
             cumulative = 1.0 - not_pulled_yet
 
-            return CalculationResult(
-                raw_probabilities=probs,
-                first_5star_prob=first_5star,
-                cumulative_prob=cumulative,
-            )
+            return probs, first_5star, cumulative
         except Exception as e:
             logger.error(f"Calculation failed: {str(e)}", exc_info=True)
             raise CalculationError(f"Failed to calculate probabilities: {str(e)}")

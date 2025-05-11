@@ -1,8 +1,8 @@
 """CSV output handler with chunked writing and validation support."""
 
 import csv
-from typing import List, Iterator
 import os
+from typing import List
 
 
 class CSVValidationError(Exception):
