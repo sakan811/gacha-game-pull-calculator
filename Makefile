@@ -44,7 +44,7 @@ ruff:
 	cd $(STATS_DIR) && ruff check . --fix --unsafe-fixes && ruff format .
 
 mypy:
-	cd $(STATS_DIR) && mypy . --strict --ignore-missing-imports
+	cd $(STATS_DIR) && mypy . --strict --ignore-missing-imports --explicit-package-bases
 
 run-stats:
 	cd $(STATS_DIR) && python runner.py
