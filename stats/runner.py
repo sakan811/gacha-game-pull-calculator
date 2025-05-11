@@ -55,7 +55,9 @@ class StatsRunner:
                     if game not in game_data:
                         game_data[game] = {"rows": [], "headers": header}
                     game_data[game]["rows"].extend(rows)
-                    logger.info(f"Prepared stats for {game} {banner_type} ({len(rows)} rows)")
+                    logger.info(
+                        f"Prepared stats for {game} {banner_type} ({len(rows)} rows)"
+                    )
 
             except Exception as e:
                 logger.error(
@@ -99,7 +101,9 @@ class StatsRunner:
 
         banner_analyzer.calculate_probabilities()
         header, rows = banner_analyzer.get_banner_rows()
-        rows = list(rows)  # Convert generator to list for length and multiple iterations
+        rows = list(
+            rows
+        )  # Convert generator to list for length and multiple iterations
 
         return header, rows, banner_analyzer.game_name
 

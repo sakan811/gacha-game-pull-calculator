@@ -1,4 +1,5 @@
 """Defines the interface for probability calculation strategies."""
+
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 

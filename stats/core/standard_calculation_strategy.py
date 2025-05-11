@@ -1,7 +1,6 @@
 """Implements the standard banner probability calculation strategy."""
 
 from typing import Dict, Any, List
-import numpy as np
 
 from core.calculation_strategy import CalculationStrategy
 from core.banner import BannerConfig
@@ -63,11 +62,16 @@ class StandardCalculationStrategy(CalculationStrategy):
         max_pity = config.max_pity
 
         return [
-            min(1.0, base_rate * (1 + max(0, (i - pity_starts) / (max_pity - pity_starts))))
+            min(
+                1.0,
+                base_rate * (1 + max(0, (i - pity_starts) / (max_pity - pity_starts))),
+            )
             for i in rolls
         ]
 
-    def _calculate_first_5star_probabilities(self, raw_probs: List[float]) -> List[float]:
+    def _calculate_first_5star_probabilities(
+        self, raw_probs: List[float]
+    ) -> List[float]:
         """Calculate probability of getting first 5-star at each roll.
 
         Args:
@@ -81,12 +85,14 @@ class StandardCalculationStrategy(CalculationStrategy):
 
         for prob in raw_probs:
             prob_here = cumulative_fail * prob
-            cumulative_fail *= (1 - prob)
+            cumulative_fail *= 1 - prob
             result.append(prob_here)
 
         return result
 
-    def _calculate_cumulative_probabilities(self, raw_probs: List[float]) -> List[float]:
+    def _calculate_cumulative_probabilities(
+        self, raw_probs: List[float]
+    ) -> List[float]:
         """Calculate cumulative probability of getting at least one 5-star.
 
         Args:
@@ -99,7 +105,7 @@ class StandardCalculationStrategy(CalculationStrategy):
         cumulative_fail = 1.0
 
         for prob in raw_probs:
-            cumulative_fail *= (1 - prob)
+            cumulative_fail *= 1 - prob
             result.append(1 - cumulative_fail)
 
         return result

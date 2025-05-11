@@ -5,6 +5,7 @@ from numpy import ndarray
 from core.banner import BannerConfig
 from typing import Any
 
+
 class ProbabilityCalculator(ABC):
     """Base class for calculating banner probabilities."""
 

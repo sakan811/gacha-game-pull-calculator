@@ -1,4 +1,5 @@
 """Handles formatting of banner data into CSV rows."""
+
 from typing import Dict, List, Any, Tuple, Generator
 from core.banner import BannerConfig
 
@@ -21,10 +22,12 @@ class BannerRowFormatter:
             "Pity",
             "Probability",
             "Cumulative Probability",
-            "Expected Pulls"
+            "Expected Pulls",
         ]
 
-    def format_rows(self, stats_data: Dict[str, Any]) -> Generator[List[Any], None, None]:
+    def format_rows(
+        self, stats_data: Dict[str, Any]
+    ) -> Generator[List[Any], None, None]:
         """Format statistical data into CSV rows.
 
         Args:
@@ -40,10 +43,12 @@ class BannerRowFormatter:
                 pity,
                 data.get("probability", 0),
                 data.get("cumulative", 0),
-                data.get("expected_pulls", 0)
+                data.get("expected_pulls", 0),
             ]
 
-    def get_rows(self, stats_data: Dict[str, Any]) -> Tuple[List[str], Generator[List[Any], None, None]]:
+    def get_rows(
+        self, stats_data: Dict[str, Any]
+    ) -> Tuple[List[str], Generator[List[Any], None, None]]:
         """Get both header and formatted rows.
 
         Args:

@@ -8,7 +8,6 @@ for different banner types.
 from typing import Dict, Tuple, Any, List
 
 from core.banner import BannerConfig
-from core.calculator import ProbabilityCalculator
 from core.calculation_strategy import CalculationStrategy
 from output.csv_handler import CSVOutputHandler
 from output.row_formatter import BannerRowFormatter
