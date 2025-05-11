@@ -7,16 +7,19 @@ from numpy import ndarray
 
 class CalculationError(Exception):
     """Base error for calculation failures."""
+
     pass
 
 
 class ValidationError(CalculationError):
     """Validation error in calculations."""
+
     pass
 
 
 class ConfigurationError(CalculationError):
     """Configuration error in banner setup."""
+
     pass
 
 

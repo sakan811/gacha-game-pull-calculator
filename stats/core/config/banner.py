@@ -1,4 +1,5 @@
 """Banner configuration module with validation and inheritance support."""
+
 from dataclasses import dataclass
 from typing import Optional, ClassVar
 

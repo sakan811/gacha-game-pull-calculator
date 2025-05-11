@@ -18,11 +18,11 @@ logger = get_logger(__name__)
 DECIMAL_PLACES: Final[int] = 6
 COLUMN_HEADERS: Final[List[str]] = [
     "Game",
-    "Banner Type", 
+    "Banner Type",
     "Roll Number",
     "Probability per Roll",
     "Cumulative Probability",
-    "First 5 Star Probability"
+    "First 5 Star Probability",
 ]
 
 
@@ -138,11 +138,17 @@ class BannerRowFormatter:
             for i in range(len(stats_data.raw_probabilities)):
                 yield [
                     self.config.game_name,  # Game name
-                    self.config.banner_type,  # Banner type  
+                    self.config.banner_type,  # Banner type
                     str(i + 1),  # Roll number
-                    self.format_probability(stats_data.raw_probabilities[i]),  # Probability per roll
-                    self.format_probability(stats_data.cumulative_prob[i]),  # Cumulative probability
-                    self.format_probability(stats_data.first_5star_prob[i]),  # First 5* probability
+                    self.format_probability(
+                        stats_data.raw_probabilities[i]
+                    ),  # Probability per roll
+                    self.format_probability(
+                        stats_data.cumulative_prob[i]
+                    ),  # Cumulative probability
+                    self.format_probability(
+                        stats_data.first_5star_prob[i]
+                    ),  # First 5* probability
                 ]
 
         except Exception as e:
@@ -166,19 +172,27 @@ class BannerRowFormatter:
 
             return [
                 ["Summary Statistics"],
-                ["Average 5★ pulls", self.format_probability(np.average(
-                    np.arange(1, len(result.raw_probabilities) + 1),
-                    weights=result.first_5star_prob
-                ))],
-                ["50% chance at pull", str(np.searchsorted(
-                    result.cumulative_prob, 0.5
-                ) + 1)],
-                ["90% chance at pull", str(np.searchsorted(
-                    result.cumulative_prob, 0.9
-                ) + 1)],
-                ["99% chance at pull", str(np.searchsorted(
-                    result.cumulative_prob, 0.99
-                ) + 1)],
+                [
+                    "Average 5★ pulls",
+                    self.format_probability(
+                        np.average(
+                            np.arange(1, len(result.raw_probabilities) + 1),
+                            weights=result.first_5star_prob,
+                        )
+                    ),
+                ],
+                [
+                    "50% chance at pull",
+                    str(np.searchsorted(result.cumulative_prob, 0.5) + 1),
+                ],
+                [
+                    "90% chance at pull",
+                    str(np.searchsorted(result.cumulative_prob, 0.9) + 1),
+                ],
+                [
+                    "99% chance at pull",
+                    str(np.searchsorted(result.cumulative_prob, 0.99) + 1),
+                ],
             ]
 
         except Exception as e:

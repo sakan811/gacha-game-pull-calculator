@@ -3,6 +3,7 @@
 This module provides the base abstract class for calculating banner probabilities.
 It handles the core probability calculations for gacha banners including pity systems.
 """
+
 from abc import ABC, abstractmethod
 from typing import Optional
 import numpy as np
@@ -21,10 +22,10 @@ RollArray = NDArray[np.int64]
 
 class ProbabilityCalculator(ABC):
     """Base class for calculating banner probabilities.
-    
+
     This class handles the core probability calculations for gacha banners,
     including pity systems, rate-up mechanics, and cumulative probabilities.
-    
+
     Attributes:
         config: Banner configuration parameters
         rolls: Array of roll numbers from 1 to hard pity
@@ -60,7 +61,7 @@ class ProbabilityCalculator(ABC):
 
     def _initialize_calculations(self) -> None:
         """Initialize all probability calculations.
-        
+
         This method sets up the basic arrays and calculates all probabilities
         based on the current configuration.
 
@@ -86,7 +87,7 @@ class ProbabilityCalculator(ABC):
 
     def _calculate_raw_probabilities(self) -> ProbabilityArray:
         """Calculate raw probabilities for each roll.
-        
+
         Calculates the base probability of getting a 5-star on each roll,
         taking into account soft pity and hard pity mechanics.
 
@@ -99,7 +100,9 @@ class ProbabilityCalculator(ABC):
         """
         if self.config is None:
             logger.error("Config must be set to calculate raw probabilities")
-            raise ConfigurationError("Config must be set to calculate raw probabilities")
+            raise ConfigurationError(
+                "Config must be set to calculate raw probabilities"
+            )
 
         try:
             rolls = self.rolls
@@ -110,13 +113,13 @@ class ProbabilityCalculator(ABC):
 
             # Initialize probabilities array with base rate
             probs = np.full_like(rolls, base_rate, dtype=np.float64)
-            
+
             # Apply soft pity
             soft_mask = (rolls >= soft_pity) & (rolls < hard_pity)
             probs[soft_mask] = np.minimum(
                 1.0, base_rate + (rolls[soft_mask] - soft_pity + 1) * rate_increase
             )
-            
+
             # Apply hard pity
             probs[rolls == hard_pity] = 1.0
 
@@ -134,7 +137,7 @@ class ProbabilityCalculator(ABC):
         self, raw_probabilities: ProbabilityArray
     ) -> ProbabilityArray:
         """Calculate probability of getting first 5-star on each roll.
-        
+
         Args:
             raw_probabilities: Array of raw probabilities for each roll
 
@@ -147,22 +150,24 @@ class ProbabilityCalculator(ABC):
         try:
             p_first_5_star = np.zeros_like(raw_probabilities)
             prob_no_5star_so_far = 1.0
-            
+
             for i, p_roll in enumerate(raw_probabilities):
                 p_first_5_star[i] = prob_no_5star_so_far * p_roll
-                prob_no_5star_so_far *= (1 - p_roll)
+                prob_no_5star_so_far *= 1 - p_roll
 
             return p_first_5_star
 
         except Exception as e:
             logger.error(f"First 5-star probability calculation failed: {str(e)}")
-            raise CalculationError(f"Failed to calculate first 5-star probabilities: {str(e)}")
+            raise CalculationError(
+                f"Failed to calculate first 5-star probabilities: {str(e)}"
+            )
 
     def _calculate_cumulative_prob_from_raw(
         self, raw_probabilities: ProbabilityArray
     ) -> ProbabilityArray:
         """Calculate cumulative probability of getting a 5-star by each roll.
-        
+
         Args:
             raw_probabilities: Array of raw probabilities for each roll
 
@@ -175,21 +180,23 @@ class ProbabilityCalculator(ABC):
         try:
             cumulative = np.zeros_like(raw_probabilities)
             prob_no_5star_at_all = 1.0
-            
+
             for i, p_roll in enumerate(raw_probabilities):
-                prob_no_5star_at_all *= (1 - p_roll)
+                prob_no_5star_at_all *= 1 - p_roll
                 cumulative[i] = 1 - prob_no_5star_at_all
 
             return cumulative
 
         except Exception as e:
             logger.error(f"Cumulative probability calculation failed: {str(e)}")
-            raise CalculationError(f"Failed to calculate cumulative probabilities: {str(e)}")
+            raise CalculationError(
+                f"Failed to calculate cumulative probabilities: {str(e)}"
+            )
 
     @abstractmethod
     def calculate(self, params: dict) -> dict:
         """Calculate complete probability statistics for the banner.
-        
+
         This method must be implemented by concrete calculator classes
         to provide specific calculation logic for different banner types.
 

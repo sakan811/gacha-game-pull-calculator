@@ -1,4 +1,5 @@
 """Base calculator module for banner probability calculations."""
+
 from abc import ABC, abstractmethod
 from typing import Optional
 from numpy import ndarray
@@ -18,7 +19,7 @@ class ProbabilityCalculator(ABC):
 
     def _initialize_calculations(self) -> None:
         """Initialize calculation parameters.
-        
+
         Raises:
             ConfigurationError: If configuration is not set
         """
@@ -28,34 +29,38 @@ class ProbabilityCalculator(ABC):
     @abstractmethod
     def _calculate_raw_probabilities(self) -> ndarray:
         """Calculate raw probabilities for each pull.
-        
+
         Returns:
             Array of raw probabilities
-            
+
         Raises:
             ConfigurationError: If configuration is invalid
         """
         pass
 
     @abstractmethod
-    def _calculate_first_5star_prob_from_raw(self, raw_probabilities: ndarray) -> ndarray:
+    def _calculate_first_5star_prob_from_raw(
+        self, raw_probabilities: ndarray
+    ) -> ndarray:
         """Calculate probability of first 5★ from raw probabilities.
-        
+
         Args:
             raw_probabilities: Array of raw probabilities
-            
+
         Returns:
             Array of first 5★ probabilities
         """
         pass
 
     @abstractmethod
-    def _calculate_cumulative_prob_from_raw(self, raw_probabilities: ndarray) -> ndarray:
+    def _calculate_cumulative_prob_from_raw(
+        self, raw_probabilities: ndarray
+    ) -> ndarray:
         """Calculate cumulative probabilities from raw probabilities.
-        
+
         Args:
             raw_probabilities: Array of raw probabilities
-            
+
         Returns:
             Array of cumulative probabilities
         """

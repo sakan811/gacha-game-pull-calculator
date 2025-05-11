@@ -1,4 +1,5 @@
 """Core calculation package."""
+
 from .calculator import ProbabilityCalculator
 from .strategy import CalculationStrategy, CalculationResult
 

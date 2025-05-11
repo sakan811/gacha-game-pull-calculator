@@ -1,4 +1,5 @@
 """Core statistics package."""
+
 from .analyzer import BannerStats
 from .formatter import StatsFormatter
 

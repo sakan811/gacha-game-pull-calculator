@@ -69,7 +69,7 @@ class BannerConfig:
         """
         try:
             self.validate()
-            object.__setattr__(self, '_validated', True)
+            object.__setattr__(self, "_validated", True)
         except Exception as e:
             logger.error(f"Banner configuration validation failed: {str(e)}")
             raise ValidationError(f"Invalid banner configuration: {str(e)}")
@@ -91,7 +91,9 @@ class BannerConfig:
             raise ValidationError(f"Invalid game name. Must be one of: {GAME_TYPES}")
 
         if self.banner_type not in BANNER_TYPES:
-            raise ValidationError(f"Invalid banner type. Must be one of: {BANNER_TYPES}")
+            raise ValidationError(
+                f"Invalid banner type. Must be one of: {BANNER_TYPES}"
+            )
 
         # Validate rates
         if not self._MIN_BASE_RATE <= self.base_rate <= self._MAX_BASE_RATE:
@@ -99,13 +101,22 @@ class BannerConfig:
                 f"Base rate must be between {self._MIN_BASE_RATE} and {self._MAX_BASE_RATE}"
             )
 
-        if not self._MIN_FOUR_STAR_RATE <= self.four_star_rate <= self._MAX_FOUR_STAR_RATE:
+        if (
+            not self._MIN_FOUR_STAR_RATE
+            <= self.four_star_rate
+            <= self._MAX_FOUR_STAR_RATE
+        ):
             raise ValidationError(
                 f"Four star rate must be between {self._MIN_FOUR_STAR_RATE} and {self._MAX_FOUR_STAR_RATE}"
             )
 
         # Validate pity system
-        if not self._MIN_PITY <= self.soft_pity_start_after <= self.hard_pity <= self._MAX_PITY:
+        if (
+            not self._MIN_PITY
+            <= self.soft_pity_start_after
+            <= self.hard_pity
+            <= self._MAX_PITY
+        ):
             raise ValidationError(
                 f"Soft pity must be between {self._MIN_PITY} and hard pity, "
                 f"hard pity must be between soft pity and {self._MAX_PITY}"
@@ -156,8 +167,14 @@ class BannerConfig:
             ConfigurationError: If the data is invalid or missing required fields
         """
         required_fields = {
-            "game_name", "banner_type", "base_rate", "four_star_rate",
-            "soft_pity_start_after", "hard_pity", "rate_increase", "guaranteed_rate_up"
+            "game_name",
+            "banner_type",
+            "base_rate",
+            "four_star_rate",
+            "soft_pity_start_after",
+            "hard_pity",
+            "rate_increase",
+            "guaranteed_rate_up",
         }
 
         missing_fields = required_fields - set(data.keys())

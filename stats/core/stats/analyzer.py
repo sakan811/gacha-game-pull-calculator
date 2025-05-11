@@ -1,4 +1,5 @@
 """Module for analyzing banner statistics."""
+
 from typing import Dict, Any, List
 
 from ..calculation.calculator import ProbabilityCalculator
@@ -21,13 +22,13 @@ class BannerStats:
 
     def calculate_stats(self, params: Dict[str, Any]) -> CalculationResult:
         """Calculate banner statistics.
-        
+
         Args:
             params: Calculation parameters
-            
+
         Returns:
             Calculation results
-            
+
         Raises:
             CalculationError: If calculation fails
         """
@@ -41,10 +42,10 @@ class BannerStats:
 
     def format_results(self, results: CalculationResult) -> List[List[str]]:
         """Format calculation results for output.
-        
+
         Args:
             results: Calculation results to format
-            
+
         Returns:
             Formatted results as list of string lists
         """
