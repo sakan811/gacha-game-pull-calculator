@@ -1,13 +1,13 @@
 """Banner statistics calculation runner module."""
 
-from typing import Dict, Any, Callable, TypeVar
+from typing import Dict, Any, Callable, TypeVar, Mapping, cast
 import time
 from functools import wraps
 
-from core.common import get_logger
+from core.common.errors import CalculationError
+from core.common.logging import get_logger
 from core.config import BannerConfig
-from core.stats import BannerStats
-from core.calculation import CalculationError
+from core.stats.analyzer import BannerStats
 from output.csv_handler import CSVOutputHandler
 from core.calculation.standard_calculation_strategy import StandardCalculationStrategy
 from core.config.banner_config import BANNER_CONFIGS
@@ -52,11 +52,10 @@ def retry_on_error(max_retries: int = 3, delay: float = 1.0):
 class StatsRunner:
     """Orchestrates banner statistics calculations with error handling and progress tracking."""
 
-    def __init__(self, banner_configs: Dict[str, Any]) -> None:
+    def __init__(self, banner_configs: Mapping[str, Mapping[str, BannerConfig]]) -> None:
         self.banner_configs = banner_configs
         self.calculator = StandardCalculationStrategy()
         self.output_handler = CSVOutputHandler()
-        self.total_configs = len(banner_configs)
         self.processed_configs = 0
 
     @retry_on_error()
@@ -74,59 +73,46 @@ class StatsRunner:
             stats.calculate_and_save()
             self.processed_configs += 1
             logger.info(
-                f"Progress: {self.processed_configs}/{self.total_configs} banners processed"
+                f"Processed {config.game_name} - {config.banner_type} banner"
             )
         except Exception as e:
             logger.error(
-                f"Error processing banner {config.game_name}-{config.banner_type}: {str(e)}"
+                f"Error processing {config.game_name} - {config.banner_type} banner: {str(e)}"
             )
             raise CalculationError(f"Failed to process banner: {str(e)}")
 
     def process_all_banners(self) -> None:
         """Process all banner configurations with progress tracking."""
-        logger.info(
-            f"Starting processing of {self.total_configs} banner configurations"
+        total_configs = sum(
+            len(game_banners) for game_banners in self.banner_configs.values()
         )
-        configs = self._process_banner_configs()
+        logger.info(f"Starting processing of {total_configs} banner configurations")
 
-        for game_name, game_configs in configs.items():
+        for game_name, game_banners in self.banner_configs.items():
             logger.info(f"Processing {game_name} banners")
-            for config in game_configs.values():
-                self.process_banner(config)
-
-        logger.info("All banner configurations processed successfully")
-
-    def _process_banner_configs(self) -> Dict[str, Dict[str, BannerConfig]]:
-        """Process banner configurations with validation.
-
-        Returns:
-            Dictionary of processed and validated banner configurations.
-
-        Raises:
-            ValueError: If a configuration is invalid.
-        """
-        processed_configs: Dict[str, Dict[str, BannerConfig]] = {}
-        for game_name, game_config in self.banner_configs.items():
-            processed_configs[game_name] = {}
-            for banner_type, config in game_config.items():
+            for banner_type, config in game_banners.items():
                 try:
-                    banner_config = BannerConfig(**config)
-                    processed_configs[game_name][banner_type] = banner_config
-                except (ValueError, TypeError) as e:
+                    self.process_banner(config)
+                except Exception as e:
                     logger.error(
-                        f"Invalid configuration for {game_name}-{banner_type}: {str(e)}"
+                        f"Error processing {game_name} {banner_type} banner: {str(e)}"
                     )
-                    continue
-        return processed_configs
+
+        if self.processed_configs == total_configs:
+            logger.info("All banner configurations processed successfully")
+        else:
+            logger.warning(
+                f"Processed {self.processed_configs}/{total_configs} banner configurations"
+            )
 
 
 def main() -> None:
     """Main entry point for banner statistics calculation."""
     try:
-        runner = StatsRunner(BANNER_CONFIGS)
+        runner = StatsRunner(cast(Mapping[str, Mapping[str, BannerConfig]], BANNER_CONFIGS))
         runner.process_all_banners()
     except Exception as e:
-        logger.critical(f"Failed to initialize or run StatsRunner: {e}", exc_info=True)
+        logger.critical(f"Failed to initialize or run StatsRunner: {e}")
 
 
 if __name__ == "__main__":

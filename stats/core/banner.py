@@ -14,7 +14,13 @@ logger = get_logger(__name__)
 
 # Constants for validation
 GAME_TYPES: Final[set[str]] = {"Star Rail", "Genshin Impact", "Zenless Zone Zero"}
-BANNER_TYPES: Final[set[str]] = {"Standard", "Limited", "Light Cone", "Weapon"}
+
+# Game-specific banner types
+BANNER_TYPES_BY_GAME: Final[Dict[str, set[str]]] = {
+    "Star Rail": {"Standard", "Limited", "Light Cone"},
+    "Genshin Impact": {"Standard", "Limited", "Weapon"},
+    "Zenless Zone Zero": {"Standard", "Limited", "W-Engine", "Bangboo"},
+}
 
 
 @dataclass(frozen=True)
@@ -85,14 +91,16 @@ class BannerConfig:
 
         Raises:
             ValidationError: If any parameter is invalid
-        """
-        # Validate game and banner type
+        """        
+        # Validate game type
         if self.game_name not in GAME_TYPES:
             raise ValidationError(f"Invalid game name. Must be one of: {GAME_TYPES}")
-
-        if self.banner_type not in BANNER_TYPES:
+            
+        # Validate banner type for specific game
+        valid_banner_types = BANNER_TYPES_BY_GAME.get(self.game_name, set())
+        if self.banner_type not in valid_banner_types:
             raise ValidationError(
-                f"Invalid banner type. Must be one of: {BANNER_TYPES}"
+                f"Invalid banner type for {self.game_name}. Must be one of: {valid_banner_types}"
             )
 
         # Validate rates

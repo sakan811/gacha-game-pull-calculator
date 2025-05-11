@@ -1,6 +1,6 @@
 """Core statistics package."""
 
-from .analyzer import BannerStats
-from .formatter import StatsFormatter
+from core.stats.analyzer import BannerStats
+from core.stats.formatter import StatsFormatter
 
 __all__ = ["BannerStats", "StatsFormatter"]

@@ -2,9 +2,9 @@
 
 from typing import List
 
-from ..calculation.strategy import CalculationResult
-from ..config.banner import BannerConfig
-from ..common.logging import get_logger
+from core.calculation.strategy import CalculationResult
+from core.config.banner import BannerConfig
+from core.common.logging import get_logger
 
 logger = get_logger(__name__)
 

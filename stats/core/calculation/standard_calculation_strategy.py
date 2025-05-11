@@ -1,73 +1,92 @@
 """Implements the standard banner probability calculation strategy."""
 
 from typing import Dict, Any, List
+import numpy as np
 
-from core.calculation_strategy import CalculationStrategy
-from core.banner import BannerConfig
+from core.calculation.strategy import CalculationStrategy, CalculationResult
+from core.config.banner import BannerConfig
+from core.common.errors import CalculationError, ValidationError
+from core.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class StandardCalculationStrategy(CalculationStrategy):
     """Standard implementation of banner probability calculations."""
 
-    def calculate(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def calculate(self, params: Dict[str, Any]) -> CalculationResult:
         """Calculate banner probabilities using standard pity system.
 
         Args:
             params: Dictionary containing:
-                - config: BannerConfig instance
-                - pity_range: Range of pity values to calculate
+                - base_rate: Base probability rate (float)
+                - hard_pity: Maximum pity value (int)
+                - soft_pity_start: Start of soft pity (int)
+                - rate_increase: Rate increase per roll after soft pity (float)
 
         Returns:
-            Dictionary containing calculation results with keys:
-                - rolls: List of roll numbers
-                - raw_probabilities: Base probability per roll
-                - cumulative_probabilities: Cumulative chance
-                - first_5_star_probabilities: Chance of first 5-star
+            CalculationResult with calculation outcomes
 
         Raises:
-            ValueError: If required parameters are missing
+            ValidationError: If required parameters are missing or invalid
+            CalculationError: If calculation fails
         """
-        config = params.get("config")
-        pity_range = params.get("pity_range", range(1, 91))
+        try:
+            try:
+                base_rate = float(params["base_rate"])
+                hard_pity = int(params["hard_pity"])
+                soft_pity_start = int(params["soft_pity_start"])
+                rate_increase = float(params["rate_increase"])
+            except (KeyError, ValueError, TypeError) as e:
+                raise ValidationError(f"Invalid parameter value: {str(e)}")
 
-        if not isinstance(config, BannerConfig):
-            raise ValueError("Valid BannerConfig required")
+            if not 0 < base_rate <= 1:
+                raise ValidationError("Base rate must be between 0 and 1")
+            if not 0 < hard_pity <= 100:
+                raise ValidationError("Hard pity must be between 1 and 100")
+            if not 0 < soft_pity_start < hard_pity:
+                raise ValidationError("Soft pity must be between 1 and hard pity")
+            if not 0 <= rate_increase <= 1:
+                raise ValidationError("Rate increase must be between 0 and 1")
 
-        rolls = list(pity_range)
-        raw_probs = self._calculate_raw_probabilities(config, rolls)
-        first_5star_probs = self._calculate_first_5star_probabilities(raw_probs)
-        cumulative_probs = self._calculate_cumulative_probabilities(raw_probs)
+            pity_range = range(1, hard_pity + 1)
+            rolls = list(pity_range)
 
-        return {
-            "rolls": rolls,
-            "raw_probabilities": raw_probs,
-            "first_5_star_probabilities": first_5star_probs,
-            "cumulative_probabilities": cumulative_probs,
-        }
+            raw_probs = [
+                min(
+                    1.0,
+                    base_rate * (1 + max(0, (i - soft_pity_start) * rate_increase))
+                )
+                for i in rolls
+            ]
+            first_5star_probs = self._calculate_first_5star_probabilities(raw_probs)
+            cumulative_probs = self._calculate_cumulative_probabilities(raw_probs)
 
-    def _calculate_raw_probabilities(
-        self, config: BannerConfig, rolls: List[int]
-    ) -> List[float]:
-        """Calculate raw probability for each roll.
+            metadata = {
+                "base_rate": base_rate,
+                "hard_pity": hard_pity,
+                "soft_pity_start": soft_pity_start,
+                "rate_increase": rate_increase,
+                "total_rolls": len(rolls)
+            }
 
-        Args:
-            config: Banner configuration
-            rolls: List of roll numbers
-
-        Returns:
-            List of probabilities per roll
-        """
-        base_rate = config.base_rate
-        pity_starts = config.pity_starts
-        max_pity = config.max_pity
-
-        return [
-            min(
-                1.0,
-                base_rate * (1 + max(0, (i - pity_starts) / (max_pity - pity_starts))),
+            result = CalculationResult(
+                raw_probabilities=np.array(raw_probs),
+                first_5star_prob=np.array(first_5star_probs),
+                cumulative_prob=np.array(cumulative_probs),
+                metadata=metadata
             )
-            for i in rolls
-        ]
+
+            # Validate the result before returning
+            result.validate()
+            return result
+
+        except ValidationError as ve:
+            logger.error(f"Validation error: {str(ve)}")
+            raise
+        except Exception as e:
+            logger.error(f"Calculation error: {str(e)}")
+            raise CalculationError(f"Probability calculation failed: {str(e)}")
 
     def _calculate_first_5star_probabilities(
         self, raw_probs: List[float]
