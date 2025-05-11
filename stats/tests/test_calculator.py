@@ -54,10 +54,10 @@ def test_calculator_initialization_without_config():
     """Test ProbabilityCalculator initialization without a config."""
     calc = ProbabilityCalculator()
     assert calc.config is None
-    assert calc.rolls == []
-    assert calc.probabilities == []
-    assert calc.p_first_5_star == []
-    assert calc.cumulative_prob == []
+    assert len(calc.rolls) == 0
+    assert len(calc.probabilities) == 0
+    assert len(calc.p_first_5_star) == 0
+    assert len(calc.cumulative_prob) == 0
 
 
 def test_calculate_probabilities_before_config_raises_error():

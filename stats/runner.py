@@ -41,7 +41,9 @@ class StatsRunner:
                 )
                 banner_analyzer.calculate_probabilities()
                 header, rows = banner_analyzer.get_banner_rows()
-                rows = list(rows)  # Convert generator to list for length and multiple iterations
+                rows = list(
+                    rows
+                )  # Convert generator to list for length and multiple iterations
                 game = banner_analyzer.game_name
                 if game not in game_rows:
                     game_rows[game] = []
