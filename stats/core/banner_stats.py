@@ -51,7 +51,7 @@ class BannerStats:
             f"Finished calculating probabilities for {self.game_name} - {self.banner_type}."
         )
 
-    def get_banner_rows(self) -> Tuple[list[str], list[list[Any]]]:
+    def get_banner_rows(self) -> Tuple[list[str], Any]:
         header = [
             "Game",
             "Banner Type",
@@ -64,15 +64,16 @@ class BannerStats:
         first_5_star_probs = self.results.get("first_5_star_probabilities", [])
         raw_probs = self.results.get("raw_probabilities", [])
         rolls = self.results.get("rolls", [])
-        rows = [
-            [
-                self.game_name,
-                self.banner_type,
-                roll,
-                raw_probs[idx] if idx < len(raw_probs) else None,
-                cumulative_probs[idx] if idx < len(cumulative_probs) else None,
-                first_5_star_probs[idx] if idx < len(first_5_star_probs) else None,
-            ]
-            for idx, roll in enumerate(rolls)
-        ]
-        return header, rows
+
+        def row_generator():
+            for idx, roll in enumerate(rolls):
+                yield [
+                    self.game_name,
+                    self.banner_type,
+                    roll,
+                    raw_probs[idx] if idx < len(raw_probs) else None,
+                    cumulative_probs[idx] if idx < len(cumulative_probs) else None,
+                    first_5_star_probs[idx] if idx < len(first_5_star_probs) else None,
+                ]
+
+        return header, row_generator()

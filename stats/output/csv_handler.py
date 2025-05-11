@@ -8,7 +8,7 @@ class CSVOutputHandler:
         self,
         filename: str,
         header: list[str],
-        rows: list[list[str]],
+        rows,
         metadata_row: list[str] | None = None,
     ) -> None:
         with open(filename, mode="w", newline="", encoding="utf-8") as file:
@@ -16,4 +16,5 @@ class CSVOutputHandler:
             if metadata_row is not None:
                 writer.writerow(metadata_row)
             writer.writerow(header)
-            writer.writerows(rows)
+            for row in rows:
+                writer.writerow(row)
