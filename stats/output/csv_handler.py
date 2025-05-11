@@ -19,15 +19,17 @@ class CSVOutputHandler:
     def __init__(self, encoding: str = "utf-8") -> None:
         self.encoding = encoding
 
-    def validate_header(self, header: List[str]) -> None:
-        """Validate CSV header.
+    def validate_data(self, header: List[str], rows: List[List[str]]) -> None:
+        """Validate both header and row data in one pass.
 
         Args:
-            header: List of column headers.
+            header: The CSV header row
+            rows: Data rows to validate
 
         Raises:
-            CSVValidationError: If header is invalid.
+            CSVValidationError: If validation fails
         """
+        # Validate header
         if not header:
             raise CSVValidationError("Header cannot be empty")
         if not all(isinstance(col, str) for col in header):
@@ -35,20 +37,13 @@ class CSVOutputHandler:
         if len(set(header)) != len(header):
             raise CSVValidationError("Header columns must be unique")
 
-    def validate_row(self, row: List[str], header_length: int) -> None:
-        """Validate a CSV row.
-
-        Args:
-            row: List of row values.
-            header_length: Expected number of columns.
-
-        Raises:
-            CSVValidationError: If row is invalid.
-        """
-        if len(row) != header_length:
-            raise CSVValidationError(
-                f"Row length {len(row)} does not match header length {header_length}"
-            )
+        # Validate rows
+        header_length = len(header)
+        for row_num, row in enumerate(rows, 1):
+            if len(row) != header_length:
+                raise CSVValidationError(
+                    f"Row {row_num} length {len(row)} does not match header length {header_length}"
+                )
 
     def write(
         self,
@@ -67,9 +62,8 @@ class CSVOutputHandler:
             CSVValidationError: If data validation fails.
             IOError: If file operations fail.
         """
-        # Validate inputs
-        self.validate_header(header)
-        header_length = len(header)
+        # Validate all data upfront
+        self.validate_data(header, rows)
 
         # Ensure directory exists
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -89,7 +83,6 @@ class CSVOutputHandler:
                 for i in range(0, len(rows), self.CHUNK_SIZE):
                     chunk = rows[i : i + self.CHUNK_SIZE]
                     for row in chunk:
-                        self.validate_row(row, header_length)
                         writer.writerow(row)
 
         except IOError as e:
@@ -112,19 +105,27 @@ class CSVOutputHandler:
             CSVValidationError: If data validation fails.
             IOError: If file operations fail.
         """
-        self.validate_header(header)
-        header_length = len(header)
+        # Validate header upfront
+        if not header:
+            raise CSVValidationError("Header cannot be empty")
+        if not all(isinstance(col, str) for col in header):
+            raise CSVValidationError("All header columns must be strings")
+        if len(set(header)) != len(header):
+            raise CSVValidationError("Header columns must be unique")
 
+        header_length = len(header)
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         try:
             with open(filename, mode="w", newline="", encoding=self.encoding) as file:
                 writer = csv.writer(file)
-
                 writer.writerow(header)
 
-                for row in row_iterator:
-                    self.validate_row(row, header_length)
+                for row_num, row in enumerate(row_iterator, 1):
+                    if len(row) != header_length:
+                        raise CSVValidationError(
+                            f"Row {row_num} length {len(row)} does not match header length {header_length}"
+                        )
                     writer.writerow(row)
 
         except IOError as e:
