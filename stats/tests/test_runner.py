@@ -1,66 +1,21 @@
-import sys
-import os
+
 import pytest
-from unittest.mock import patch, MagicMock, ANY
+from unittest.mock import MagicMock
+import runner
 
-# Add the stats directory to sys.path for relative imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from runner import StatsRunner, main
-from core.banner import BannerConfig
 
 
 @pytest.fixture
-def mock_calculator_class():
-    """Fixture to mock ProbabilityCalculator class."""
-    with patch("runner.ProbabilityCalculator", autospec=True) as mock_calc_class:
-        yield mock_calc_class
-
-
-@pytest.fixture
-def mock_output_handler_class():
-    """Fixture to mock CSVOutputHandler class."""
-    with patch("runner.CSVOutputHandler", autospec=True) as mock_handler_class:
-        yield mock_handler_class
-
-
-@pytest.fixture
-def mock_banner_config_instances():
-    """Provides a dictionary of mocked BannerConfig instances."""
-    config1 = MagicMock(spec=BannerConfig)
-    config1.key = "star_rail_standard"
+def mock_banner_configs():
+    config1 = MagicMock()
     config1.game_name = "Star Rail"
     config1.banner_type = "Standard"
-
-    config2 = MagicMock(spec=BannerConfig)
-    config2.key = "genshin_limited_character_1"
+    config2 = MagicMock()
     config2.game_name = "Genshin Impact"
     config2.banner_type = "Limited"
+    return {"star_rail_standard": config1, "genshin_limited": config2}
 
-    return {config1.key: config1, config2.key: config2}
 
-
-@pytest.fixture
-def mock_banner_stats():  # This mocks the BannerStats CLASS
-    """Fixture to mock the BannerStats class."""
-    with patch("runner.BannerStats", autospec=True) as mock_class:
-        # This is the instance that will be returned when BannerStats() is called
-        mock_instance = mock_class.return_value
-
-        # Set up the .config attribute on the mock_instance because runner.py accesses it
-        # e.g., banner_analyzer.config.game_name
-        mock_instance.config = MagicMock(spec=BannerConfig)
-        mock_instance.config.game_name = "MockedGameForLog"
-        mock_instance.config.banner_type = "MockedBannerForLog"
-        # Add game_name and banner_type directly to the mock for runner.py attribute access
-        mock_instance.game_name = mock_instance.config.game_name
-        mock_instance.banner_type = mock_instance.config.banner_type
-
-        mock_instance.calculate_probabilities = MagicMock()
-        # save_results_to_csv is not used in runner, so do not mock it
-        mock_instance.get_banner_rows = MagicMock(
-            return_value=(["header1"], [["row1"]])
-        )
-        yield mock_class  # yield the mock for the class itself
 
 
 @pytest.fixture
@@ -74,15 +29,75 @@ def stats_runner_with_mocks(
     return runner
 
 
-def test_stats_runner_initialization(
-    stats_runner_with_mocks, mock_banner_config_instances, mock_output_handler_class
-):
-    """Test StatsRunner initialization."""
-    assert stats_runner_with_mocks.banner_configs == mock_banner_config_instances
-    assert isinstance(
-        stats_runner_with_mocks.csv_handler,
-        mock_output_handler_class.return_value.__class__,
-    )
+
+def test_run_banner_stats_success(monkeypatch, mock_banner_configs):
+    monkeypatch.setattr(runner, "BANNER_CONFIGS", {k: {v.banner_type: v} for k, v in mock_banner_configs.items()})
+    mock_calc = MagicMock()
+    mock_calc_instance = MagicMock()
+    mock_calc_instance.calculate_probabilities.return_value = ([0.1], [0.1], [0.1])
+    mock_calc.return_value = mock_calc_instance
+    monkeypatch.setattr(runner, "ProbabilityCalculator", mock_calc)
+    mock_format_results = MagicMock(return_value=[["game", "banner", "1", "0.1", "0.1", "0.1"]])
+    monkeypatch.setattr(runner, "format_results", mock_format_results)
+    monkeypatch.setattr(runner, "get_headers", lambda: ["h1", "h2", "h3", "h4", "h5", "h6"])
+    mock_csv = MagicMock()
+    monkeypatch.setattr(runner, "CSVOutputHandler", lambda: mock_csv)
+    runner.run_banner_stats()
+    assert mock_calc_instance.calculate_probabilities.call_count == 2
+    assert mock_csv.write.call_count == 2
+    assert mock_format_results.call_count == 2
+
+def test_run_banner_stats_calculation_error(monkeypatch, mock_banner_configs):
+    monkeypatch.setattr(runner, "BANNER_CONFIGS", {k: {v.banner_type: v} for k, v in mock_banner_configs.items()})
+    mock_calc = MagicMock()
+    mock_calc_instance1 = MagicMock()
+    mock_calc_instance1.calculate_probabilities.side_effect = Exception("fail")
+    mock_calc_instance2 = MagicMock()
+    mock_calc_instance2.calculate_probabilities.return_value = ([0.1], [0.1], [0.1])
+    mock_calc.side_effect = [mock_calc_instance1, mock_calc_instance2]
+    monkeypatch.setattr(runner, "ProbabilityCalculator", mock_calc)
+    monkeypatch.setattr(runner, "format_results", MagicMock(return_value=[["row"]]))
+    monkeypatch.setattr(runner, "get_headers", lambda: ["h1", "h2", "h3", "h4", "h5", "h6"])
+    mock_csv = MagicMock()
+    monkeypatch.setattr(runner, "CSVOutputHandler", lambda: mock_csv)
+    runner.run_banner_stats()
+    assert mock_csv.write.call_count == 2
+
+def test_run_banner_stats_csv_write_error(monkeypatch, mock_banner_configs):
+    monkeypatch.setattr(runner, "BANNER_CONFIGS", {k: {v.banner_type: v} for k, v in mock_banner_configs.items()})
+    mock_calc = MagicMock()
+    mock_calc_instance = MagicMock()
+    mock_calc_instance.calculate_probabilities.return_value = ([0.1], [0.1], [0.1])
+    mock_calc.return_value = mock_calc_instance
+    monkeypatch.setattr(runner, "ProbabilityCalculator", mock_calc)
+    monkeypatch.setattr(runner, "format_results", MagicMock(return_value=[["row"]]))
+    monkeypatch.setattr(runner, "get_headers", lambda: ["h1", "h2", "h3", "h4", "h5", "h6"])
+    mock_csv = MagicMock()
+    mock_csv.write.side_effect = Exception("csv fail")
+    monkeypatch.setattr(runner, "CSVOutputHandler", lambda: mock_csv)
+    runner.run_banner_stats()
+    assert mock_csv.write.call_count == 2
+
+def test_run_banner_stats_empty_configs(monkeypatch):
+    monkeypatch.setattr(runner, "BANNER_CONFIGS", {})
+    mock_csv = MagicMock()
+    monkeypatch.setattr(runner, "CSVOutputHandler", lambda: mock_csv)
+    runner.run_banner_stats()
+    assert mock_csv.write.call_count == 0
+
+def test_run_banner_stats_empty_results(monkeypatch, mock_banner_configs):
+    monkeypatch.setattr(runner, "BANNER_CONFIGS", {k: {v.banner_type: v} for k, v in mock_banner_configs.items()})
+    mock_calc = MagicMock()
+    mock_calc_instance = MagicMock()
+    mock_calc_instance.calculate_probabilities.return_value = ([], [], [])
+    mock_calc.return_value = mock_calc_instance
+    monkeypatch.setattr(runner, "ProbabilityCalculator", mock_calc)
+    monkeypatch.setattr(runner, "format_results", MagicMock(return_value=[]))
+    monkeypatch.setattr(runner, "get_headers", lambda: ["h1", "h2", "h3", "h4", "h5", "h6"])
+    mock_csv = MagicMock()
+    monkeypatch.setattr(runner, "CSVOutputHandler", lambda: mock_csv)
+    runner.run_banner_stats()
+    assert mock_csv.write.call_count == 2
 
 
 def test_process_all_banners_success(

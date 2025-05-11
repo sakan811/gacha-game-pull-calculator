@@ -1,6 +1,5 @@
 """Probability calculator for gacha banners."""
 from typing import List, Tuple
-import math
 
 
 class ProbabilityCalculator:
