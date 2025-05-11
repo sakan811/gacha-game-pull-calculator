@@ -12,7 +12,7 @@ from core.common.logging import get_logger
 logger = get_logger(__name__)
 
 
-def run_banner_stats():
+def run_banner_stats() -> None:
     """Calculate and save banner statistics."""
     logger.info("Starting banner statistics calculation.")
     output_handler = CSVOutputHandler()

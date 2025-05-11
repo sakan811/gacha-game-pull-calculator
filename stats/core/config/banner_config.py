@@ -22,7 +22,7 @@ class BannerConfig:
     guaranteed_rate_up: bool
     rate_up_chance: Optional[float] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # Type validation first
         if not isinstance(self.game_name, str):
             raise ValidationError(

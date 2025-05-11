@@ -2,11 +2,13 @@
 
 from typing import List, Tuple
 
+from core.config.banner_config import BannerConfig
+
 
 class ProbabilityCalculator:
     """Calculates banner probabilities."""
 
-    def __init__(self, config):
+    def __init__(self, config: "BannerConfig"):
         self.config = config
 
     def calculate_probabilities(self) -> Tuple[List[float], List[float], List[float]]:
