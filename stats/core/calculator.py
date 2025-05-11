@@ -4,7 +4,6 @@ This module provides the calculator class for banner probabilities.
 It handles the core probability calculations for gacha banners including pity systems.
 """
 
-from typing import Dict, Any
 import numpy as np
 
 from core.config.banner import BannerConfig
@@ -12,6 +11,20 @@ from core.common.errors import ConfigurationError, CalculationError
 from core.common.logging import get_logger
 
 logger = get_logger(__name__)
+
+
+class CalculationResult:
+    """Container for calculation results."""
+
+    def __init__(
+        self,
+        raw_probabilities: np.ndarray,
+        first_5star_prob: np.ndarray,
+        cumulative_prob: np.ndarray,
+    ):
+        self.raw_probabilities = raw_probabilities
+        self.first_5star_prob = first_5star_prob
+        self.cumulative_prob = cumulative_prob
 
 
 class ProbabilityCalculator:
@@ -22,50 +35,48 @@ class ProbabilityCalculator:
             raise ConfigurationError("Banner configuration is required")
         self.config = config
 
-    def calculate_probabilities(self, max_rolls: int = 180) -> Dict[str, Any]:
+    def calculate_probabilities(self, max_rolls: int = 180) -> CalculationResult:
         """Calculate banner probabilities.
 
         Args:
             max_rolls: Maximum number of rolls to calculate for
 
         Returns:
-            Dictionary with probability arrays and metadata
+            CalculationResult with probability arrays
 
         Raises:
             CalculationError: If calculation fails
         """
         try:
-            probs = np.zeros(max_rolls, dtype=np.float64)
-            base_rate = self.config.base_rate
-            for i in range(max_rolls):
-                # Apply pity system
-                if i >= 73:
-                    base_rate = min(1.0, self.config.base_rate + (i - 72) * 0.06)
-                probs[i] = base_rate
+            # Use config parameters for soft pity and rate increase
+            probs = np.full(max_rolls, self.config.base_rate, dtype=np.float64)
+            soft_pity = self.config.soft_pity_start_after
+            hard_pity = self.config.hard_pity
+            rate_increase = self.config.rate_increase
 
-            n = len(probs)
-            first_5star = np.zeros(n, dtype=np.float64)
-            not_pulled_yet = 1.0
-            for i in range(n):
-                first_5star[i] = probs[i] * not_pulled_yet
-                not_pulled_yet *= 1 - probs[i]
+            # Apply soft pity
+            for i in range(soft_pity - 1, min(hard_pity, max_rolls)):
+                increased_rate = min(
+                    1.0, self.config.base_rate + (i - (soft_pity - 1)) * rate_increase
+                )
+                probs[i] = increased_rate
 
-            cumulative = np.zeros(n, dtype=np.float64)
-            not_pulled = 1.0
-            for i in range(n):
-                cumulative[i] = 1.0 - not_pulled
-                not_pulled *= 1 - probs[i]
+            # Guarantee at hard pity
+            if hard_pity <= max_rolls:
+                probs[hard_pity - 1] = 1.0
 
-            return {
-                "raw_probabilities": probs,
-                "first_5star_prob": first_5star,
-                "cumulative_prob": cumulative,
-                "metadata": {
-                    "max_rolls": max_rolls,
-                    "banner_type": self.config.banner_type,
-                    "base_rate": self.config.base_rate,
-                },
-            }
+            # First 5-star probability per roll
+            not_pulled_yet = np.cumprod(1 - probs)
+            first_5star = probs * np.concatenate(([1.0], not_pulled_yet[:-1]))
+
+            # Cumulative probability
+            cumulative = 1.0 - not_pulled_yet
+
+            return CalculationResult(
+                raw_probabilities=probs,
+                first_5star_prob=first_5star,
+                cumulative_prob=cumulative,
+            )
         except Exception as e:
             logger.error(f"Calculation failed: {str(e)}", exc_info=True)
             raise CalculationError(f"Failed to calculate probabilities: {str(e)}")
