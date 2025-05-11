@@ -11,7 +11,7 @@ def run_banner_stats():
     """Calculate and save banner statistics."""
     output_handler = CSVOutputHandler()
     for game_type, banners in BANNER_CONFIGS.items():
-        output_path = Path("csv_output") / f"{game_type.lower()}_all_banners.csv"
+        output_path = Path("csv_output") / f"{game_type.lower().replace(' ', '_')}_all_banners.csv"
         all_results = []
         for banner_type, config in banners.items():
             calculator = ProbabilityCalculator(config)
