@@ -9,9 +9,6 @@ from output.row_formatter import format_results, get_headers
 from core.config.banner_config import BANNER_CONFIGS
 from core.common.errors import (
     BannerError,
-    ConfigurationError,
-    ValidationError,
-    CalculationError,
 )
 
 logger = get_logger(__name__)
@@ -22,19 +19,17 @@ class StatsRunner:
 
     def __init__(self) -> None:
         self.output_handler = CSVOutputHandler()
+        self.banner_configs = BANNER_CONFIGS
 
     def run(self) -> None:
         """Run banner statistics calculations."""
         try:
             self._process_banners()
-        except (ConfigurationError, ValidationError):
-            logger.error("Configuration or validation error", exc_info=True)
+        except BannerError as e:
+            logger.error(f"Banner error: {e}", exc_info=True)
             raise
-        except CalculationError:
-            logger.error("Calculation error", exc_info=True)
-            raise
-        except Exception:
-            logger.error("Unexpected error occurred", exc_info=True)
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}", exc_info=True)
             raise
 
     def _process_banners(self) -> None:
@@ -44,13 +39,26 @@ class StatsRunner:
             all_results = []
 
             for banner_type, config in banners.items():
+                if not hasattr(config, "game_name") or not hasattr(
+                    config, "banner_type"
+                ):
+                    logger.warning(
+                        f"Invalid config for {game_type} {banner_type}, skipping."
+                    )
+                    continue
                 try:
                     calculator = ProbabilityCalculator(config)
-                    results = calculator.calculate()
+                    results = calculator.calculate_probabilities()
                     formatted_data = format_results(config, results)
                     all_results.extend(formatted_data)
                 except BannerError as e:
                     logger.warning(f"Skipping {game_type} {banner_type} banner: {e}")
+                    continue
+                except Exception as e:
+                    logger.error(
+                        f"Unexpected error processing {game_type} {banner_type}: {e}",
+                        exc_info=True,
+                    )
                     continue
 
             if all_results:
