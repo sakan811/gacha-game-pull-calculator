@@ -3,17 +3,18 @@ from typing import Optional
 import numpy as np
 from numpy import ndarray
 from core.banner import BannerConfig
-
+from typing import Any
 
 class ProbabilityCalculator(ABC):
     """Base class for calculating banner probabilities."""
 
     def __init__(self, config: Optional[BannerConfig] = None) -> None:
         self.config: Optional[BannerConfig] = config
-        self.rolls: ndarray = np.array([])
-        self.probabilities: ndarray = np.array([])
-        self.p_first_5_star: ndarray = np.array([])
-        self.cumulative_prob: ndarray = np.array([])
+
+        self.rolls: ndarray[Any, np.dtype[Any]] = np.array([])
+        self.probabilities: ndarray[Any, np.dtype[Any]] = np.array([])
+        self.p_first_5_star: ndarray[Any, np.dtype[Any]] = np.array([])
+        self.cumulative_prob: ndarray[Any, np.dtype[Any]] = np.array([])
         if self.config:
             self._initialize_calculations()
 
@@ -29,7 +30,7 @@ class ProbabilityCalculator(ABC):
             self.probabilities
         )
 
-    def _calculate_raw_probabilities(self) -> ndarray:
+    def _calculate_raw_probabilities(self) -> ndarray[Any, np.dtype[Any]]:
         if self.config is None:
             raise ValueError("Config must be set to calculate raw probabilities.")
         rolls = self.rolls
@@ -47,8 +48,8 @@ class ProbabilityCalculator(ABC):
         return probs
 
     def _calculate_first_5star_prob_from_raw(
-        self, raw_probabilities: ndarray
-    ) -> ndarray:
+        self, raw_probabilities: ndarray[Any, np.dtype[Any]]
+    ) -> ndarray[Any, np.dtype[Any]]:
         p_first_5_star = np.zeros_like(raw_probabilities)
         prob_no_5star_so_far = 1.0
         for i, p_roll in enumerate(raw_probabilities):
@@ -57,8 +58,8 @@ class ProbabilityCalculator(ABC):
         return p_first_5_star
 
     def _calculate_cumulative_prob_from_raw(
-        self, raw_probabilities: ndarray
-    ) -> ndarray:
+        self, raw_probabilities: ndarray[Any, np.dtype[Any]]
+    ) -> ndarray[Any, np.dtype[Any]]:
         cumulative = np.zeros_like(raw_probabilities)
         prob_no_5star_at_all = 1.0
         for i, p_roll in enumerate(raw_probabilities):
