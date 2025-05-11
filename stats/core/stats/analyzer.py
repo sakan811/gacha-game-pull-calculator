@@ -1,6 +1,5 @@
 """Module for analyzing banner statistics."""
 from typing import Dict, Any, List
-import numpy as np
 
 from ..calculation.calculator import ProbabilityCalculator
 from ..calculation.strategy import CalculationResult

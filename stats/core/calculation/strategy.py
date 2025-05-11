@@ -1,10 +1,9 @@
 """Calculation strategy interface and result types."""
 from abc import ABC, abstractmethod
 from typing import Dict, Any, NamedTuple
-import numpy as np
 from numpy import ndarray
 
-from ..common.errors import ValidationError, CalculationError
+from ..common.errors import ValidationError
 from ..common.logging import get_logger
 
 logger = get_logger(__name__)

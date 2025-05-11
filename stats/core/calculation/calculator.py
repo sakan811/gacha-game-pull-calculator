@@ -1,7 +1,6 @@
 """Base calculator module for banner probability calculations."""
 from abc import ABC, abstractmethod
-from typing import Optional, Any
-import numpy as np
+from typing import Optional
 from numpy import ndarray
 
 from ..config.banner import BannerConfig

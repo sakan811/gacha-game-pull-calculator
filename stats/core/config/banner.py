@@ -1,8 +1,7 @@
 """Banner configuration module with validation and inheritance support."""
-from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, ClassVar
+from dataclasses import dataclass
+from typing import Optional, ClassVar
 
-from ..common.errors import ValidationError
 from .validation import validate_banner_config
 
 

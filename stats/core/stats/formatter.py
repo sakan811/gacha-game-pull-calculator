@@ -1,6 +1,5 @@
 """Module for formatting banner statistics results."""
-from typing import List, Generator
-import numpy as np
+from typing import List
 
 from ..calculation.strategy import CalculationResult
 from ..config.banner import BannerConfig
