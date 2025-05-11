@@ -7,7 +7,7 @@ import numpy as np
 class ProbabilityCalculator(ABC):
     """Base class for calculating banner probabilities."""
 
-    def __init__(self, config: Optional[BannerConfig] = None):
+    def __init__(self, config: Optional[BannerConfig] = None) -> None:
         self.config: Optional[BannerConfig] = config
         self.rolls: List[int] = []
         self.probabilities: List[float] = []
@@ -16,7 +16,7 @@ class ProbabilityCalculator(ABC):
         if self.config:
             self._initialize_calculations()
 
-    def _initialize_calculations(self):
+    def _initialize_calculations(self) -> None:
         if not self.config:
             return
         self.rolls = [int(x) for x in np.arange(1, self.config.hard_pity + 1)]

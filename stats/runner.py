@@ -12,16 +12,16 @@ logger = Logger().get_logger()
 class StatsRunner:
     """Orchestrates the probability calculations and output for all configured banners."""
 
-    def __init__(self, banner_configs: Dict[str, Any]):
+    def __init__(self, banner_configs: Dict[str, Any]) -> None:
         if not isinstance(banner_configs, dict):
-            raise TypeError("banner_configs must be a dictionary.")
+            raise TypeError("banner_configs must be a dictionary")
         self.banner_configs = banner_configs
         self.csv_handler = CSVOutputHandler()
 
-    def process_all_banners(self):
+    def process_all_banners(self) -> None:
         logger.info("Starting banner statistics processing...")
-        game_rows = {}
-        game_headers = {}
+        game_rows: Dict[str, list[list[Any]]] = {}
+        game_headers: Dict[str, list[str]] = {}
         for config_key, banner_config_data in self.banner_configs.items():
             game_name = getattr(banner_config_data, "game_name", "UnknownGame")
             banner_type = getattr(banner_config_data, "banner_type", "UnknownBanner")
@@ -76,7 +76,7 @@ class StatsRunner:
         logger.info("Banner statistics processing finished.")
 
 
-def main():
+def main() -> None:
     try:
         runner = StatsRunner(BANNER_CONFIGS)
         runner.process_all_banners()

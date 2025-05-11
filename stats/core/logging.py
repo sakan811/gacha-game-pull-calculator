@@ -2,7 +2,7 @@ import logging
 
 
 class Logger:
-    def __init__(self, level=logging.INFO):
+    def __init__(self, level: int = logging.INFO) -> None:
         self.logger = logging.getLogger(__name__)
         # Only configure the logger (set level and add handlers) if it hasn't been configured already.
         # This prevents duplicate handlers if Logger() is instantiated multiple times
@@ -11,7 +11,7 @@ class Logger:
             self.logger.setLevel(level)
             self._setup_logging()
 
-    def _setup_logging(self):
+    def _setup_logging(self) -> None:
         formatter = logging.Formatter(
             "%(asctime)s - %(module)s - %(levelname)s - %(lineno)d - %(message)s"
         )
@@ -19,5 +19,5 @@ class Logger:
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
-    def get_logger(self):
+    def get_logger(self) -> logging.Logger:
         return self.logger
