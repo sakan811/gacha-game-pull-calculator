@@ -23,26 +23,27 @@ class ProbabilityCalculator:
         base_rate = self.config.base_rate
         soft_pity_start = self.config.soft_pity_start_after
         hard_pity = self.config.hard_pity
+        rate_increase = self.config.rate_increase
 
         # Calculate per roll probabilities
         per_roll = []
         for i in range(hard_pity):
-            if i < soft_pity_start:
+            roll_number = i + 1  # Convert 0-based index to 1-based roll number
+
+            if roll_number <= soft_pity_start:
                 prob = base_rate
-            elif i == hard_pity - 1:
+            elif roll_number == hard_pity:
                 prob = 1.0  # Hard pity
             else:
-                # Linear increase from base_rate to 1.0 during soft pity
-                remaining_rolls = hard_pity - soft_pity_start
-                increase_per_roll = (1.0 - base_rate) / remaining_rolls
-                rolls_into_soft_pity = i - soft_pity_start + 1
-                prob = min(1.0, base_rate + (increase_per_roll * rolls_into_soft_pity))
+                # Apply the rate increase formula during soft pity
+                rolls_into_soft_pity = roll_number - soft_pity_start
+                prob = min(1.0, base_rate + (rate_increase * rolls_into_soft_pity))
             per_roll.append(prob)
 
         # Calculate first 5* probability (chance to get first 5* on exactly this roll)
         first_5star = []
         no_5star_prob = 1.0
-        for i, prob in enumerate(per_roll):
+        for prob in per_roll:
             first_5star.append(no_5star_prob * prob)
             no_5star_prob *= 1.0 - prob
 

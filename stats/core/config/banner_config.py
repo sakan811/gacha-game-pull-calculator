@@ -23,6 +23,47 @@ class BannerConfig:
     rate_up_chance: Optional[float] = None
 
     def __post_init__(self):
+        # Type validation first
+        if not isinstance(self.game_name, str):
+            raise ValidationError(
+                f"Game name must be a string, got {type(self.game_name)}"
+            )
+        if not isinstance(self.banner_type, str):
+            raise ValidationError(
+                f"Banner type must be a string, got {type(self.banner_type)}"
+            )
+        if not isinstance(self.base_rate, (int, float)):
+            raise ValidationError(
+                f"Base rate must be a number, got {type(self.base_rate)}"
+            )
+        if not isinstance(self.four_star_rate, (int, float)):
+            raise ValidationError(
+                f"Four star rate must be a number, got {type(self.four_star_rate)}"
+            )
+        if not isinstance(self.soft_pity_start_after, int):
+            raise ValidationError(
+                f"Soft pity must be an integer, got {type(self.soft_pity_start_after)}"
+            )
+        if not isinstance(self.hard_pity, int):
+            raise ValidationError(
+                f"Hard pity must be an integer, got {type(self.hard_pity)}"
+            )
+        if not isinstance(self.rate_increase, (int, float)):
+            raise ValidationError(
+                f"Rate increase must be a number, got {type(self.rate_increase)}"
+            )
+        if not isinstance(self.guaranteed_rate_up, bool):
+            raise ValidationError(
+                f"Guaranteed rate up must be a boolean, got {type(self.guaranteed_rate_up)}"
+            )
+        if self.rate_up_chance is not None and not isinstance(
+            self.rate_up_chance, (int, float)
+        ):
+            raise ValidationError(
+                f"Rate up chance must be a number if provided, got {type(self.rate_up_chance)}"
+            )
+
+        # Value validation after type checking
         if self.game_name not in GAME_TYPES:
             raise ValidationError(f"Invalid game name: {self.game_name}")
         valid_types = BANNER_TYPES_BY_GAME.get(self.game_name, set())

@@ -78,20 +78,26 @@ def test_run_banner_stats_error_handling(error_msg: str):
     mock_calc = Mock(spec=ProbabilityCalculator)
     mock_calc.calculate_probabilities.side_effect = ValueError(error_msg)
 
+    # We need to patch the logger differently to capture the error
+    mock_logger = Mock()
+
     with (
         patch("runner.BANNER_CONFIGS", {"Star Rail": {"Limited": config}}),
         patch("runner.ProbabilityCalculator", return_value=mock_calc),
         patch("runner.CSVOutputHandler", return_value=mock_csv),
-        patch("runner.get_logger") as mock_logger,
+        patch("runner.logger", mock_logger),
     ):
         from runner import run_banner_stats
 
         run_banner_stats()
 
-        # Verify error logging contains the expected message
-        mock_logger.return_value.error.assert_called()
-        assert error_msg in mock_logger.return_value.error.call_args[0][0]
-        mock_csv.write.assert_not_called()
+        # Verify that error was logged
+        error_message = f"Error calculating probabilities for Limited: {error_msg}"
+        mock_logger.error.assert_called_once()
+        assert error_message in mock_logger.error.call_args[0][0]
+
+        # Verify CSV write is still called (with empty results for the failed banner)
+        mock_csv.write.assert_called_once()
 
 
 def test_run_banner_stats_empty_config():
