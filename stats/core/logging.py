@@ -4,7 +4,7 @@ import logging
 class Logger:
     def __init__(self, level: int = logging.INFO) -> None:
         self.logger = logging.getLogger(__name__)
-        if not self.logger.hasHandlers():  
+        if not self.logger.hasHandlers():
             self.logger.setLevel(level)
             self._setup_logging()
 
