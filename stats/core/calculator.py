@@ -14,7 +14,7 @@ class ProbabilityCalculator:
             tuple: (per_roll_prob, cumulative_prob, first_5star_prob)
         """
         base_prob = self.config.base_rate
-        soft_pity = self.config.soft_pity_start
+        soft_pity = self.config.soft_pity_start_after
 
         per_roll = [base_prob] * soft_pity
         cumulative = [1 - (1 - base_prob) ** (i + 1) for i in range(soft_pity)]
