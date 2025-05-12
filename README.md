@@ -26,7 +26,7 @@ Includes statistical visualizations via Tableau for deeper insights into pull ra
 [![Docker Build](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/docker-build.yml)
 [![Python Tests](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/python-test.yml/badge.svg)](https://github.com/sakan811/gacha-game-pull-calculator/actions/workflows/python-test.yml)
 
-## Quick Start Guide for the Web-App Caculator
+## Quick Start Guide for the Web-App Calculator
 
 ### Docker Requirements
 
