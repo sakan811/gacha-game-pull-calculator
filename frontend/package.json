@@ -30,7 +30,7 @@
     "@testing-library/vue": "^8.1.0",
     "@types/node": "^22.15.29",
     "@vitejs/plugin-vue": "^5.2.4",
-    "@vitest/ui": "^3.2.0",
+    "@vitest/ui": "^3.2.3",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.28.0",
