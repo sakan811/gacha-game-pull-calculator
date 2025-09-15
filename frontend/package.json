@@ -26,7 +26,7 @@
     "@eslint/js": "^9.30.0",
     "@juggle/resize-observer": "^3.4.0",
     "@tailwindcss/forms": "^0.5.10",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/vue": "^8.1.0",
     "@types/node": "^24.0.13",
     "@vitejs/plugin-vue": "^5.2.4",
